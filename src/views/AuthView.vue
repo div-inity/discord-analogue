@@ -1,26 +1,30 @@
 <template>
   <div class="auth-screen">
     <form action="" class="auth-form">
-      <h1 class="greetings">Welcome back!</h1>
-      <p>We're so excited to see you again!</p>
-      <label for="email">Email or Phone Number</label>
+      <h1 class="greetings">{{ t('auth.greetings') }}</h1>
+      <p class="subgreetings">{{ t('auth.subgreetings') }}</p>
+      <label for="email">{{ t('auth.email') }}</label>
       <input type="text" id="email">
 
-      <label for="pass">Password</label>
+      <label for="pass">{{ t('auth.pass') }}</label>
       <input type="password" id="pass">
 
-      <a href="#">Forgot your password?</a>
-      <button class="button-auth button-purple">Log In</button>
-      <p class="register-link">Need an account? &nbsp&nbsp<a href="#">Register</a></p>
+      <a href="#" class="forgot-pass">{{ t('auth.forgotpass') }}</a>
+      <button class="button-auth button-purple log-in">{{ t('auth.forgobuttontpass') }}</button>
+      <p class="register-link">{{ t('auth.registerlink') }} &nbsp&nbsp
+        <a href="#" class="register">{{ t('auth.register') }}</a>
+      </p>
     </form>
     <div class="qrcode-block">
       <div class="qrcode"></div>
-      <h2>Log in with QR Code</h2>
-      <p>Scan this with the Discord mobile app to log in instantly.</p>
+      <h2 class="login-with-qr">{{ t('auth.loginwithqr') }}</h2>
+      <p class="scan-qr">{{ t('auth.scanqr') }}</p>
     </div>
   </div>
 </template>
 <script setup>
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 </script>
 <style lang="scss">
 * {
@@ -106,8 +110,8 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 43px;
     width: 229px;
+    justify-content: center;
 
     .qrcode {
       background-image: url(@/assets/img/qr.svg);
