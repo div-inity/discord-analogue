@@ -2,7 +2,7 @@ export default {
   namespaced: true,
   state: {
     user: {
-      id: null,
+      id: 1,
     }
   },
   getters: {

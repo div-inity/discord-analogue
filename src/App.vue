@@ -29,6 +29,10 @@ onMounted(() => {
 <style lang="scss">
 @import "./styles/main.scss";
 
+html {
+  background-image: none;
+}
+
 .theme-switcher {
   background: var(--button-back-color);
   border: none;

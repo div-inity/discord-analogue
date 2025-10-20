@@ -10,7 +10,7 @@
       <input type="password" id="pass">
 
       <a href="#" class="forgot-pass">{{ t('auth.forgotpass') }}</a>
-      <button class="button-auth button-purple log-in">{{ t('auth.forgobuttontpass') }}</button>
+      <button class="button-auth button-purple log-in">{{ t('auth.button') }}</button>
       <p class="register-link">{{ t('auth.registerlink') }} &nbsp&nbsp
         <a href="#" class="register">{{ t('auth.register') }}</a>
       </p>
@@ -31,7 +31,7 @@ const { t } = useI18n()
   font-weight: 400;
 }
 
-html {
+#app {
   font-family: var(--Ubuntu);
   background-image: url(@/assets/img/BackgroungAuth.svg);
   background-size: cover;
@@ -39,8 +39,6 @@ html {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100vw;
-  height: 100vh;
 }
 
 .auth-screen {
