@@ -39,6 +39,8 @@ const { t } = useI18n()
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100vw;
+  height: 100vh;
 }
 
 .auth-screen {
@@ -141,6 +143,11 @@ const { t } = useI18n()
 @media screen and (max-width: 800px) {
   html {
     height: auto;
+
+    #app {
+      width: auto;
+      height: auto;
+    }
 
     .auth-screen {
       flex-direction: column;
