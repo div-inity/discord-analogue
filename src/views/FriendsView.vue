@@ -1,0 +1,10 @@
+<template>
+  <div class="friends-container">
+    <Sidebar></Sidebar>
+    <router-view />
+  </div>
+</template>
+<script setup>
+import Sidebar from '@/components/Sidebar.vue'
+</script>
+<style lang="scss"></style>

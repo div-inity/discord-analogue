@@ -20,9 +20,11 @@ export default {
       if (['light', 'dark'].includes(theme)) {
         commit('SET_THEME', theme)
 
+        // Применяем тему к корневому HTML элементу
         document.documentElement.setAttribute('data-theme', theme)
         localStorage.setItem('theme', theme)
-        console.log('Theme changed to:', theme)
+
+        console.log('Theme applied globally:', theme)
       }
     },
 

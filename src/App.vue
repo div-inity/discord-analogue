@@ -1,50 +1,34 @@
 <template>
-  <!-- <button @click="toggleTheme" class="theme-switcher">
-    {{ isDark ? '☀️' : '🌙' }} {{ currentTheme }}
-  </button> -->
-  <header>
-    <div class="logo">Discord Analogue</div>
-    <div class="header-actions">
-      <button class="header-action minus">
-        <svg width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="26" height="24" fill="#202225" />
-          <path d="M6.5 12L19.5 12" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-      <button class="header-action square">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="24" height="24" fill="#202225" />
-          <path d="M14.4 6H9.6H6V9.6V14.4V18H9.6H14.4H18V14.4V9.6V6H14.4Z" stroke="white" stroke-linecap="round"
-            stroke-linejoin="round" />
-        </svg>
-      </button>
-      <button class="header-action cross">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="24" height="24" fill="#202225" />
-          <path d="M6 6L18 18M18 6L6 18" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-    </div>
-  </header>
-  <router-view></router-view>
+  <div id="app" :class="`theme-${currentTheme}`">
+    <button @click="toggleTheme" class="theme-switcher">
+      {{ isDark ? '☀️' : '🌙' }} {{ currentTheme }}
+    </button>
+    <Header v-if="user"></Header>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script setup>
 import { useStore } from 'vuex'
-const store = useStore()
 import { useRouter } from 'vue-router'
-const router = useRouter()
-
+import { computed, onMounted } from 'vue'
 import { useTheme } from '@/composables/useTheme'
 const { currentTheme, toggleTheme, isDark } = useTheme()
 
+const store = useStore()
+const router = useRouter()
+
+const user = computed(() => store.getters['user/getUser'])
+
 const checkAuth = () => {
-  const user = store.getters['user/getUser']
-  if (!user.id) {
+  //console.log('User', user.value);
+  if (!user.value) {
     router.push('/auth')
+  } else {
+    router.push({ name: 'friends' })
   }
 }
-import { onMounted } from 'vue'
+
 onMounted(() => {
   checkAuth()
 })
@@ -55,6 +39,11 @@ onMounted(() => {
 
 html {
   background-image: none;
+}
+
+#app {
+  height: 100vh;
+  width: 100vw;
 }
 
 header {
@@ -105,6 +94,9 @@ header {
   cursor: pointer;
   color: var(--main-text-color);
   transition: all 0.3s ease;
+  position: absolute;
+  right: 0;
+  bottom: 90%;
 
   &:hover {
     opacity: 0.8;
