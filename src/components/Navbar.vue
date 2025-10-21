@@ -2,12 +2,13 @@
   <TransitionGroup name="fade" class="navbar" tag="div">
     <div class="private-messages" :key="currentBlock">
       <div class="home-link">
-        <router-link to="/messages" :class="(activeServer != null) ? null : 'active'" class="home"
-          @mouseenter="hover = -1" @mouseleave="hover = null"></router-link>
+        <router-link to="/messages" :class="(activeServer > 0) ? null : 'active'" class="home" @mouseenter="hover = -1"
+          @mouseleave="hover = null"></router-link>
         <div class="tooltip right" v-if="hover == -1">Личные сообщения</div>
       </div>
 
       <div class="h-divider divider"></div>
+
       <div class="messages" v-for="(m, i) in messages">
         <div class="message" @mouseenter="hover = 'm' + i" @mouseleave="hover = null">
           <router-link :class="(m.missed_messages && m.missed_messages > 0) ? 'missed-messages' : null"
@@ -21,9 +22,11 @@
     </div>
 
     <div :key="currentBlock" class="h-divider divider" v-if="messages && messages.length"></div>
+
     <div :key="currentBlock" class="servers" v-for="(s, i) in servers">
       <div class="server" @mouseenter="hover = 's' + i" @mouseleave="hover = null">
-        <router-link :class="(s.missed_messages && s.missed_messages > 0) ? 'missed-messages' : null"
+        <router-link
+          :class="{ 'missed-messages': s.missed_messages && s.missed_messages > 0, 'active': activeServer == s.id }"
           :to="'/server/' + s.id" class="link-server">
           <img :src="s.avatar" alt="">
           <div class="mentions" v-if="s.mentions && s.mentions > 0">{{ s.mentions }}</div>
@@ -32,19 +35,21 @@
       </div>
     </div>
     <div :key="currentBlock" class="h-divider divider"></div>
+
     <div :key="currentBlock" class="actions" v-for="(a, i) in actions">
-      <router-link :to="a.link" class="link-action">
+      <div @click="a.handler" class="link-action">
         <img :src="a.avatar" alt="" @mouseenter="hover = i" @mouseleave="hover = null">
-      </router-link>
+      </div>
       <div class="tooltip right" v-if="hover == i">{{ a.name }}</div>
     </div>
-    {{ hover }}
+    {{ activeServer }}
   </TransitionGroup>
 </template>
 <script setup>
+import router from '@/router'
 import { ref, reactive, computed, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
-const activeServer = ref(null)
+const activeServer = ref(0) // Начальное значение - сервер не выбран
 const currentBlock = ref(1) // Для плавной анимации исчезновения диалога
 const hover = ref(1) // Для видимости наведенного блока
 const actions = reactive([
@@ -52,12 +57,18 @@ const actions = reactive([
     id: 1,
     name: "Добавить сервер",
     link: '/add-server',
+    handler: () => {
+      alert("add server")
+    },
     avatar: require('@/assets/img/Plus.svg'),
   },
   {
     id: 2,
     name: "Путешествие",
     link: '/discovery',
+    handler: () => {
+      router.push({ name: 'discovery' })
+    },
     avatar: require('@/assets/img/Discovery.svg'),
   },
 ])
@@ -110,17 +121,24 @@ let messages = reactive([
 ])
 const route = useRoute()
 const goToMessage = (id) => { // Для перехода в ЛС
-  if (route.name == 'message') {
-    let index = messages.findIndex(e => e.id == id);
-    if (index > -1) messages.splice(index, 1) // Удаление из Навбара
+  let index = messages.findIndex(e => e.id == id);
+  activeServer.value = 0 // Очищение значения - сервер не выбран, домашняя страница
+  if (index > -1) messages.splice(index, 1) // Удаление из Навбара
 
-  }
+}
+const goToServer = (id) => {
+  activeServer.value = id // Сервер выбран
+
 }
 watchEffect(() => {
   //console.log('Полный route объект:', route)
-  goToMessage(route.params.id) // Отслеживание изменения пути
+  if (route.name == 'message') goToMessage(route.params.id) // Выбран диалог
+  else if (route.name == 'server') goToServer(route.params.id) // Выбран сервер
+  else if (route.name == 'messages') {
+    activeServer.value = 0 // Очищение значения - сервер не выбран, домашняя страница
+  }
+  hover.value = null // Очищение тултипов
 })
-
 </script>
 <style lang="scss">
 .navbar {
@@ -208,9 +226,11 @@ watchEffect(() => {
     background-repeat: no-repeat;
     background-position: center center;
 
-    &:hover {
+    &:hover,
+    &.active {
       background-color: var(--system-purple-color);
     }
+
   }
 
   .home-link,
@@ -259,6 +279,10 @@ watchEffect(() => {
       justify-content: center;
       background-color: var(--system-back-color2);
       border-radius: 30px;
+
+      &:first-of-type {
+        cursor: pointer;
+      }
 
       &::before {
         display: none;
