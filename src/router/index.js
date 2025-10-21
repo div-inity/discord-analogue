@@ -17,14 +17,16 @@ const routes = [
           {
             path: ":id",
             name: "message",
-            component: import(/* webpackChunkName: "message" */ "../views/MessageView.vue"),
+            component: () =>
+              import(/* webpackChunkName: "message" */ "../views/MessageView.vue"),
           }
         ],
       },
       {
         path: "/server/:id",
         name: "server",
-        component: import(/* webpackChunkName: "server" */ "../views/ServerView.vue"),
+        component: () =>
+          import(/* webpackChunkName: "server" */ "../views/ServerView.vue"),
       },
       {
         path: "/friends",
@@ -36,6 +38,18 @@ const routes = [
         name: "auth",
         component: () =>
           import(/* webpackChunkName: "auth" */ "../views/AuthView.vue"),
+      },
+      {
+        path: "/add-server",
+        name: "add-server",
+        component: () =>
+          import(/* webpackChunkName: "add-server" */ "../views/AddServerView.vue"),
+      },
+      {
+        path: "/discovery",
+        name: "discovery",
+        component: () =>
+          import(/* webpackChunkName: "discovery" */ "../views/DiscoveryView.vue"),
       },
       {
         path: "/user-settings",

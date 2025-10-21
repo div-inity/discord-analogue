@@ -11,7 +11,7 @@
       <div class="messages" v-for="(m, i) in messages">
         <div class="message" @mouseenter="hover = 'm' + i" @mouseleave="hover = null">
           <router-link :class="(m.missed_messages && m.missed_messages > 0) ? 'missed-messages' : null"
-            :to="'/messages/' + m.id" class="link-message">
+            :to="'/messages/' + m.id" class="link-message" @click="goToMessage(m.id)"><!--  -->
             <img :src="m.avatar" alt="">
             <div class="mentions" v-if="m.missed_messages && m.missed_messages > 0">{{ m.missed_messages }}</div>
           </router-link>
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="h-divider divider"></div>
+    <div class="h-divider divider" v-if="messages && messages.length"></div>
     <div class="servers" v-for="(s, i) in servers">
       <div class="server" @mouseenter="hover = 's' + i" @mouseleave="hover = null">
         <router-link :class="(s.missed_messages && s.missed_messages > 0) ? 'missed-messages' : null"
@@ -42,8 +42,8 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive } from 'vue'
-//let active = 
+import { ref, reactive, computed, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
 const hover = ref(null)
 const actions = reactive([
   {
@@ -83,9 +83,9 @@ const servers = reactive([
     avatar: require('@/assets/img/Server Icon2.jpg'),
   },
 ]);
-const messages = reactive([
+let messages = reactive([
   {
-    id: 1,
+    id: 101, // userId
     name: "Анна Шатова",
     missed_messages: 1,
     last_message: "2025-21-03 10:08:15",
@@ -99,13 +99,23 @@ const messages = reactive([
     avatar: require('@/assets/img/User Icon1.jpg'),
   },
   {
-    id: 3,
+    id: 35,
     name: "Василий Николаев",
     missed_messages: 5,
     last_message: "2025-21-03 15:03:16",
     avatar: require('@/assets/img/User Icon2.jpg'),
   }
 ])
+const route = useRoute()
+const goToMessage = (id) => {
+  let index = messages.findIndex(e => e.id == id);
+  if (index > -1) messages.splice(index, 1)
+}
+watchEffect(() => {
+  //console.log('Полный route объект:', route.params.id)
+  goToMessage(route.params.id)
+})
+
 </script>
 <style lang="scss">
 .navbar {
