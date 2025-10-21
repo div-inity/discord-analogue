@@ -25,7 +25,7 @@ const checkAuth = () => {
   if (!user.value) {
     router.push('/auth')
   } else {
-    router.push({ name: 'friends' })
+    /* router.push({ name: 'friends' }) */
   }
 }
 

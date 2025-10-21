@@ -2,16 +2,18 @@
   <div class="navbar">
     <div class="private-messages">
       <div class="home-link">
-        <router-link to="/messages" class="home" @mouseenter="hover = -1" @mouseleave="hover = null"></router-link>
+        <router-link to="/messages" class="home active" @mouseenter="hover = -1"
+          @mouseleave="hover = null"></router-link>
         <div class="tooltip right" v-if="hover == -1">Личные сообщения</div>
       </div>
 
       <div class="h-divider divider"></div>
       <div class="messages" v-for="(m, i) in messages">
         <div class="message" @mouseenter="hover = 'm' + i" @mouseleave="hover = null">
-          <router-link :to="'/messages/' + m.id" class="link-message">
+          <router-link :class="(m.missed_messages && m.missed_messages > 0) ? 'missed-messages' : null"
+            :to="'/messages/' + m.id" class="link-message">
             <img :src="m.avatar" alt="">
-            <div class="mentions" v-if="m.mentions && m.mentions > 0">{{ m.mentions }}</div>
+            <div class="mentions" v-if="m.missed_messages && m.missed_messages > 0">{{ m.missed_messages }}</div>
           </router-link>
           <div class="tooltip right" v-if="hover == 'm' + i">{{ m.name }}</div>
         </div>
@@ -21,7 +23,8 @@
     <div class="h-divider divider"></div>
     <div class="servers" v-for="(s, i) in servers">
       <div class="server" @mouseenter="hover = 's' + i" @mouseleave="hover = null">
-        <router-link :to="'/server/' + s.id" class="link-server">
+        <router-link :class="(s.missed_messages && s.missed_messages > 0) ? 'missed-messages' : null"
+          :to="'/server/' + s.id" class="link-server">
           <img :src="s.avatar" alt="">
           <div class="mentions" v-if="s.mentions && s.mentions > 0">{{ s.mentions }}</div>
         </router-link>
@@ -40,6 +43,7 @@
 </template>
 <script setup>
 import { ref, reactive } from 'vue'
+//let active = 
 const hover = ref(null)
 const actions = reactive([
   {
@@ -59,7 +63,7 @@ const servers = reactive([
   {
     id: 1,
     name: "Test",
-    notifies: 71,
+    missed_messages: 71,
     last_message: "2025-21-04 15:20:03",
     avatar: require('@/assets/img/Server Icon.jpg'),
     mentions: 1,
@@ -67,14 +71,14 @@ const servers = reactive([
   {
     id: 2,
     name: "Nice cats",
-    notifies: 15,
+    missed_messages: 1,
     last_message: "2025-21-03 08:09:10",
     avatar: require('@/assets/img/Server Icon1.jpg'),
   },
   {
     id: 3,
     name: "Help yourself",
-    notifies: 1003,
+    /* missed_messages: 1003, */
     last_message: "2025-10-03 21:30:15",
     avatar: require('@/assets/img/Server Icon2.jpg'),
   },
@@ -83,23 +87,21 @@ const messages = reactive([
   {
     id: 1,
     name: "Анна Шатова",
-    notifies: 1,
+    missed_messages: 1,
     last_message: "2025-21-03 10:08:15",
     avatar: require('@/assets/img/User Icon.jpg'),
-    mentions: 1500,
   },
   {
     id: 2,
     name: "Михаил Шатов",
-    notifies: 2,
+    missed_messages: 2,
     last_message: "2025-21-03 15:03:15",
     avatar: require('@/assets/img/User Icon1.jpg'),
-    mentions: 20,
   },
   {
-    id: 2,
+    id: 3,
     name: "Василий Николаев",
-    notifies: 5,
+    missed_messages: 5,
     last_message: "2025-21-03 15:03:16",
     avatar: require('@/assets/img/User Icon2.jpg'),
   }
@@ -113,6 +115,40 @@ const messages = reactive([
   padding-inline: 10px;
   /* overflow: auto; */
   scrollbar-width: none;
+
+  a {
+    &.missed-messages {
+      &::before {
+        height: 8px;
+        left: -10px;
+      }
+    }
+
+    &.active {
+      &::before {
+        height: 95.2% !important;
+        left: -10px;
+      }
+    }
+
+    &::before {
+      position: absolute;
+      content: "";
+      width: 4px;
+      height: 0;
+      background: #fff;
+      border-radius: 0 4px 4px 0;
+      top: 50%;
+      left: -20px;
+      transform: translate(0%, -50%);
+      transition: height 0.3s ease, left 0.3s ease;
+    }
+
+    &:hover::before {
+      height: 19px;
+      left: -10px;
+    }
+  }
 
   .mentions {
     color: white;
@@ -152,10 +188,14 @@ const messages = reactive([
   }
 
   .home {
-    background-color: var(--system-purple-color);
+    background-color: var(--system-back-color2);
     background-image: url(@/assets/img/Main-icon.svg);
     background-repeat: no-repeat;
     background-position: center center;
+
+    &:hover {
+      background-color: var(--system-purple-color);
+    }
   }
 
   .home-link,
@@ -204,6 +244,10 @@ const messages = reactive([
       justify-content: center;
       background-color: var(--system-back-color2);
       border-radius: 30px;
+
+      &::before {
+        display: none;
+      }
 
       &:hover {
         background-color: var(--system-purple-color);

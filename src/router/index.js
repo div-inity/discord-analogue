@@ -13,6 +13,18 @@ const routes = [
         path: "/messages",
         name: "messages",
         component: MessagesView,
+        children: [
+          {
+            path: ":id",
+            name: "message",
+            component: import(/* webpackChunkName: "message" */ "../views/MessageView.vue"),
+          }
+        ],
+      },
+      {
+        path: "/server/:id",
+        name: "server",
+        component: import(/* webpackChunkName: "server" */ "../views/ServerView.vue"),
       },
       {
         path: "/friends",
