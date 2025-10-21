@@ -2,8 +2,8 @@
   <TransitionGroup name="fade" class="navbar" tag="div">
     <div class="private-messages" :key="currentBlock">
       <div class="home-link">
-        <router-link to="/messages" class="home active" @mouseenter="hover = -1"
-          @mouseleave="hover = null"></router-link>
+        <router-link to="/messages" :class="(activeServer != null) ? null : 'active'" class="home"
+          @mouseenter="hover = -1" @mouseleave="hover = null"></router-link>
         <div class="tooltip right" v-if="hover == -1">Личные сообщения</div>
       </div>
 
@@ -11,7 +11,7 @@
       <div class="messages" v-for="(m, i) in messages">
         <div class="message" @mouseenter="hover = 'm' + i" @mouseleave="hover = null">
           <router-link :class="(m.missed_messages && m.missed_messages > 0) ? 'missed-messages' : null"
-            :to="'/messages/' + m.id" class="link-message" @click="goToMessage(m.id)"><!--  -->
+            :to="'/messages/' + m.id" class="link-message">
             <img :src="m.avatar" alt="">
             <div class="mentions" v-if="m.missed_messages && m.missed_messages > 0">{{ m.missed_messages }}</div>
           </router-link>
@@ -44,8 +44,9 @@
 <script setup>
 import { ref, reactive, computed, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
+const activeServer = ref(null)
 const currentBlock = ref(1) // Для плавной анимации исчезновения диалога
-const hover = ref(null)
+const hover = ref(1) // Для видимости наведенного блока
 const actions = reactive([
   {
     id: 1,
@@ -108,13 +109,16 @@ let messages = reactive([
   }
 ])
 const route = useRoute()
-const goToMessage = (id) => {
-  let index = messages.findIndex(e => e.id == id);
-  if (index > -1) messages.splice(index, 1)
+const goToMessage = (id) => { // Для перехода в ЛС
+  if (route.name == 'message') {
+    let index = messages.findIndex(e => e.id == id);
+    if (index > -1) messages.splice(index, 1) // Удаление из Навбара
+
+  }
 }
 watchEffect(() => {
-  //console.log('Полный route объект:', route.params.id)
-  goToMessage(route.params.id)
+  //console.log('Полный route объект:', route)
+  goToMessage(route.params.id) // Отслеживание изменения пути
 })
 
 </script>
