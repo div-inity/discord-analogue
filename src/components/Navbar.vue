@@ -1,6 +1,6 @@
 <template>
-  <div class="navbar">
-    <div class="private-messages">
+  <TransitionGroup name="fade" class="navbar" tag="div">
+    <div class="private-messages" :key="currentBlock">
       <div class="home-link">
         <router-link to="/messages" class="home active" @mouseenter="hover = -1"
           @mouseleave="hover = null"></router-link>
@@ -20,8 +20,8 @@
       </div>
     </div>
 
-    <div class="h-divider divider" v-if="messages && messages.length"></div>
-    <div class="servers" v-for="(s, i) in servers">
+    <div :key="currentBlock" class="h-divider divider" v-if="messages && messages.length"></div>
+    <div :key="currentBlock" class="servers" v-for="(s, i) in servers">
       <div class="server" @mouseenter="hover = 's' + i" @mouseleave="hover = null">
         <router-link :class="(s.missed_messages && s.missed_messages > 0) ? 'missed-messages' : null"
           :to="'/server/' + s.id" class="link-server">
@@ -31,19 +31,20 @@
         <div class="tooltip right" v-if="hover == 's' + i">{{ s.name }}</div>
       </div>
     </div>
-    <div class="h-divider divider"></div>
-    <div class="actions" v-for="(a, i) in actions">
+    <div :key="currentBlock" class="h-divider divider"></div>
+    <div :key="currentBlock" class="actions" v-for="(a, i) in actions">
       <router-link :to="a.link" class="link-action">
         <img :src="a.avatar" alt="" @mouseenter="hover = i" @mouseleave="hover = null">
       </router-link>
       <div class="tooltip right" v-if="hover == i">{{ a.name }}</div>
     </div>
     {{ hover }}
-  </div>
+  </TransitionGroup>
 </template>
 <script setup>
 import { ref, reactive, computed, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
+const currentBlock = ref(1) // Для плавной анимации исчезновения диалога
 const hover = ref(null)
 const actions = reactive([
   {
