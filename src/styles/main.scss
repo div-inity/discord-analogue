@@ -66,18 +66,6 @@
   --system-green-color: #248046;
   --system-purple-color: #5865f2;
   --link-color: #00aff4;
-
-  // темная тема по умолчанию
-  /* --system-back-color1: #40444b;
-  --system-back-color2: #36393f;
-  --system-back-color3: #2f3136;
-  --system-back-color4: #292b2f;
-  --system-back-color5: #1e1f22;
-  --loud-text-color: #f2f3f5;
-  --main-text-color: #dbdee1;
-  --muted-text-color: #949ba4;
-  --icon-color: #80848e;
-  --button-back-color: #4e5058; */
 }
 
 *,
@@ -120,6 +108,60 @@ a {
   }
 }
 
+.divider {
+  display: block;
+  background-color: #2d2f32;
+  border-radius: 1px;
+
+  &.h-divider {
+    width: 67%;
+    height: 1px;
+    margin-block: 15px;
+    margin-inline: auto;
+  }
+}
+
+.tooltip {
+  color: var(--loud-text-color);
+  font-family: var(--font-family-500);
+  --color: var(--system-back-color5);
+  background: var(--color);
+  padding: 10px;
+  display: block;
+  width: max-content;
+  max-width: 300px;
+  position: absolute;
+  border-radius: 10px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    border: 7px solid transparent;
+  }
+
+  &.bottom {
+    top: 113%;
+
+    &::after {
+      top: -14px;
+      left: 50%;
+      translate: -50% 0;
+      border-bottom-color: var(--color);
+    }
+  }
+
+  &.right {
+    left: 136%;
+
+    &::after {
+      left: -14px;
+      top: 50%;
+      translate: 0 -50%;
+      border-right-color: var(--color);
+    }
+  }
+}
+
 [data-theme="dark"] {
   --system-back-color5: #1e1f22;
   --system-back-color4: #292b2f;
@@ -137,7 +179,7 @@ a {
   }
 
   body {
-    background-color: #2c3e50;
+    background-color: var(--system-back-color5);
 
   }
 }

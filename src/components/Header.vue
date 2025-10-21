@@ -26,3 +26,44 @@
 </template>
 <script>
 </script>
+<style lang="scss">
+header {
+  width: 100%;
+  height: 24px;
+  background-color: #1e1f22;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-content: space-between;
+  padding-left: 8px;
+
+
+  .logo {
+    font-family: 'inter-600';
+    font-size: 12px;
+    line-height: 133%;
+    color: var(--muted-text-color);
+  }
+
+  .header-actions {
+    display: flex;
+    height: inherit;
+
+    .header-action {
+
+      &:hover {
+        rect {
+          fill: #4d4d4d;
+        }
+      }
+
+      /* .cross:hover { не работает
+        rect {
+          fill: red !important;
+        }
+      } */
+    }
+  }
+}
+</style>

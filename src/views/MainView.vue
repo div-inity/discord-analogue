@@ -27,10 +27,11 @@ export default {
 
   .content-wrapper {
     height: 100%;
-    width: calc(100vw - 72px);
+    width: calc(100vw - 68px);
     background-color: var(--system-back-color2);
     display: flex;
     flex-direction: row;
+    border-radius: 7px 0 0 0;
   }
 }
 </style>

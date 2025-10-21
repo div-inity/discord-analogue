@@ -39,51 +39,14 @@ onMounted(() => {
 
 html {
   background-image: none;
+  min-width: 796px;
+  min-height: 380px;
+  overflow: hidden;
 }
 
 #app {
   height: 100vh;
   width: 100vw;
-}
-
-header {
-  width: 100%;
-  height: 24px;
-  background-color: var(--system-back-color5);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex-wrap: wrap;
-  align-content: space-between;
-  padding-left: 8px;
-
-
-  .logo {
-    font-family: 'inter-600';
-    font-size: 12px;
-    line-height: 133%;
-    color: #fff;
-  }
-
-  .header-actions {
-    display: flex;
-    height: inherit;
-
-    .header-action {
-
-      &:hover {
-        rect {
-          fill: #4d4d4d;
-        }
-      }
-
-      /* .cross:hover { не работает
-        rect {
-          fill: red !important;
-        }
-      } */
-    }
-  }
 }
 
 .theme-switcher {
