@@ -47,8 +47,12 @@
 </template>
 <script setup>
 import router from '@/router'
+import { useStore } from 'vuex'
 import { ref, reactive, computed, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
+const store = useStore()
+const servers = store.state.servers.servers
+const messages = store.state.private_msg.messages
 const activeServer = ref(0) // Начальное значение - сервер не выбран
 const currentBlock = ref(1) // Для плавной анимации исчезновения диалога
 const hover = ref(1) // Для видимости наведенного блока
@@ -71,53 +75,6 @@ const actions = reactive([
     },
     avatar: require('@/assets/img/Discovery.svg'),
   },
-])
-const servers = reactive([
-  {
-    id: 1,
-    name: "Test",
-    missed_messages: 71,
-    last_message: "2025-21-04 15:20:03",
-    avatar: require('@/assets/img/Server Icon.jpg'),
-    mentions: 1,
-  },
-  {
-    id: 2,
-    name: "Nice cats",
-    missed_messages: 1,
-    last_message: "2025-21-03 08:09:10",
-    avatar: require('@/assets/img/Server Icon1.jpg'),
-  },
-  {
-    id: 3,
-    name: "Help yourself",
-    /* missed_messages: 1003, */
-    last_message: "2025-10-03 21:30:15",
-    avatar: require('@/assets/img/Server Icon2.jpg'),
-  },
-]);
-let messages = reactive([
-  {
-    id: 101, // userId
-    name: "Анна Шатова",
-    missed_messages: 1,
-    last_message: "2025-21-03 10:08:15",
-    avatar: require('@/assets/img/User Icon.jpg'),
-  },
-  {
-    id: 2,
-    name: "Михаил Шатов",
-    missed_messages: 2,
-    last_message: "2025-21-03 15:03:15",
-    avatar: require('@/assets/img/User Icon1.jpg'),
-  },
-  {
-    id: 35,
-    name: "Василий Николаев",
-    missed_messages: 5,
-    last_message: "2025-21-03 15:03:16",
-    avatar: require('@/assets/img/User Icon2.jpg'),
-  }
 ])
 const route = useRoute()
 const goToMessage = (id) => { // Для перехода в ЛС
