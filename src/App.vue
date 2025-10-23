@@ -36,6 +36,7 @@ onMounted(() => {
 
 <style lang="scss">
 @import "./styles/main.scss";
+@import '../node_modules/tippy.js/themes/custom.css';
 
 html {
   background-image: none;

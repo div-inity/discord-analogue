@@ -1,22 +1,19 @@
 <template>
   <TransitionGroup name="fade" class="navbar" tag="div">
     <div class="private-messages" :key="currentBlock">
-      <div class="home-link">
-        <router-link to="/messages" :class="(activeServer > 0) ? null : 'active'" class="home" @mouseenter="hover = -1"
-          @mouseleave="hover = null"></router-link>
-        <div class="tooltip right" v-if="hover == -1">Личные сообщения</div>
+      <div class="home-link" v-tippy="{ content: 'Личные сообщения' }">
+        <router-link to="/messages" :class="(activeServer > 0) ? null : 'active'" class="home"></router-link>
       </div>
 
       <div class="h-divider divider"></div>
 
       <div class="messages" v-for="(m, i) in messages">
-        <div class="message" @mouseenter="hover = 'm' + i" @mouseleave="hover = null">
+        <div class="message" v-tippy="{ content: m.name }">
           <router-link :class="(m.missed_messages && m.missed_messages > 0) ? 'missed-messages' : null"
             :to="'/messages/' + m.id" class="link-message">
             <img :src="m.avatar" alt="">
             <div class="mentions" v-if="m.missed_messages && m.missed_messages > 0">{{ m.missed_messages }}</div>
           </router-link>
-          <div class="tooltip right" v-if="hover == 'm' + i">{{ m.name }}</div>
         </div>
       </div>
     </div>
@@ -24,23 +21,21 @@
     <div :key="currentBlock" class="h-divider divider" v-if="messages && messages.length"></div>
 
     <div :key="currentBlock" class="servers" v-for="(s, i) in servers">
-      <div class="server" @mouseenter="hover = 's' + i" @mouseleave="hover = null">
+      <div class="server" v-tippy="{ content: s.name }">
         <router-link
           :class="{ 'missed-messages': s.missed_messages && s.missed_messages > 0, 'active': activeServer == s.id }"
           :to="'/server/' + s.id" class="link-server">
           <img :src="s.avatar" alt="">
           <div class="mentions" v-if="s.mentions && s.mentions > 0">{{ s.mentions }}</div>
         </router-link>
-        <div class="tooltip right" v-if="hover == 's' + i">{{ s.name }}</div>
       </div>
     </div>
     <div :key="currentBlock" class="h-divider divider"></div>
 
-    <div :key="currentBlock" class="actions" v-for="(a, i) in actions">
+    <div :key="currentBlock" v-tippy="{ content: a.name }" class="actions" v-for="(a, i) in actions">
       <div @click="a.handler" class="link-action">
-        <img :src="a.avatar" alt="" @mouseenter="hover = i" @mouseleave="hover = null">
+        <img :src="a.avatar" alt="">
       </div>
-      <div class="tooltip right" v-if="hover == i">{{ a.name }}</div>
     </div>
     {{ activeServer }}
   </TransitionGroup>
@@ -55,7 +50,6 @@ const servers = store.state.servers.servers
 const messages = store.state.private_msg.messages
 const activeServer = ref(0) // Начальное значение - сервер не выбран
 const currentBlock = ref(1) // Для плавной анимации исчезновения диалога
-const hover = ref(1) // Для видимости наведенного блока
 const actions = reactive([
   {
     id: 1,
@@ -94,7 +88,6 @@ watchEffect(() => {
   else if (route.name == 'messages') {
     activeServer.value = 0 // Очищение значения - сервер не выбран, домашняя страница
   }
-  hover.value = null // Очищение тултипов
 })
 </script>
 <style lang="scss">
@@ -103,7 +96,7 @@ watchEffect(() => {
   width: 68px;
   height: 100%;
   padding-inline: 10px;
-  /* overflow: auto; */
+  overflow: auto;
   scrollbar-width: none;
 
   a {

@@ -68,6 +68,24 @@
   --link-color: #00aff4;
 }
 
+/* .tippy-box {
+  --color: var(--system-back-color5) !important;
+  color: var(--loud-text-color) !important;
+  font-family: var(--font-family-500) !important;
+  background: var(--color) !important;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+.tippy-backdrop {
+  background: var(--system-back-color5) !important;
+
+}
+
+.tippy-svg-arrow {
+  fill: var(--system-back-color5) !important;
+} */
+
 *,
 *::after,
 *::before {
@@ -121,7 +139,7 @@ a {
   }
 }
 
-.tooltip {
+/* .tooltip {
   color: var(--loud-text-color);
   font-family: var(--font-family-500);
   --color: var(--system-back-color5);
@@ -160,7 +178,7 @@ a {
       border-right-color: var(--color);
     }
   }
-}
+} */
 
 [data-theme="dark"] {
   --system-back-color5: #1e1f22;
