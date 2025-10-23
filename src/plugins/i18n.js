@@ -13,10 +13,15 @@ const messages = {
       register: "Register",
       loginwithqr: "Log in with QR Code",
       scanqr: "Scan this with the Discord mobile app to log in instantly.",
+    },
+    navbar: {
+      mymessages: "Personal messages",
+      discovery: "Discovery",
+      addserver: "Add server",
     }
   },
   'ru': {
-    'auth': {
+    auth: {
       greetings: "С возвращением!",
       subgreetings: "Мы так рады видеть вас снова!",
       email: "Адрес электронной почты или номер телефона",
@@ -27,6 +32,11 @@ const messages = {
       register: "Зарегистрироваться",
       loginwithqr: "Войдите с помощью QR-кода",
       scanqr: "Отсканируйте код с помощью мобильного приложения Discord, чтобы сразу же войти в систему.",
+    },
+    navbar: {
+      mymessages: "Личные сообщения",
+      discovery: "Путешествие",
+      addserver: "Добавить сервер",
     }
   }
 };

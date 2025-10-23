@@ -1,7 +1,7 @@
 <template>
   <TransitionGroup name="fade" class="navbar" tag="div">
     <div class="private-messages" :key="currentBlock">
-      <div class="home-link" v-tippy="{ content: 'Личные сообщения' }">
+      <div class="home-link" v-tippy="{ content: t('navbar.mymessages') }">
         <router-link to="/messages" :class="(activeServer > 0) ? null : 'active'" class="home"></router-link>
       </div>
 
@@ -40,26 +40,20 @@
         <img :src="a.avatar" alt="">
       </div>
     </div>
-    {{ activeServer }}
   </TransitionGroup>
-  <!-- <tippy tag="button" style="background-color: var(--system-back-color3)" content-tag="div"
-    content-class="content-wrapper" hideOnClick="false" trigger="click">
-    <template #default>Tippy!</template>
-<template #content>Hi!</template>
-</tippy> -->
 </template>
 <script setup>
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 import router from '@/router'
 import { useStore } from 'vuex'
 import { ref, reactive, computed, watchEffect, h } from 'vue'
 import { useRoute } from 'vue-router'
 
+/* Картинки для тултипов */
 import call from '@/assets/img/svg/call.svg'
 import display from '@/assets/img/svg/display.svg'
 import camera from '@/assets/img/svg/camera.svg'
-/* const display = new URL('@/assets/img/NavStream.svg', import.meta.url).href;
-const camera = new URL('@/assets/img/NavVideo.svg', import.meta.url).href;
-const call = new URL('@/assets/img/NavCall.svg', import.meta.url).href; */
 
 const store = useStore()
 const servers = store.state.servers.servers
@@ -69,7 +63,7 @@ const currentBlock = ref(1) // Для плавной анимации исчез
 const actions = reactive([
   {
     id: 1,
-    name: "Добавить сервер",
+    name: t('navbar.addserver'),
     link: '/add-server',
     handler: () => {
       alert("add server")
@@ -78,7 +72,7 @@ const actions = reactive([
   },
   {
     id: 2,
-    name: "Путешествие",
+    name: t('navbar.discovery'),
     link: '/discovery',
     handler: () => {
       router.push({ name: 'discovery' })
@@ -112,23 +106,25 @@ const computeServerData = (i) => {
 
   return h(
     'div',
-
+    {
+      style: {
+        display: 'flex',
+        'flex-direction': 'column',
+        'row-gap': '8px',
+      }
+    },
     [
       h(
         'div',
-        {
-          style: {
-            'padding-bottom': '8px'
-          }
-        },
         [servers[i].name]
       ),
-      h(
+      (servers[i].activity_type) ? h(
         'div',
         {
           style: {
             display: 'flex',
-            'flex-direction': 'row'
+            'flex-direction': 'row',
+            'align-items': 'center',
           }
         },
         (servers[i].activity_type == 'call') ? h(
@@ -162,7 +158,7 @@ const computeServerData = (i) => {
             `+${servers[i].total_active_users - servers[i].active_users.length}`
           ]
         ) : null
-      )
+      ) : null
 
     ]
   );
