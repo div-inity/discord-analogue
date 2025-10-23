@@ -6,8 +6,8 @@ import store from "./store";
 import './styles/main.scss';
 import i18n from '@/plugins/i18n';
 
-import VueTippy from 'vue-tippy';
 import 'tippy.js/dist/tippy.css'
+import VueTippy from 'vue-tippy';
 
 //Глобальные компоненты - важно сразу загрузить
 import Header from './components/Header.vue'

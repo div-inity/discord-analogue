@@ -39,6 +39,11 @@
     </div>
     {{ activeServer }}
   </TransitionGroup>
+  <!-- <tippy tag="button" style="background-color: var(--system-back-color3)" content-tag="div"
+    content-class="content-wrapper" hideOnClick="false" trigger="click">
+    <template #default>Tippy!</template>
+<template #content>Hi!</template>
+</tippy> -->
 </template>
 <script setup>
 import router from '@/router'
