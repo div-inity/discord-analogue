@@ -22,6 +22,13 @@ export default {
         missed_messages: 5,
         last_message: "2025-21-03 15:03:16",
         avatar: require('@/assets/img/User Icon2.jpg'),
+      },
+      {
+        id: 28,
+        name: "Карабас-Барабас",
+        missed_messages: 1,
+        last_message: "2025-21-03 15:03:16",
+        avatar: require('@/assets/img/Server Icon.svg'),
       }
     ]
   },

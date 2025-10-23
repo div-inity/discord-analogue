@@ -121,48 +121,57 @@ a {
   }
 }
 
-
-
-/* .tooltip {
-  color: var(--loud-text-color);
-  font-family: var(--font-family-500);
-  --color: var(--system-back-color5);
-  background: var(--color);
-  padding: 10px;
-  display: block;
-  width: max-content;
-  max-width: 300px;
+.activity {
+  /*Активность в диалогах и серверах */
+  background-repeat: no-repeat;
+  background-position: center center;
+  aspect-ratio: 1 / 1;
+  height: 16px;
   position: absolute;
-  border-radius: 10px;
+  right: 0;
+  top: 0;
+  background-size: 10px;
+  background-color: #4f545c;
+  border-radius: 8px;
+  outline: 3px solid var(--system-back-color5);
 
-  &::after {
-    content: '';
-    position: absolute;
-    border: 7px solid transparent;
+  &.my_activity {
+    background-color: #43A25A;
   }
 
-  &.bottom {
-    top: 113%;
-
-    &::after {
-      top: -14px;
-      left: 50%;
-      translate: -50% 0;
-      border-bottom-color: var(--color);
-    }
+  &.camera {
+    background-image: url(@/assets/img/NavVideo.svg);
   }
 
-  &.right {
-    left: 136%;
-
-    &::after {
-      left: -14px;
-      top: 50%;
-      translate: 0 -50%;
-      border-right-color: var(--color);
-    }
+  &.display {
+    background-image: url(@/assets/img/NavStream.svg);
   }
-} */
+
+  &.call {
+    background-image: url(@/assets/img/NavCall.svg);
+  }
+}
+
+.server_users_activity {
+  background-color: #00aff4;
+}
+
+.mentions {
+  color: white;
+  font-family: var(--font-family-600);
+  font-size: 13px;
+  line-height: 109%;
+  letter-spacing: -0.01em;
+  background-color: var(--notification-color);
+  height: 16px;
+  width: auto;
+  border-radius: 8px;
+  padding: 0px 5px;
+  outline: 3px solid var(--system-back-color5);
+  display: flex;
+  align-items: center;
+
+}
 
 [data-theme="dark"] {
   --system-back-color5: #1e1f22;

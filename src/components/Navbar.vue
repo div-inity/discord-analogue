@@ -21,11 +21,14 @@
     <div :key="currentBlock" class="h-divider divider" v-if="messages && messages.length"></div>
 
     <div :key="currentBlock" class="servers" v-for="(s, i) in servers">
-      <div class="server" v-tippy="{ content: s.name }">
+      <div class="server" v-tippy="{ content: computeServerData(i) }">
         <router-link
           :class="{ 'missed-messages': s.missed_messages && s.missed_messages > 0, 'active': activeServer == s.id }"
           :to="'/server/' + s.id" class="link-server">
           <img :src="s.avatar" alt="">
+          <div class="activity" :class="s.activity_type, { 'my_activity': s.my_activity && s.my_activity == true }"
+            v-if="s.activity_type">
+          </div>
           <div class="mentions" v-if="s.mentions && s.mentions > 0">{{ s.mentions }}</div>
         </router-link>
       </div>
@@ -48,8 +51,16 @@
 <script setup>
 import router from '@/router'
 import { useStore } from 'vuex'
-import { ref, reactive, computed, watchEffect } from 'vue'
+import { ref, reactive, computed, watchEffect, h } from 'vue'
 import { useRoute } from 'vue-router'
+
+import call from '@/assets/img/svg/call.svg'
+import display from '@/assets/img/svg/display.svg'
+import camera from '@/assets/img/svg/camera.svg'
+/* const display = new URL('@/assets/img/NavStream.svg', import.meta.url).href;
+const camera = new URL('@/assets/img/NavVideo.svg', import.meta.url).href;
+const call = new URL('@/assets/img/NavCall.svg', import.meta.url).href; */
+
 const store = useStore()
 const servers = store.state.servers.servers
 const messages = store.state.private_msg.messages
@@ -76,6 +87,87 @@ const actions = reactive([
   },
 ])
 const route = useRoute()
+
+const computeServerData = (i) => {
+  let imgs = [];
+
+  if (servers[i].active_users && servers[i].active_users.length) {
+    for (const item of servers[i].active_users) {
+      imgs.push(h(
+        'img',
+        {
+          src: item,
+          style: {
+            width: '24px',
+            'aspect-ratio': '1/1',
+            'border-radius': '20px',
+            'backround-position': 'center center',
+            'margin-right': '-5px',
+            'border': '1px solid var(--icon-color)'
+          }
+        }
+      ));
+    }
+  }
+
+  return h(
+    'div',
+
+    [
+      h(
+        'div',
+        {
+          style: {
+            'padding-bottom': '8px'
+          }
+        },
+        [servers[i].name]
+      ),
+      h(
+        'div',
+        {
+          style: {
+            display: 'flex',
+            'flex-direction': 'row'
+          }
+        },
+        (servers[i].activity_type == 'call') ? h(
+          'img', {
+          src: call, style:
+            { width: '20px', 'margin-right': '7px' }
+        }
+        ) :
+          (servers[i].activity_type == 'camera') ? h(
+            'img', {
+            src: camera, style:
+              { width: '20px', 'margin-right': '7px' }
+          }
+          ) :
+            (servers[i].activity_type == 'display') ? h(
+              'img', {
+              src: display, style:
+                { width: '20px', 'margin-right': '7px' }
+            }
+            ) : null,
+        ...imgs,
+        (servers[i].active_users && servers[i].active_users.length > 2) ? h(
+          'span',
+          {
+            style: {
+              'margin-left': '10px',
+              color: 'var(--muted-text-color)'
+            }
+          },
+          [
+            `+${servers[i].total_active_users - servers[i].active_users.length}`
+          ]
+        ) : null
+      )
+
+    ]
+  );
+}
+
 const goToMessage = (id) => { // Для перехода в ЛС
   let index = messages.findIndex(e => e.id == id);
   activeServer.value = 0 // Очищение значения - сервер не выбран, домашняя страница
@@ -139,20 +231,7 @@ watchEffect(() => {
   }
 
   .mentions {
-    color: white;
-    font-family: var(--font-family-600);
-    font-size: 13px;
-    line-height: 109%;
-    letter-spacing: -0.01em;
-    background-color: var(--notification-color);
-    width: auto;
-    height: 16px;
     position: absolute;
-    border-radius: 8px;
-    padding: 0px 5px;
-    outline: 3px solid var(--system-back-color5);
-    display: flex;
-    align-items: center;
     right: 0;
     bottom: 0;
   }
@@ -215,9 +294,9 @@ watchEffect(() => {
   .servers {
     .server {
       a.link-server {
-        background-color: var(--link-color);
         overflow: hidden;
       }
+
     }
   }
 
