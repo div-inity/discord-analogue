@@ -91,14 +91,7 @@ const computeServerData = (i) => {
         'img',
         {
           src: item,
-          style: {
-            width: '24px',
-            'aspect-ratio': '1/1',
-            'border-radius': '20px',
-            'backround-position': 'center center',
-            'margin-right': '-5px',
-            'border': '1px solid var(--icon-color)'
-          }
+          class: 'tooltip-imgs',
         }
       ));
     }
@@ -107,52 +100,42 @@ const computeServerData = (i) => {
   return h(
     'div',
     {
-      style: {
-        display: 'flex',
-        'flex-direction': 'column',
-        'row-gap': '8px',
-      }
+      class: 'flex column navbar-server-tooltip'
     },
     [
       h(
         'div',
+        { class: 'server-name' },
         [servers[i].name]
       ),
       (servers[i].activity_type) ? h(
         'div',
         {
-          style: {
-            display: 'flex',
-            'flex-direction': 'row',
-            'align-items': 'center',
-          }
+          class: 'flex row server-activity',
         },
         (servers[i].activity_type == 'call') ? h(
           'img', {
-          src: call, style:
-            { width: '20px', 'margin-right': '7px' }
+          src: call,
+          class: 'server-activity-type'
         }
         ) :
           (servers[i].activity_type == 'camera') ? h(
             'img', {
-            src: camera, style:
-              { width: '20px', 'margin-right': '7px' }
+            src: camera,
+            class: 'server-activity-type'
           }
           ) :
             (servers[i].activity_type == 'display') ? h(
               'img', {
-              src: display, style:
-                { width: '20px', 'margin-right': '7px' }
+              src: display,
+              class: 'server-activity-type'
             }
             ) : null,
         ...imgs,
         (servers[i].active_users && servers[i].active_users.length > 2) ? h(
           'span',
           {
-            style: {
-              'margin-left': '10px',
-              color: 'var(--muted-text-color)'
-            }
+            class: 'server-active-users',
           },
           [
             `+${servers[i].total_active_users - servers[i].active_users.length}`
@@ -184,6 +167,35 @@ watchEffect(() => {
 })
 </script>
 <style lang="scss">
+.navbar-server-tooltip {
+  row-gap: 8px;
+
+  .server-name {}
+
+  .server-activity {
+    align-items: center;
+
+    .server-activity-type {
+      width: 20px;
+      margin-right: 7px;
+    }
+
+    .server-active-users {
+      margin-left: 10px;
+      color: var(--muted-text-color);
+    }
+  }
+}
+
+.tooltip-imgs {
+  width: 24px;
+  aspect-ratio: 1/1;
+  border-radius: 20px;
+  background-position: center center;
+  margin-right: -5px;
+  border: 1px solid var(--icon-color);
+}
+
 .navbar {
   background-color: var(--system-back-color5);
   width: 68px;

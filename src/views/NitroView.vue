@@ -1,6 +1,5 @@
 <template>
-  <Sidebar></Sidebar>
-  <router-view />serverview
+  <Sidebar></Sidebar>Nitro
 </template>
 <script setup>
 import Sidebar from '@/components/Sidebar.vue'

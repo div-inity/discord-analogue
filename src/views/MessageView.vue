@@ -1,1 +1,1 @@
-<template>swegewg</template>
+<template>messageview</template>

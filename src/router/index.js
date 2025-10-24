@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import MainView from "../views/MainView.vue";
 import MessagesView from "../views/MessagesView.vue";
 import FriendsView from "../views/FriendsView.vue";
+import private_msg from "@/store/modules/private_msg";
 
 const routes = [
   {
@@ -13,10 +14,16 @@ const routes = [
         path: "/messages",
         name: "messages",
         component: MessagesView,
+        meta: {
+          private_msg: true,
+        },
         children: [
           {
             path: ":id",
             name: "message",
+            meta: {
+              private_msg: true,
+            },
             component: () =>
               import(/* webpackChunkName: "message" */ "../views/MessageView.vue"),
           }
@@ -31,7 +38,37 @@ const routes = [
       {
         path: "/friends",
         name: "friends",
+        meta: {
+          private_msg: true,
+        },
         component: FriendsView,
+      },
+      {
+        path: "/nitro",
+        name: "nitro",
+        meta: {
+          private_msg: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "nitro" */ "../views/NitroView.vue"),
+      },
+      {
+        path: "/store",
+        name: "store",
+        meta: {
+          private_msg: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "store" */ "../views/StoreView.vue"),
+      },
+      {
+        path: "/tasks",
+        name: "tasks",
+        meta: {
+          private_msg: true,
+        },
+        component: () =>
+          import(/* webpackChunkName: "tasks" */ "../views/TasksView.vue"),
       },
       {
         path: "/auth",

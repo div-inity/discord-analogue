@@ -18,7 +18,14 @@ const messages = {
       mymessages: "Personal messages",
       discovery: "Discovery",
       addserver: "Add server",
-    }
+    },
+    sidebar: {
+      sidebarsearchdialog: "Find or start a conversation",
+      friends: "Friends",
+      nitro: "Nitro",
+      store: "Library",
+      tasks: "Stage Discovery",
+    },
   },
   'ru': {
     auth: {
@@ -37,7 +44,14 @@ const messages = {
       mymessages: "Личные сообщения",
       discovery: "Путешествие",
       addserver: "Добавить сервер",
-    }
+    },
+    sidebar: {
+      sidebarsearchdialog: "Найти или начать беседу",
+      friends: "Друзья",
+      nitro: "Nitro",
+      store: "Магазин",
+      tasks: "Задания",
+    },
   }
 };
 const i18n = createI18n({

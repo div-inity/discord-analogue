@@ -1,6 +1,6 @@
 <template>
   <Sidebar></Sidebar>
-  <router-view />
+  <router-view />messagesview
 </template>
 <script setup>
 import Sidebar from '@/components/Sidebar.vue'

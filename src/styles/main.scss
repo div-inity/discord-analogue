@@ -77,6 +77,22 @@
   transition: 0.3s all;
 }
 
+.flex {
+  display: flex;
+
+  &.column {
+    flex-direction: column;
+  }
+
+  &.row {
+    flex-direction: row;
+  }
+}
+
+ul {
+  list-style: none;
+}
+
 input,
 button {
   border: none;
@@ -96,14 +112,22 @@ input {
   }
 }
 
-button {
+button.text {
   cursor: pointer;
+  background-color: var(--system-back-color5);
+  font-family: var(--font-family-500);
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  background-color: var(--button-back-color);
+
+  &:hover {
+    background-color: #575a63;
+  }
 }
 
 a {
   text-decoration: none;
   color: var(--link-color);
-
 }
 
 .button-purple {
@@ -124,8 +148,13 @@ a {
   &.h-divider {
     width: 67%;
     height: 1px;
-    margin-block: 15px;
+    /* margin-block: 15px; */
     margin-inline: auto;
+
+    &.sidebar-divider {
+      background-color: var(--system-back-color1);
+      width: 90%;
+    }
   }
 }
 
