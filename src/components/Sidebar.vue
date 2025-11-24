@@ -23,16 +23,21 @@
         </div>
         <div class="dialogs flex column">
           <div class="dialog flex row" v-for="(d, i) in dialogs">
-            <div class="avatar">
+            <!-- <router-link to="/message"> -->
+            <div class="avatar" v-if="d.avatars.length == 1">
+              <img :src="d.avatars[0]" alt="">
               <div class="status"></div>
             </div>
-            <div class="flex column">
-              <div class="names">{{ dialogNames(i) }}</div>
+            <div class="flex column dialog-info">
+              <div class="names" v-if="d.names.length > 1" v-tippy="{ content: dialogNames(d.id), placement: 'top' }">
+                {{ dialogNames(d.id) }}
+              </div>
+              <div class="names" v-else>{{ dialogNames(d.id) }}</div>
               <div class="members" v-if="d.names.length > 1">
                 {{ d.names.length }} {{ memberWord(d.names.length) }}
               </div>
             </div>
-
+            <!-- </router-link> -->
 
           </div>
         </div>
@@ -49,9 +54,14 @@ import { reactive } from 'vue';
 import { useRoute } from 'vue-router'
 import router from '@/router'
 import { useStore } from 'vuex';
-const store = useStore()
-const dialogs = store.state.private_msg.dialogs
-const menuIcons = {
+
+import { generalFunctions } from '@/composables/generalFunctions'
+const { dialogNames, memberWord } = generalFunctions()
+
+const store = useStore();
+const route = useRoute();
+const dialogs = store.state.private_msg.dialogs;
+const menuIcons = { // Иконки сайдбар-actions
   add: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M43.3334 20C43.3334 19.1159 42.9822 18.2681 42.3571 17.6429C41.732 17.0178 40.8841 16.6666 40.0001 16.6666C39.116 16.6666 38.2682 17.0178 37.6431 17.6429C37.0179 18.2681 36.6667 19.1159 36.6667 20V36.6666H20.0001C19.116 36.6666 18.2682 37.0178 17.6431 37.6429C17.0179 38.2681 16.6667 39.1159 16.6667 40C16.6667 40.884 17.0179 41.7319 17.6431 42.357C18.2682 42.9821 19.116 43.3333 20.0001 43.3333H36.6667V60C36.6667 60.884 37.0179 61.7319 37.6431 62.357C38.2682 62.9821 39.116 63.3333 40.0001 63.3333C40.8841 63.3333 41.732 62.9821 42.3571 62.357C42.9822 61.7319 43.3334 60.884 43.3334 60V43.3333H60.0001C60.8841 43.3333 61.732 42.9821 62.3571 42.357C62.9822 41.7319 63.3334 40.884 63.3334 40C63.3334 39.1159 62.9822 38.2681 62.3571 37.6429C61.732 37.0178 60.8841 36.6666 60.0001 36.6666H43.3334V20Z" fill="#ABABAB"/>
   </svg>
@@ -75,65 +85,48 @@ const menuIcons = {
     <path fill-rule="evenodd" clip-rule="evenodd" d="M13 12C13 13.1 12.1 14 11 14C9.90001 14 9.00001 13.1 9.00001 12C9.00001 10.9 9.90001 9.99998 11 9.99998C12.1 9.99998 13 10.9 13 12ZM7.50001 19V18.5C7.50001 16.8 8.94001 15.5 11 15.5C13.06 15.5 14.5 16.8 14.5 18.5V19H7.50001ZM6.00001 12C6.00001 9.24001 8.24003 6.99998 11 6.99998C13.76 6.99998 16 9.24001 16 12C16 12.91 15.74 13.75 15.31 14.49L16.62 15.25C17.17 14.29 17.5 13.19 17.5 12C17.5 8.41996 14.58 5.49997 11 5.49997C7.41998 5.49997 4.50001 8.41996 4.50001 12C4.50001 13.18 4.82001 14.29 5.38001 15.25L6.69 14.49C6.26003 13.75 6.00001 12.91 6.00001 12Z" fill="#8E9297"/>
     <path d="M11 2.5C5.75001 2.5 1.5 6.75004 1.5 12C1.5 13.73 1.97001 15.35 2.77001 16.7401L1.48001 17.4901C0.550006 15.88 0 14 0 12C0 5.92999 4.93001 1 11 1C17.07 1 22 5.92999 22 12C22 14 21.45 15.88 20.51 17.5L19.22 16.75C20.03 15.35 20.5 13.73 20.5 12C20.5 6.75004 16.25 2.5 11 2.5Z" fill="#8E9297"/>
     </svg>`,
-}
-const route = useRoute()
-const actions = reactive([
-  {
-    id: 1,
-    name: t('sidebar.friends'),
-    link: '/friends',
-    handler: () => {
-      router.push({ name: 'friends' })
+};
+const actions = reactive( // Функционал сайдбара
+  [
+    {
+      id: 1,
+      name: t('sidebar.friends'),
+      link: '/friends',
+      handler: () => {
+        router.push({ name: 'friends' })
+      },
+      avatar: menuIcons.friends,
+      active: true,
     },
-    avatar: menuIcons.friends,
-    active: true,
-  },
-  {
-    id: 2,
-    name: t('sidebar.nitro'),
-    link: '/nitro',
-    handler: () => {
-      router.push({ name: 'nitro' })
+    {
+      id: 2,
+      name: t('sidebar.nitro'),
+      link: '/nitro',
+      handler: () => {
+        router.push({ name: 'nitro' })
+      },
+      avatar: menuIcons.nitro,
     },
-    avatar: menuIcons.nitro,
-  },
-  {
-    id: 3,
-    name: t('sidebar.store'),
-    link: '/store',
-    handler: () => {
-      router.push({ name: 'store' })
+    {
+      id: 3,
+      name: t('sidebar.store'),
+      link: '/store',
+      handler: () => {
+        router.push({ name: 'store' })
+      },
+      avatar: menuIcons.store,
     },
-    avatar: menuIcons.store,
-  },
-  {
-    id: 4,
-    name: t('sidebar.tasks'),
-    link: '/tasks',
-    handler: () => {
-      router.push({ name: 'tasks' })
+    {
+      id: 4,
+      name: t('sidebar.tasks'),
+      link: '/tasks',
+      handler: () => {
+        router.push({ name: 'tasks' })
+      },
+      avatar: menuIcons.tasks,
     },
-    avatar: menuIcons.tasks,
-  },
-])
-const dialogNames = (i) => {
-  return dialogs[i].names.join(', ')
-}
-const memberWord = (count) => {
-  const by10 = count % 10;
-  const by100 = count % 100;
+  ]);
 
-  if (by10 === 1 && by100 !== 11) {
-    return ` участник`;
-  } else if (
-    (by10 >= 2 && by10 <= 4) &&
-    !(by100 >= 12 && by100 <= 14)
-  ) {
-    return ` участника`;
-  } else {
-    return ` участников`;
-  }
-}
 </script>
 <style lang="scss">
 .sidebar-wrapper {
@@ -157,7 +150,7 @@ const memberWord = (count) => {
 
   .sidebar-actions {
     padding: 10px;
-    box-shadow: inset 0px -1px 2px #232527;
+    /* box-shadow: inset 0px -1px 2px #232527; */
 
     .sidebar-actions-link {
       color: var(--muted-text-color);
@@ -233,9 +226,51 @@ const memberWord = (count) => {
 
     .dialogs {
       row-gap: 5px;
+      margin-top: 9px;
 
       .dialog {
-        background-color: #232527;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 3px;
+        align-items: center;
+        column-gap: 12px;
+
+        &:hover {
+          background-color: var(--system-back-color2);
+          color: var(--main-text-color);
+
+        }
+
+        img {
+          aspect-ratio: 1/1;
+          border-radius: 20px;
+          background-position: center center;
+        }
+
+        .avatar {
+          height: 32px;
+
+          img {
+            height: inherit;
+          }
+
+          .status {}
+        }
+
+        .dialog-info {
+          overflow: hidden;
+
+          .names {
+            font-size: 15px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+
+          .members {
+            font-size: 12px;
+          }
+        }
       }
     }
   }

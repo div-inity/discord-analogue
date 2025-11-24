@@ -7,18 +7,18 @@
 
       <div class="h-divider divider"></div>
 
-      <div class="messages" v-for="(m, i) in messages">
-        <div class="message" v-tippy="{ content: m.name }">
-          <router-link :class="(m.missed_messages && m.missed_messages > 0) ? 'missed-messages' : null"
-            :to="'/messages/' + m.id" class="link-message">
-            <img :src="m.avatar" alt="">
-            <div class="mentions" v-if="m.missed_messages && m.missed_messages > 0">{{ m.missed_messages }}</div>
+      <div class="missed_messages" v-for="(m, i) in missed_messages">
+        <div class="message" v-tippy="{ content: dialogNames(m.id) }">
+          <router-link :class="(m.missed && m.missed > 0) ? 'missed' : null" :to="'/messages/' + m.id"
+            class="link-message">
+            <img :src="m.avatars" alt="">
+            <div class="mentions" v-if="m.missed && m.missed > 0">{{ m.missed }}</div>
           </router-link>
         </div>
       </div>
     </div>
 
-    <div :key="currentBlock" class="h-divider divider" v-if="messages && messages.length"></div>
+    <div :key="currentBlock" class="h-divider divider" v-if="missed_messages && missed_messages.length"></div>
 
     <div :key="currentBlock" class="servers" v-for="(s, i) in servers">
       <div class="server" v-tippy="{ content: computeServerData(i) }">
@@ -55,9 +55,12 @@ import call from '@/assets/img/svg/call.svg'
 import display from '@/assets/img/svg/display.svg'
 import camera from '@/assets/img/svg/camera.svg'
 
+import { generalFunctions } from '@/composables/generalFunctions'
+const { dialogNames } = generalFunctions()
+
 const store = useStore()
 const servers = store.state.servers.servers
-const messages = store.state.private_msg.messages
+const missed_messages = store.state.private_msg.missed_messages
 const activeServer = ref(0) // Начальное значение - сервер не выбран
 const currentBlock = ref(1) // Для плавной анимации исчезновения диалога
 const actions = reactive([
@@ -148,9 +151,9 @@ const computeServerData = (i) => {
 }
 
 const goToMessage = (id) => { // Для перехода в ЛС
-  let index = messages.findIndex(e => e.id == id);
+  let index = missed_messages.findIndex(e => e.id == id);
   activeServer.value = 0 // Очищение значения - сервер не выбран, домашняя страница
-  if (index > -1) messages.splice(index, 1) // Удаление из Навбара
+  if (index > -1) missed_messages.splice(index, 1) // Удаление из Навбара
 
 }
 const goToServer = (id) => {
@@ -205,7 +208,7 @@ watchEffect(() => {
   scrollbar-width: none;
 
   a {
-    &.missed-messages {
+    &.missed {
       &::before {
         height: 8px;
         left: -10px;
@@ -286,7 +289,7 @@ watchEffect(() => {
     position: relative;
   }
 
-  .messages {
+  .missed_messages {
     .message {
       a.link-message {
         display: flex;
