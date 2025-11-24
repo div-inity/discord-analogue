@@ -11,7 +11,11 @@
         <div class="message" v-tippy="{ content: dialogNames(m.id) }">
           <router-link :class="(m.missed && m.missed > 0) ? 'missed' : null" :to="'/messages/' + m.id"
             class="link-message">
-            <img :src="m.avatars" alt="">
+            <img class="avatar" :src="m.avatars" v-if="m.avatars && m.avatars.length == 1" alt="">
+            <div class="multi-user-avatar" v-else>
+              <img class="multi-avatar" :src="m.avatars[0]" alt="">
+              <img class="multi-avatar" :src="m.avatars[1]" alt="">
+            </div>
             <div class="mentions" v-if="m.missed && m.missed > 0">{{ m.missed }}</div>
           </router-link>
         </div>
@@ -245,6 +249,7 @@ watchEffect(() => {
     position: absolute;
     right: 0;
     bottom: 0;
+    z-index: 10;
   }
 
   img {
@@ -295,9 +300,37 @@ watchEffect(() => {
         display: flex;
         width: 100%;
         aspect-ratio: 1/1;
-        background-color: var(--system-back-color1);
-        border-radius: 30px;
+        background-color: transparent;
         overflow: hidden;
+
+        .avatar {
+          border-radius: 30px;
+        }
+
+        .multi-user-avatar {
+          width: 100%;
+          position: relative;
+
+          .multi-avatar {
+            width: 60%;
+            height: 60%;
+            border-radius: 30px;
+            position: absolute;
+            outline: 3px solid var(--system-back-color5);
+
+            &:first-child {
+              z-index: 1;
+              left: 0;
+              top: 0;
+            }
+
+            &:nth-child(2) {
+              z-index: 2;
+              right: 0;
+              bottom: 0;
+            }
+          }
+        }
       }
     }
   }

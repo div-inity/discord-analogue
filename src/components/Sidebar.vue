@@ -28,6 +28,10 @@
               <img :src="d.avatars[0]" alt="">
               <div class="status"></div>
             </div>
+            <div class="multi-user-avatar" v-else>
+              <img class="multi-avatar" :src="d.avatars[0]" alt="">
+              <img class="multi-avatar" :src="d.avatars[1]" alt="">
+            </div>
             <div class="flex column dialog-info">
               <div class="names" v-if="d.names.length > 1" v-tippy="{ content: dialogNames(d.id), placement: 'top' }">
                 {{ dialogNames(d.id) }}
@@ -37,8 +41,6 @@
                 {{ d.names.length }} {{ memberWord(d.names.length) }}
               </div>
             </div>
-            <!-- </router-link> -->
-
           </div>
         </div>
       </menu>
@@ -235,6 +237,8 @@ const actions = reactive( // Функционал сайдбара
         align-items: center;
         column-gap: 12px;
 
+        .status {}
+
         &:hover {
           background-color: var(--system-back-color2);
           color: var(--main-text-color);
@@ -253,8 +257,32 @@ const actions = reactive( // Функционал сайдбара
           img {
             height: inherit;
           }
+        }
 
-          .status {}
+        .multi-user-avatar {
+          aspect-ratio: 1/1;
+          height: 32px;
+          position: relative;
+
+          .multi-avatar {
+            width: 60%;
+            height: 60%;
+            border-radius: 30px;
+            position: absolute;
+            outline: 3px solid var(--system-back-color5);
+
+            &:first-child {
+              z-index: 1;
+              left: 0;
+              top: 0;
+            }
+
+            &:nth-child(2) {
+              z-index: 2;
+              right: 0;
+              bottom: 0;
+            }
+          }
         }
 
         .dialog-info {
