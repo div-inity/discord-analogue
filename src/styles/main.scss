@@ -207,8 +207,45 @@ a {
   outline: 3px solid var(--system-back-color5);
   display: flex;
   align-items: center;
-
 }
+
+.status {
+  height: 10px;
+  width: 10px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  right: 0;
+  position: absolute;
+  bottom: 0;
+  border-radius: 30px;
+
+  &.moon {
+    background-image: url(@/assets/img/svg/status/moon.svg);
+  }
+
+  &.phone {
+    background-image: url(@/assets/img/svg/status/phone.svg);
+    height: 15px !important;
+    border-radius: 1px !important;
+  }
+
+  &.red {
+    background-image: url(@/assets/img/svg/status/red.svg);
+  }
+
+  &.streaming {
+    background-image: url(@/assets/img/svg/status/streaming.svg);
+  }
+
+  &.offline {
+    background-image: url(@/assets/img/svg/status/offline.svg);
+  }
+
+  &.online {
+    background-color: #3BA55D !important;
+  }
+}
+
 
 [data-theme="dark"] {
   --system-back-color5: #1e1f22;

@@ -23,10 +23,9 @@
         </div>
         <div class="dialogs flex column">
           <div class="dialog flex row" v-for="(d, i) in dialogs">
-            <!-- <router-link to="/message"> -->
             <div class="avatar" v-if="d.avatars.length == 1">
               <img :src="d.avatars[0]" alt="">
-              <div class="status"></div>
+              <div class="status" :class="d.status"></div>
             </div>
             <div class="multi-user-avatar" v-else>
               <img class="multi-avatar" :src="d.avatars[0]" alt="">
@@ -237,7 +236,11 @@ const actions = reactive( // Функционал сайдбара
         align-items: center;
         column-gap: 12px;
 
-        .status {}
+        .status {
+          background-color: var(--system-back-color3);
+          outline: 2px solid var(--system-back-color3);
+          height: 10px;
+        }
 
         &:hover {
           background-color: var(--system-back-color2);
@@ -253,6 +256,7 @@ const actions = reactive( // Функционал сайдбара
 
         .avatar {
           height: 32px;
+          position: relative;
 
           img {
             height: inherit;
@@ -269,7 +273,7 @@ const actions = reactive( // Функционал сайдбара
             height: 60%;
             border-radius: 30px;
             position: absolute;
-            outline: 3px solid var(--system-back-color5);
+            outline: 3px solid var(--system-back-color3);
 
             &:first-child {
               z-index: 1;

@@ -20,16 +20,19 @@ export default {
         id: 2,
         names: ["Михаил Шатов"],
         avatars: [require('@/assets/img/UserIcon1.jpg'),],
+        status: 'phone',
       },
       {
         id: 12,
         names: ["Василий Николаев"],
         avatars: [require('@/assets/img/UserIcon2.jpg')],
+        status: 'offline',
       },
       {
         id: 28,
         names: ["Карабас-Барабас"],
         avatars: [require('@/assets/img/Server Icon.svg')],
+        status: 'online',
       },
       {
         id: 35,
@@ -37,9 +40,22 @@ export default {
         avatars: [require('@/assets/img/UserIcon2.jpg'), require('@/assets/img/UserIcon1.jpg')],
       },
       {
-        id: 101, // userId
+        id: 101,
         names: ["Анна Шатова"],
         avatars: [require('@/assets/img/UserIcon.jpg')],
+        status: 'red',
+      },
+      {
+        id: 102,
+        names: ["Пам пам"],
+        avatars: [require('@/assets/img/UserIcon.jpg')],
+        status: 'streaming',
+      },
+      {
+        id: 103,
+        names: ["Бдыщь"],
+        avatars: [require('@/assets/img/UserIcon.jpg')],
+        status: 'moon',
       },
     ],
   },
