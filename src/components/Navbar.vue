@@ -11,12 +11,12 @@
         <div class="message" v-tippy="{ content: dialogNames(m.id) }">
           <router-link :class="(m.missed && m.missed > 0) ? 'missed' : null" :to="'/messages/' + m.id"
             class="link-message">
-            <img class="avatar" :src="m.avatars" v-if="m.avatars && m.avatars.length == 1" alt="">
+            <img class="avatar radial" :src="m.avatars" v-if="m.avatars && m.avatars.length == 1" alt="">
             <div class="multi-user-avatar" v-else>
-              <img class="multi-avatar" :src="m.avatars[0]" alt="">
-              <img class="multi-avatar" :src="m.avatars[1]" alt="">
+              <img class="multi-avatar radial" :src="m.avatars[0]" alt="">
+              <img class="multi-avatar radial" :src="m.avatars[1]" alt="">
             </div>
-            <div class="mentions" v-if="m.missed && m.missed > 0">{{ m.missed }}</div>
+            <div class="mentions radial" v-if="m.missed && m.missed > 0">{{ m.missed }}</div>
           </router-link>
         </div>
       </div>
@@ -30,10 +30,10 @@
           :class="{ 'missed-messages': s.missed_messages && s.missed_messages > 0, 'active': activeServer == s.id }"
           :to="'/server/' + s.id" class="link-server">
           <img :src="s.avatar" alt="">
-          <div class="activity" :class="s.activity_type, { 'my_activity': s.my_activity && s.my_activity == true }"
-            v-if="s.activity_type">
+          <div class="activity radial"
+            :class="s.activity_type, { 'my_activity': s.my_activity && s.my_activity == true }" v-if="s.activity_type">
           </div>
-          <div class="mentions" v-if="s.mentions && s.mentions > 0">{{ s.mentions }}</div>
+          <div class="mentions radial" v-if="s.mentions && s.mentions > 0">{{ s.mentions }}</div>
         </router-link>
       </div>
     </div>
@@ -98,7 +98,7 @@ const computeServerData = (i) => {
         'img',
         {
           src: item,
-          class: 'tooltip-imgs',
+          class: 'tooltip-imgs radial',
         }
       ));
     }
@@ -197,7 +197,6 @@ watchEffect(() => {
 .tooltip-imgs {
   width: 24px;
   aspect-ratio: 1/1;
-  border-radius: 20px;
   background-position: center center;
   margin-right: -5px;
   border: 1px solid var(--icon-color);
@@ -303,9 +302,7 @@ watchEffect(() => {
         background-color: transparent;
         overflow: hidden;
 
-        .avatar {
-          border-radius: 30px;
-        }
+        .avatar {}
 
         .multi-user-avatar {
           width: 100%;
@@ -314,7 +311,6 @@ watchEffect(() => {
           .multi-avatar {
             width: 60%;
             height: 60%;
-            border-radius: 30px;
             position: absolute;
             outline: 3px solid var(--system-back-color5);
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar-wrapper">
+  <div class="sidebar-wrapper" :style="{ width: sidebarWidth + 'px' }">
     <template v-if="route.meta.private_msg == true">
       <div class="sidebar-header">
         <button class="sidebar-search-dialog text">{{ t('sidebar.sidebarsearchdialog') }}</button>
@@ -18,14 +18,14 @@
       <menu class="private-msg">
         <div class="title">
           Личные сообщения
-          <button v-html="menuIcons.add" class="dialog-add"
-            v-tippy="{ content: 'Создать ЛС', placement: 'top' }"></button>
+          <button v-html="menuIcons.add" class="dialog-add" v-tippy="{ content: 'Создать ЛС', placement: 'top' }"
+            @click="createDialog"></button>
         </div>
         <div class="dialogs flex column">
           <div class="dialog flex row" v-for="(d, i) in dialogs">
             <div class="avatar" v-if="d.avatars.length == 1">
-              <img :src="d.avatars[0]" alt="">
-              <div class="status" :class="d.status"></div>
+              <img :src="d.avatars[0]" alt="" class="radial">
+              <div class="status radial" :class="d.status"></div>
             </div>
             <div class="multi-user-avatar" v-else>
               <img class="multi-avatar" :src="d.avatars[0]" alt="">
@@ -40,24 +40,32 @@
                 {{ d.names.length }} {{ memberWord(d.names.length) }}
               </div>
             </div>
+            <button class="remove-dialog" v-html="menuIcons.remove" @click="removeDialog"></button>
           </div>
         </div>
       </menu>
     </template>
 
     sidebar
+    <!-- Блок изменения ширины сайдбара -->
+    <div class="resize-handle" @mousedown="startResize"></div>
+
+    <!-- Блок юзер-функций (профиль, заглушить, откл.звук, настройки, статус) -->
+    <div class="userprofile">
+
+    </div>
   </div>
 </template>
 <script setup>
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
-import { reactive } from 'vue';
-import { useRoute } from 'vue-router'
-import router from '@/router'
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+import { reactive, ref, onMounted, onBeforeUnmount } from 'vue';
+import { useRoute } from 'vue-router';
+import router from '@/router';
 import { useStore } from 'vuex';
 
-import { generalFunctions } from '@/composables/generalFunctions'
-const { dialogNames, memberWord } = generalFunctions()
+import { generalFunctions } from '@/composables/generalFunctions';
+const { dialogNames, memberWord } = generalFunctions();
 
 const store = useStore();
 const route = useRoute();
@@ -127,7 +135,54 @@ const actions = reactive( // Функционал сайдбара
       avatar: menuIcons.tasks,
     },
   ]);
+const removeDialog = () => {
+  alert("Closed")
+};
+const createDialog = () => {
+  alert("Created")
+};
 
+
+/** Блок кода для изменения ширины сайдбара */
+const sidebarWidth = ref(240); // начальная ширина
+const minWidth = 190; // минимальная ширина
+const maxWidth = 360; // максимальная ширина
+
+const isResizing = ref(false);
+const startX = ref(0);
+const startWidth = ref(0);
+
+const startResize = (event) => {
+  isResizing.value = true;
+  startX.value = event.clientX;
+  startWidth.value = sidebarWidth.value;
+
+  document.addEventListener('mousemove', resize);
+  document.addEventListener('mouseup', stopResize);
+};
+
+const resize = (event) => {
+  if (!isResizing.value) return;
+  const deltaX = event.clientX - startX.value;
+  let newWidth = startWidth.value + deltaX;
+
+  // Ограничение по минимальной и максимальной ширине
+  newWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+
+  sidebarWidth.value = newWidth;
+};
+
+const stopResize = () => {
+  isResizing.value = false;
+  document.removeEventListener('mousemove', resize);
+  document.removeEventListener('mouseup', stopResize);
+};
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousemove', resize);
+  document.removeEventListener('mouseup', stopResize);
+});
+/** Конец блока кода для изменения ширины сайдбара */
 </script>
 <style lang="scss">
 .sidebar-wrapper {
@@ -135,17 +190,28 @@ const actions = reactive( // Функционал сайдбара
   width: 240px;
   background-color: var(--system-back-color3);
   border-radius: 7px 0 0 0;
+  position: relative;
+
+  * {
+    user-select: none;
+  }
 
   .sidebar-header {
     height: 50px;
     width: 100%;
     padding: 10px;
-    box-shadow: 0px 1px 2px #232527;
+    /* box-shadow: 0px 1px 2px #232527; */
+    border-bottom: 1px solid var(--system-back-color5);
 
     .sidebar-search-dialog {
       height: 100%;
       width: 100%;
-      color: var(--main-text-color);
+      color: var(--icon-color);
+      background-color: var(--system-back-color5);
+
+      &:hover {
+        color: var(--muted-text-color);
+      }
     }
   }
 
@@ -235,6 +301,7 @@ const actions = reactive( // Функционал сайдбара
         border-radius: 3px;
         align-items: center;
         column-gap: 12px;
+        position: relative;
 
         .status {
           background-color: var(--system-back-color3);
@@ -246,11 +313,17 @@ const actions = reactive( // Функционал сайдбара
           background-color: var(--system-back-color2);
           color: var(--main-text-color);
 
+          .dialog-info {
+            max-width: 70%;
+          }
+
+          .remove-dialog {
+            visibility: visible;
+          }
         }
 
         img {
           aspect-ratio: 1/1;
-          border-radius: 20px;
           background-position: center center;
         }
 
@@ -291,6 +364,7 @@ const actions = reactive( // Функционал сайдбара
 
         .dialog-info {
           overflow: hidden;
+          flex-grow: 2;
 
           .names {
             font-size: 15px;
@@ -303,7 +377,44 @@ const actions = reactive( // Функционал сайдбара
             font-size: 12px;
           }
         }
+
+        .remove-dialog {
+          background: transparent;
+          width: 16px;
+          aspect-ratio: 1 / 1;
+          cursor: pointer;
+          visibility: hidden;
+          position: absolute;
+          right: 5px;
+
+          &:hover svg * {
+            fill: var(--main-text-color);
+          }
+
+          svg {
+            height: 100%;
+            width: 100%;
+          }
+        }
       }
+    }
+  }
+
+  .resize-handle {
+    width: 1px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    height: 100%;
+    cursor: ew-resize;
+    background-color: transparent;
+    transition: .5s width ease;
+
+    &:hover {
+      width: 3px;
+      background-color: var(--system-back-color4);
     }
   }
 }

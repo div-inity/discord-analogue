@@ -74,7 +74,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  transition: 0.3s all;
+  /* transition: 0.3s all; */
 }
 
 .flex {
@@ -87,6 +87,10 @@
   &.row {
     flex-direction: row;
   }
+}
+
+.radial {
+  border-radius: 50px;
 }
 
 ul {
@@ -169,7 +173,6 @@ a {
   top: 0;
   background-size: 10px;
   background-color: #4f545c;
-  border-radius: 8px;
   outline: 3px solid var(--system-back-color5);
 
   &.my_activity {
@@ -202,7 +205,6 @@ a {
   background-color: var(--notification-color);
   height: 16px;
   width: auto;
-  border-radius: 8px;
   padding: 0px 5px;
   outline: 3px solid var(--system-back-color5);
   display: flex;
@@ -217,7 +219,6 @@ a {
   right: 0;
   position: absolute;
   bottom: 0;
-  border-radius: 30px;
 
   &.moon {
     background-image: url(@/assets/img/svg/status/moon.svg);
