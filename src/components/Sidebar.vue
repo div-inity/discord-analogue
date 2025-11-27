@@ -46,26 +46,23 @@
       </menu>
     </template>
 
-    sidebar
+    sidebar {{ sidebarWidth }}
     <!-- Блок изменения ширины сайдбара -->
     <div class="resize-handle" @mousedown="startResize"></div>
 
-    <!-- Блок юзер-функций (профиль, заглушить, откл.звук, настройки, статус) -->
-    <div class="userprofile">
 
-    </div>
   </div>
 </template>
 <script setup>
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
-import { reactive, ref, onMounted, onBeforeUnmount } from 'vue';
+import { reactive, ref, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 import { useStore } from 'vuex';
 
 import { generalFunctions } from '@/composables/generalFunctions';
-const { dialogNames, memberWord } = generalFunctions();
+const { dialogNames, memberWord, sidebarWidth, updateSidebarWidth } = generalFunctions();
 
 const store = useStore();
 const route = useRoute();
@@ -143,11 +140,10 @@ const createDialog = () => {
 };
 
 
+
 /** Блок кода для изменения ширины сайдбара */
-const sidebarWidth = ref(240); // начальная ширина
 const minWidth = 190; // минимальная ширина
 const maxWidth = 360; // максимальная ширина
-
 const isResizing = ref(false);
 const startX = ref(0);
 const startWidth = ref(0);
@@ -168,8 +164,7 @@ const resize = (event) => {
 
   // Ограничение по минимальной и максимальной ширине
   newWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
-
-  sidebarWidth.value = newWidth;
+  updateSidebarWidth(newWidth);
 };
 
 const stopResize = () => {
@@ -182,7 +177,8 @@ onBeforeUnmount(() => {
   document.removeEventListener('mousemove', resize);
   document.removeEventListener('mouseup', stopResize);
 });
-/** Конец блока кода для изменения ширины сайдбара */
+/** Конец Блока кода для изменения ширины сайдбара */
+
 </script>
 <style lang="scss">
 .sidebar-wrapper {
@@ -208,6 +204,8 @@ onBeforeUnmount(() => {
       width: 100%;
       color: var(--icon-color);
       background-color: var(--system-back-color5);
+      text-align: left;
+      padding: 0 8px;
 
       &:hover {
         color: var(--muted-text-color);
@@ -417,5 +415,7 @@ onBeforeUnmount(() => {
       background-color: var(--system-back-color4);
     }
   }
+
+
 }
 </style>

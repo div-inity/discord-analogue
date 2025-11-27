@@ -1,5 +1,5 @@
 <template>
-  <TransitionGroup name="fade" class="navbar" tag="div">
+  <TransitionGroup name="fade" class="navbar" tag="div" :style="{ width: navbarWidth + 'px' }">
     <div class="private-messages" :key="currentBlock">
       <div class="home-link" v-tippy="{ content: t('navbar.mymessages') }">
         <router-link to="/messages" :class="(activeServer > 0) ? null : 'active'" class="home"></router-link>
@@ -46,6 +46,10 @@
         <img :src="a.avatar" alt="">
       </div>
     </div>
+
+    <!-- Блок юзер-функций (профиль, заглушить, откл.звук, настройки, статус) -->
+    <div :key="currentBlock" class="userprofile" :style="{ width: profileWidth + 'px' }">{{ profileWidth }}
+    </div>
   </TransitionGroup>
 </template>
 <script setup>
@@ -53,7 +57,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import router from '@/router'
 import { useStore } from 'vuex'
-import { ref, reactive, computed, watchEffect, h } from 'vue'
+import { ref, reactive, watchEffect, h } from 'vue'
 import { useRoute } from 'vue-router'
 
 /* Картинки для тултипов */
@@ -62,7 +66,7 @@ import display from '@/assets/img/svg/display.svg'
 import camera from '@/assets/img/svg/camera.svg'
 
 import { generalFunctions } from '@/composables/generalFunctions'
-const { dialogNames } = generalFunctions()
+const { dialogNames, navbarWidth, profileWidth } = generalFunctions()
 
 const store = useStore()
 const servers = store.state.servers.servers
@@ -173,7 +177,7 @@ watchEffect(() => {
   else if (route.name == 'messages') {
     activeServer.value = 0 // Очищение значения - сервер не выбран, домашняя страница
   }
-})
+});
 </script>
 <style lang="scss">
 .navbar-server-tooltip {
@@ -206,7 +210,7 @@ watchEffect(() => {
 
 .navbar {
   background-color: var(--system-back-color5);
-  width: 68px;
+  /* width: 68px; */
   height: 100%;
   padding-inline: 10px;
   overflow: auto;
@@ -374,6 +378,18 @@ watchEffect(() => {
         height: auto;
       }
     }
+  }
+
+  .userprofile {
+    height: 56px;
+    padding: 8px;
+    border: 1px solid #2b2b30;
+    background: var(--system-back-color4);
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    z-index: 10;
+    min-width: 0;
   }
 }
 </style>
