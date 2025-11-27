@@ -16,7 +16,8 @@
               <img class="multi-avatar radial" :src="m.avatars[0]" alt="">
               <img class="multi-avatar radial" :src="m.avatars[1]" alt="">
             </div>
-            <div class="mentions radial" v-if="m.missed && m.missed > 0">{{ m.missed }}</div>
+            <div class="mentions radial" v-if="m.missed && m.missed > 0">{{ (m.missed < 1000) ? m.missed : m.missed /
+              1000 + 'k+' }}</div>
           </router-link>
         </div>
       </div>
@@ -33,7 +34,8 @@
           <div class="activity radial"
             :class="s.activity_type, { 'my_activity': s.my_activity && s.my_activity == true }" v-if="s.activity_type">
           </div>
-          <div class="mentions radial" v-if="s.mentions && s.mentions > 0">{{ s.mentions }}</div>
+          <div class="mentions radial" v-if="s.mentions && s.mentions > 0">{{ (s.mentions < 1000) ? s.mentions :
+            s.mentions / 1000 + 'k+' }}</div>
         </router-link>
       </div>
     </div>

@@ -6,7 +6,7 @@ export default {
         id: 12,
         names: ["Василий Николаев"],
         avatars: [require('@/assets/img/UserIcon2.jpg')],
-        missed: 1,
+        missed: 1200,
       },
       {
         id: 35,

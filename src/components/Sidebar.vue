@@ -314,7 +314,7 @@ onBeforeUnmount(() => {
           color: var(--main-text-color);
 
           .dialog-info {
-            max-width: 70%;
+            max-width: calc(70% - 10px);
           }
 
           .remove-dialog {

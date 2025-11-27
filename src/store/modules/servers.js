@@ -8,7 +8,7 @@ export default {
         missed_messages: 71,
         last_message: "2025-21-04 15:20:03",
         avatar: require('@/assets/img/Server Icon.jpg'),
-        mentions: 1,
+        mentions: 3100,
         activity_type: 'display',
         my_activity: true,
         total_active_users: 3,
