@@ -1,7 +1,22 @@
 import { useStore } from 'vuex';
 import { computed, ref } from 'vue';
 
-const sidebarWidth = ref(240); // начальная ширина sidebar
+const getInitialSidebarWidth = () => {
+  try {
+    const savedWidth = localStorage.getItem('sidebarWidth');
+    if (savedWidth) {
+      const width = parseInt(savedWidth);
+      // Проверяем, что значение в допустимых пределах
+      return (width >= 190 && width <= 360) ? width : 240;
+    }
+    return 240;
+  } catch (error) {
+    console.warn('Ошибка при чтении из localStorage:', error);
+    return 240;
+  }
+};
+
+const sidebarWidth = ref(getInitialSidebarWidth());
 const navbarWidth = ref(68);
 
 export function generalFunctions() {
@@ -37,9 +52,10 @@ export function generalFunctions() {
   };
   // memberWord
 
-
   const updateSidebarWidth = (newVal) => {
     sidebarWidth.value = newVal;
+    localStorage.setItem('sidebarWidth', newVal.toString());
+    //console.log('Sidebar width saved to localStorage:', newVal);
   }
 
   const profileWidth = computed(() => {

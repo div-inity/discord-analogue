@@ -62,7 +62,7 @@ import router from '@/router';
 import { useStore } from 'vuex';
 
 import { generalFunctions } from '@/composables/generalFunctions';
-const { dialogNames, memberWord, sidebarWidth, updateSidebarWidth } = generalFunctions();
+const { dialogNames, memberWord, sidebarWidth, updateSidebarWidth, } = generalFunctions();
 
 const store = useStore();
 const route = useRoute();
@@ -206,6 +206,9 @@ onBeforeUnmount(() => {
       background-color: var(--system-back-color5);
       text-align: left;
       padding: 0 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
       &:hover {
         color: var(--muted-text-color);

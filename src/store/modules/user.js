@@ -10,6 +10,9 @@ export default {
       info: 'Playing Counter-Strike 2',
     },
     //user: null
+    settings: {
+      sidebarWidth: 240,
+    },
   },
   getters: {
     getUser: (state) => state.user

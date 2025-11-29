@@ -58,6 +58,7 @@
         <div class="userinfo flex column">
           <div class="name">{{ user.name }}</div>
           <div class="info">{{ (user.info) ? user.info : user.status }}</div>
+          <div class="nikname">{{ user.nikname }}</div>
         </div>
       </div>
 
@@ -457,6 +458,16 @@ const profileIcons = {
 
       &:hover {
         background-color: var(--system-back-color2);
+
+        .info {
+          transform: translateY(-10px) !important;
+          visibility: hidden !important;
+        }
+
+        .nikname {
+          transform: translateY(20px) !important;
+          visibility: visible !important;
+        }
       }
 
       .avatar {
@@ -499,12 +510,24 @@ const profileIcons = {
         }
 
         .info {
+          visibility: visible;
+        }
+
+        .info,
+        .nikname {
           font-family: var(--font-family-400);
           font-size: 12px;
           color: var(--muted-text-color);
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
+          transition: 0.3s transform, visibility;
+        }
+
+        .nikname {
+          position: absolute;
+          transform: translateY(30px);
+          visibility: hidden;
         }
       }
     }
