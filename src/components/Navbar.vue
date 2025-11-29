@@ -460,13 +460,11 @@ const profileIcons = {
         background-color: var(--system-back-color2);
 
         .info {
-          transform: translateY(-10px) !important;
-          visibility: hidden !important;
+          max-height: 0 !important;
         }
 
         .nikname {
-          transform: translateY(20px) !important;
-          visibility: visible !important;
+          max-height: 17px !important;
         }
       }
 
@@ -509,10 +507,6 @@ const profileIcons = {
           overflow: hidden;
         }
 
-        .info {
-          visibility: visible;
-        }
-
         .info,
         .nikname {
           font-family: var(--font-family-400);
@@ -521,13 +515,12 @@ const profileIcons = {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-          transition: 0.3s transform, visibility;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          max-height: 17px;
         }
 
         .nikname {
-          position: absolute;
-          transform: translateY(30px);
-          visibility: hidden;
+          max-height: 0;
         }
       }
     }
