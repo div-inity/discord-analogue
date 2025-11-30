@@ -187,6 +187,8 @@ onBeforeUnmount(() => {
   background-color: var(--system-back-color3);
   border-radius: 7px 0 0 0;
   position: relative;
+  overflow: auto;
+  scrollbar-width: none;
 
   * {
     user-select: none;
