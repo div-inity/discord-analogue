@@ -42,6 +42,32 @@ const routes = [
           private_msg: true,
         },
         component: FriendsView,
+        children: [
+          {
+            path: "online",
+            name: "online",
+            component: () =>
+              import(/* webpackChunkName: "online" */ "../components/friends/Online.vue"),
+          },
+          {
+            path: "all",
+            name: "all",
+            component: () =>
+              import(/* webpackChunkName: "all" */ "../components/friends/All.vue"),
+          },
+          {
+            path: "pending",
+            name: "pending",
+            component: () =>
+              import(/* webpackChunkName: "pending" */ "../components/friends/Pending.vue"),
+          },
+          {
+            path: "blocked",
+            name: "blocked",
+            component: () =>
+              import(/* webpackChunkName: "blocked" */ "../components/friends/Blocked.vue"),
+          },
+        ],
       },
       {
         path: "/nitro",

@@ -61,12 +61,16 @@ export function generalFunctions() {
   const profileWidth = computed(() => {
     return navbarWidth.value + sidebarWidth.value - 20;
   })
+  const headerWidth = computed(() => {
+    return window.innerWidth - navbarWidth.value - sidebarWidth.value;
+  })
   return {
     dialogNames,
     memberWord,
     sidebarWidth,
     updateSidebarWidth,
     navbarWidth,
-    profileWidth
+    profileWidth,
+    headerWidth
   };
 }
