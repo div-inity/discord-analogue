@@ -15,6 +15,7 @@
       <div class="divider v-divider header-divider"></div>
       <nav class="friends-header-nav flex row">
         <router-link v-for="nl in navLinks" :to="'/friends/' + nl.link">{{ nl.name }}</router-link>
+        <a href="/friends/add" class="add-friend">Add Friend</a>
       </nav>
     </div>
     <router-view></router-view>
@@ -60,15 +61,29 @@ const navLinks = reactive([
     .friends-header-nav {
       height: 100%;
       align-items: center;
+      column-gap: 14px;
+      margin-left: 14px;
 
       a {
-        padding: 12px;
         color: var(--muted-text-color);
         font-family: var(--font-family-400);
         font-size: 14px;
+        transition: .3s all;
+        border-radius: 9px;
+        padding: 8px 12px;
+
+        &:hover:not(.add-friend) {
+          color: var(--loud-text-color);
+          background: var(--button-back-color);
+        }
+      }
+
+      .add-friend {
+        background-color: var(--system-purple-color);
+        color: var(--loud-text-color);
 
         &:hover {
-          color: var(--main-text-color);
+          filter: brightness(0.8);
         }
       }
     }
