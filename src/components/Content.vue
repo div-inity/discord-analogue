@@ -1,5 +1,5 @@
 <template>
-  <div class="content flex" :style="{ width: contentWidth + 'px', height: contentHeight + 'px' }">
+  <div class="content flex column" :style="{ width: contentWidth + 'px', height: contentHeight + 'px' }">
     <slot>
       content width:{{ headerWidth }}<br>
       content height:{{ contentHeight }}
@@ -36,5 +36,6 @@ onUnmounted(() => {
 .content {
   height: 100%;
   padding: 15px 25px;
+  row-gap: 15px;
 }
 </style>
