@@ -1,31 +1,35 @@
 <template>
   <div class="friends-container">
     <Sidebar></Sidebar>
-    <div class="friends-header content-header flex row" :style="{ width: headerWidth + 'px' }">
-      <span class="flex row">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M4.77528 2H1C1 10.6232 4.77528 13.744 6.66292 14.0725V19H22C22 12.5942 17.2809 12.5942 13.9775 12.5942C6.66292 12.5942 4.77528 6.43478 4.77528 2Z"
-            fill="#8E9297" />
-          <path d="M13.9775 2.5C19.6405 2.5 19.6405 11.1232 13.9775 11.1232C8.0867 11.1232 8.31461 2.5 13.9775 2.5Z"
-            fill="#8E9297" />
-        </svg>
-        Друзья
-      </span>
-      <div class="divider v-divider header-divider"></div>
-      <nav class="friends-header-nav flex row">
-        <router-link v-for="nl in navLinks" :to="'/friends/' + nl.link">{{ nl.name }}</router-link>
-        <a href="/friends/add" class="add-friend">Add Friend</a>
-      </nav>
+    <div class="content-wrapper flex column">
+      <ContentHeader>
+        <template v-slot:page-title>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M4.77528 2H1C1 10.6232 4.77528 13.744 6.66292 14.0725V19H22C22 12.5942 17.2809 12.5942 13.9775 12.5942C6.66292 12.5942 4.77528 6.43478 4.77528 2Z"
+              fill="#8E9297" />
+            <path d="M13.9775 2.5C19.6405 2.5 19.6405 11.1232 13.9775 11.1232C8.0867 11.1232 8.31461 2.5 13.9775 2.5Z"
+              fill="#8E9297" />
+          </svg>
+          Друзья
+        </template>
+        <template v-slot:other>
+          <div class="divider v-divider header-divider"></div>
+          <nav class="friends-header-nav flex row">
+            <router-link v-for="nl in navLinks" :to="'/friends/' + nl.link">{{ nl.name }}</router-link>
+            <a href="/friends/add" class="add-friend">Add Friend</a>
+          </nav>
+        </template>
+      </ContentHeader>
+      <router-view></router-view>
     </div>
-    <router-view></router-view>
+
   </div>
 </template>
 <script setup>
 import Sidebar from '@/components/Sidebar.vue'
-import { generalFunctions } from '@/composables/generalFunctions';
+import ContentHeader from '@/components/ContentHeader.vue';
 import { reactive } from 'vue';
-const { headerWidth } = generalFunctions();
 const navLinks = reactive([
   {
     name: 'Online',
@@ -51,43 +55,7 @@ const navLinks = reactive([
   display: flex;
   flex-direction: row;
 
-  .friends-header {
-    span {
-      align-items: center;
-      justify-content: center;
-      column-gap: 12px;
-    }
 
-    .friends-header-nav {
-      height: 100%;
-      align-items: center;
-      column-gap: 14px;
-      margin-left: 14px;
-
-      a {
-        color: var(--muted-text-color);
-        font-family: var(--font-family-400);
-        font-size: 14px;
-        transition: .3s all;
-        border-radius: 9px;
-        padding: 8px 12px;
-
-        &:hover:not(.add-friend) {
-          color: var(--loud-text-color);
-          background: var(--button-back-color);
-        }
-      }
-
-      .add-friend {
-        background-color: var(--system-purple-color);
-        color: var(--loud-text-color);
-
-        &:hover {
-          filter: brightness(0.8);
-        }
-      }
-    }
-  }
 
 }
 </style>
