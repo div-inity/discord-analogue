@@ -6,7 +6,7 @@
       </slot>
       <slot name="other">Прочие элементы header-а</slot>
     </span>
-
+    headerWidth: {{ headerWidth }}
   </div>
 </template>
 <script setup>
@@ -23,6 +23,9 @@ const setHeaderClass = () => {
 <style lang="scss">
 .content-header {
   min-height: 50px;
+  width: 561px;
+  overflow-x: auto;
+  scrollbar-width: none;
 
   &.friends-header {
     span {
@@ -54,6 +57,12 @@ const setHeaderClass = () => {
       .add-friend {
         background-color: var(--system-purple-color);
         color: var(--loud-text-color);
+        width: 92px;
+        height: 35px;
+        padding: 0 !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
 
         &:hover {
           filter: brightness(0.8);

@@ -34,6 +34,8 @@ import SystemNotify from '../SystemNotify.vue';
 
     &.icon-info {
       margin-right: 8px;
+      min-height: 20px;
+      min-width: 20px;
     }
   }
 
