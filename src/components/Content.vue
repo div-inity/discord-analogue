@@ -24,5 +24,6 @@ const contentWidth = computed(() => {
 <style lang="scss">
 .content {
   height: 100%;
+  padding: 15px 25px;
 }
 </style>
