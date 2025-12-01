@@ -16,7 +16,6 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 //console.log(route.matched[1].path)
 const setHeaderClass = () => {
-  console.log(route.matched[1].path == '/friends')
   if (route.matched[1].path == '/friends') return 'friends-header';
 };
 </script>

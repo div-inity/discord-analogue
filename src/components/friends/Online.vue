@@ -1,7 +1,7 @@
 <template>
   <ContentFlex>
     <Content :RightAside="200">
-      <SystemNotify :close="true">
+      <SystemNotify close type="info">
         <template v-slot:text>Ищете пользователей, которых вы заблокировали или игнорируете?&nbsp
           <a href="">Перейти в настройки</a>
         </template>
@@ -16,31 +16,4 @@ import Content from '../Content.vue';
 import RightAside from '../RightAside.vue';
 import SystemNotify from '../SystemNotify.vue';
 </script>
-<style lang="scss">
-.system-notify {
-  background-color: var(--system-back-color5);
-  padding: 20px 15px;
-  height: fit-content;
-  border-radius: 4px;
-  color: var(--main-text-color);
-  font-family: var(--font-family-400);
-  font-size: 13px;
-  width: 100%;
-  align-items: center;
-
-  svg {
-    height: 20px;
-    width: 20px;
-
-    &.icon-info {
-      margin-right: 8px;
-      min-height: 20px;
-      min-width: 20px;
-    }
-  }
-
-  p {
-    flex-grow: 2;
-  }
-}
-</style>
+<style lang="scss"></style>
