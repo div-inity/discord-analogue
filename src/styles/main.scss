@@ -215,7 +215,7 @@ a {
   letter-spacing: -0.01em;
   background-color: var(--notification-color);
   height: 16px;
-  width: auto;
+  width: fit-content;
   padding: 0px 5px;
   outline: 3px solid var(--system-back-color5);
   display: flex;
@@ -223,13 +223,15 @@ a {
 }
 
 .status {
-  height: 10px;
-  width: 10px;
+  height: 12px;
+  width: 12px;
   background-repeat: no-repeat;
   background-position: center center;
   right: 0;
   position: absolute;
   bottom: 0;
+  background-color: var(--system-back-color3);
+  outline: 2px solid var(--system-back-color3);
 
   &.moon {
     background-image: url(@/assets/img/svg/status/moon.svg);
@@ -255,6 +257,7 @@ a {
 
   &.online {
     background-color: #3BA55D !important;
+    outline-width: 3px !important;
   }
 }
 

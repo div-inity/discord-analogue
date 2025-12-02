@@ -5,24 +5,33 @@
     </p>
     <div class="list-friends flex column">
       <div class="list-friends-item flex row" v-for="item in props.list">
-        <div class="avatar radial">
+        <!-- <div class="avatar radial">
           <img v-if="item.avatar" :src="item.avatar" alt="" class="user-custom-avatar">
           <img v-else src="@/assets/img/svg/logo.svg" alt="" class="user-logo">
           <div class="status radial" :class="item.status"></div>
-        </div>
+        </div> -->
+        <Avatar :avatar="item.avatar" :width="50" :status="item.status"></Avatar>
         {{ item.name }}
       </div>
+      <Avatar :avatar="props.list[0].avatar" :width="50" square mentions="204"></Avatar>
+      {{ props.list[0].name }}
     </div>
+
+    <!-- <Avatar :avatars="ava" width="40"></Avatar> -->
   </div>
 
 </template>
 <script setup>
+import { ref } from 'vue';
+import Avatar from '../Avatar.vue';
 const props = defineProps({
   list: {
     type: Object,
     required: true,
   }
 })
+const ava = ref({ 0: props.list[0].avatar, 1: props.list[1].avatar })
+console.log(ava.value)
 </script>
 <style lang="scss">
 .list-friends-wrapper {
@@ -34,8 +43,10 @@ const props = defineProps({
   }
 
   .list-friends {
+    gap: 20px;
+
     .list-friends-item {
-      .avatar {
+      /* .avatar {
         width: 40px;
         aspect-ratio: 1/1;
         outline: 1px solid grey;
@@ -64,7 +75,7 @@ const props = defineProps({
         }
 
         .status {}
-      }
+      } */
     }
   }
 }

@@ -308,7 +308,7 @@ const settingsOpen = () => {
       content: "";
       width: 4px;
       height: 0;
-      background: #fff;
+      background: var(--loud-text-color);
       border-radius: 0 4px 4px 0;
       top: 50%;
       left: -20px;
