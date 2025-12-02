@@ -16,8 +16,8 @@
 
         <button>Send Friend Request</button>
       </div>
-      <ListFriends :array="list">
-        <template v-slot:title></template>
+      <ListFriends :list="online">
+        <template v-slot:title>В сети &#8211 {{ online.length }}</template>
       </ListFriends>
     </Content>
     <RightAside :RightAside="350">
@@ -36,6 +36,15 @@ import Content from '../Content.vue';
 import RightAside from '../RightAside.vue';
 import SystemNotify from '../SystemNotify.vue';
 import ListFriends from './ListFriends.vue';
+import { useStore } from 'vuex';
+import { ref, computed } from 'vue';
+const store = useStore();
+const allFriends = ref(store.state.user.friends);
+const online = computed(() => {
+  return allFriends.value.filter(friend => friend.status !== 'offline');
+})
+console.log(allFriends.value)
+console.log(online.value)
 </script>
 <style lang="scss">
 .input-wrapper {

@@ -1,5 +1,6 @@
 <template>
-  <div class="content flex column" :style="{ width: contentWidth + 'px', height: contentHeight + 'px' }">
+  <div class="content flex column" :style="{ width: contentWidth + 'px', height: contentHeight + 'px' }"
+    @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" :class="{ hovered: isHovered }">
     <slot>
       content width:{{ headerWidth }}<br>
       content height:{{ contentHeight }}
@@ -31,11 +32,43 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', updateWidth);
 });
+const isHovered = ref(false);
+
+function onMouseEnter() {
+  isHovered.value = true;
+}
+
+function onMouseLeave() {
+  isHovered.value = false;
+}
 </script>
 <style lang="scss">
 .content {
   height: 100%;
   padding: 15px 25px;
   row-gap: 15px;
+  overflow-y: auto;
+
+  /* базовые стили scrollbar */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  /* Target the scrollbar track (the background) */
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  /* Target the scrollbar thumb (the draggable handle) */
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: transparent;
+  }
+
+  /* Меняем стиль при наведении на весь контейнер */
+  &.hovered::-webkit-scrollbar-thumb {
+    background: var(--system-back-color1);
+  }
 }
 </style>
