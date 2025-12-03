@@ -60,7 +60,7 @@ html {
   transition: all 0.3s ease;
   position: absolute;
   right: 0;
-  bottom: 90%;
+  bottom: 0;
 
   &:hover {
     opacity: 0.8;

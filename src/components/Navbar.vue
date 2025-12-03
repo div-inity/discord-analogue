@@ -57,7 +57,7 @@
         </div>
         <div class="userinfo flex column">
           <div class="name">{{ user.name }}</div>
-          <div class="info">{{ (user.info) ? user.info : user.status }}</div>
+          <div class="userprofile-info">{{ (user.info) ? user.info : user.status }}</div>
           <div class="nikname">{{ user.nikname }}</div>
         </div>
       </div>
@@ -308,7 +308,7 @@ const settingsOpen = () => {
       content: "";
       width: 4px;
       height: 0;
-      background: #fff;
+      background: var(--loud-text-color);
       border-radius: 0 4px 4px 0;
       top: 50%;
       left: -20px;
@@ -466,7 +466,7 @@ const settingsOpen = () => {
     justify-content: space-between;
 
     &:hover {
-      .info {
+      .userprofile-info {
         max-height: 0 !important;
       }
 
@@ -527,7 +527,7 @@ const settingsOpen = () => {
           overflow: hidden;
         }
 
-        .info,
+        .userprofile-info,
         .nikname {
           font-family: var(--font-family-400);
           font-size: 12px;

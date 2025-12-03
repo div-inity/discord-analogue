@@ -1,5 +1,5 @@
 import { useStore } from 'vuex';
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 
 const getInitialSidebarWidth = () => {
   try {
@@ -61,12 +61,38 @@ export function generalFunctions() {
   const profileWidth = computed(() => {
     return navbarWidth.value + sidebarWidth.value - 20;
   })
+
+  const windowWidth = ref(window.innerWidth);
+  const windowHeight = ref(window.innerHeight);
+  const headerWidth = computed(() => {
+    return windowWidth.value - navbarWidth.value - sidebarWidth.value;
+  })
+
+
+  const updateWidth = () => {
+    windowWidth.value = window.innerWidth;
+  };
+
+  const updateHeight = () => {
+    windowHeight.value = window.innerHeight;
+  };
+
+  onMounted(() => {
+    window.addEventListener('resize', updateHeight);
+    window.addEventListener('resize', updateWidth);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('resize', updateHeight);
+    window.removeEventListener('resize', updateWidth);
+  });
   return {
     dialogNames,
     memberWord,
     sidebarWidth,
     updateSidebarWidth,
     navbarWidth,
-    profileWidth
+    profileWidth,
+    headerWidth
   };
 }
