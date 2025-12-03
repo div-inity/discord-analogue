@@ -10,10 +10,10 @@
           <img v-else src="@/assets/img/svg/logo.svg" alt="" class="user-logo">
           <div class="status radial" :class="item.status"></div>
         </div> -->
-        <Avatar :avatar="item.avatar" :width="50" :status="item.status"></Avatar>
+        <Avatar :avatar="item.avatar" :size="50" :status="item.status"></Avatar>
         {{ item.name }}
       </div>
-      <Avatar :avatar="props.list[0].avatar" :width="50" square mentions="204"></Avatar>
+      <Avatar :avatar="props.list[0].avatar" :size="50" square mentions="1204" activity="call" active></Avatar>
       {{ props.list[0].name }}
     </div>
 
