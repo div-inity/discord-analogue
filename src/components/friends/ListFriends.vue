@@ -13,24 +13,32 @@
         <Avatar :avatar="item.avatar" :size="50" :status="item.status"></Avatar>
         {{ item.name }}
       </div>
-      <Avatar :avatar="props.list[0].avatar" :size="50" square mentions="1204" activity="call" active></Avatar>
-      {{ props.list[0].name }}
+      <!-- <Avatar :avatar="props.list[0].avatar" :size="50" square mentions="1204" activity="call" active></Avatar>
+      {{ props.list[0].name }} -->
     </div>
 
-    <!-- <Avatar :avatars="ava" width="40"></Avatar> -->
+    <Avatar :avatars="ava" :size="50" multy status="online" activity="call" active></Avatar>
   </div>
 
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Avatar from '../Avatar.vue';
+import { useStore } from 'vuex';
+const store = useStore();
 const props = defineProps({
   list: {
     type: Object,
     required: true,
   }
 })
-const ava = ref({ 0: props.list[0].avatar, 1: props.list[1].avatar })
+/* const ava = computed(() => {
+  const arr = [];
+  for (i in store.state.private_msg.missed_messages.length) {
+    arr.push(i.ava)
+  }
+}) */
+const ava = ref(store.state.private_msg.missed_messages[1].avatars)
 console.log(ava.value)
 </script>
 <style lang="scss">

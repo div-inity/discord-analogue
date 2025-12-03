@@ -232,6 +232,7 @@ a {
   bottom: 0;
   background-color: var(--system-back-color3);
   outline: 2px solid var(--system-back-color3);
+  z-index: 10;
 
   &.moon {
     background-image: url(@/assets/img/svg/status/moon.svg);
