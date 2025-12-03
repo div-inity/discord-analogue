@@ -39,7 +39,9 @@
         <div v-if="props.status" class="status radial" :class="props.status"></div>
         <div class="activity radial" v-if="props.activity"
           :class="[defineActivity(), { 'my_activity': props.active === true }]"></div>
-      </div>
+        <div v-if="props.mentions && props.mentions > 0" class="mentions radial">
+          {{ props.mentions < 1000 ? props.mentions : (props.mentions / 1000).toFixed(1) + 'k+' }} </div>
+        </div>
 </template>
 <script setup>
 const props = defineProps({
@@ -100,8 +102,10 @@ const defineActivity = () => {
   }
 
   &.square {
+    border-radius: 13px !important;
+
     img {
-      border-radius: 13px;
+      border-radius: 13px !important;
     }
   }
 

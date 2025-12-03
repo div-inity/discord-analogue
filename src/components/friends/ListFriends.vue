@@ -17,7 +17,7 @@
       {{ props.list[0].name }} -->
     </div>
 
-    <Avatar :avatars="ava" :size="50" multy status="online" activity="call" active></Avatar>
+    <Avatar :avatars="ava" :size="50" multy activity="call" active :mentions="40"></Avatar>
   </div>
 
 </template>

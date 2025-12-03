@@ -2,7 +2,9 @@
   <TransitionGroup name="fade" class="navbar" tag="div" :style="{ width: navbarWidth + 'px' }">
     <div class="private-messages" :key="currentBlock">
       <div class="home-link" v-tippy="{ content: t('navbar.mymessages') }">
-        <router-link to="/messages" :class="(activeServer > 0) ? null : 'active'" class="home"></router-link>
+        <router-link to="/messages" :class="(activeServer > 0) ? null : 'active'" class="home">
+          <Avatar size="48" square />
+        </router-link>
       </div>
 
       <div class="h-divider divider"></div>
@@ -11,13 +13,8 @@
         <div class="message" v-tippy="{ content: dialogNames(m.id) }">
           <router-link :class="(m.missed && m.missed > 0) ? 'missed' : null" :to="'/messages/' + m.id"
             class="link-message">
-            <img class="avatar radial" :src="m.avatars" v-if="m.avatars && m.avatars.length == 1" alt="">
-            <div class="multi-user-avatar" v-else>
-              <img class="multi-avatar radial" :src="m.avatars[0]" alt="">
-              <img class="multi-avatar radial" :src="m.avatars[1]" alt="">
-            </div>
-            <div class="mentions radial" v-if="m.missed && m.missed > 0">{{ (m.missed < 1000) ? m.missed : m.missed /
-              1000 + 'k+' }}</div>
+            <Avatar v-if="m.avatars && m.avatars.length == 1" size="48" :mentions="m.missed" :avatar="m.avatars" />
+            <Avatar v-else size="48" :mentions="m.missed" :avatars="m.avatars" multy />
           </router-link>
         </div>
       </div>
@@ -30,12 +27,8 @@
         <router-link
           :class="{ 'missed-messages': s.missed_messages && s.missed_messages > 0, 'active': activeServer == s.id }"
           :to="'/server/' + s.id" class="link-server">
-          <img :src="s.avatar" alt="">
-          <div class="activity radial"
-            :class="s.activity_type, { 'my_activity': s.my_activity && s.my_activity == true }" v-if="s.activity_type">
-          </div>
-          <div class="mentions radial" v-if="s.mentions && s.mentions > 0">{{ (s.mentions < 1000) ? s.mentions :
-            s.mentions / 1000 + 'k+' }}</div>
+          <Avatar :avatar="s.avatar" square size="48" :mentions="s.mentions" :activity="s.activity_type"
+            :active="s.my_activity" />
         </router-link>
       </div>
     </div>
@@ -50,11 +43,7 @@
     <!-- Блок юзер-функций (профиль, заглушить, откл.звук, настройки, статус) -->
     <div :key="currentBlock" class="userprofile flex row" :style="{ width: profileWidth + 'px' }">
       <div class="profile flex row">
-        <div class="avatar radial">
-          <img v-if="user.avatar" :src="user.avatar" alt="" class="user-custom-avatar">
-          <img v-else src="@/assets/img/svg/logo.svg" alt="" class="user-logo">
-          <div class="status radial" :class="user.status"></div>
-        </div>
+        <Avatar size="40" :avatar="user.avatar" :status="user.status" />
         <div class="userinfo flex column">
           <div class="name">{{ user.name }}</div>
           <div class="userprofile-info">{{ (user.info) ? user.info : user.status }}</div>
@@ -83,6 +72,7 @@ import router from '@/router'
 import { useStore } from 'vuex'
 import { ref, reactive, watchEffect, h } from 'vue'
 import { useRoute } from 'vue-router'
+import Avatar from './Avatar.vue'
 
 /* Картинки для тултипов */
 import call from '@/assets/img/svg/call.svg'
@@ -255,8 +245,6 @@ const settingsOpen = () => {
 .navbar-server-tooltip {
   row-gap: 8px;
 
-  .server-name {}
-
   .server-activity {
     align-items: center;
 
@@ -281,6 +269,7 @@ const settingsOpen = () => {
 }
 
 .navbar {
+  padding-bottom: 80px;
   background-color: var(--system-back-color5);
   /* width: 68px; */
   height: 100%;
@@ -339,25 +328,14 @@ const settingsOpen = () => {
     margin-block: 8px;
   }
 
-  a.home,
-  a.link-server {
-    display: flex;
-    border-radius: 13px;
-    width: 100%;
-    aspect-ratio: 1/1;
-  }
-
-  .home {
-    background-color: var(--system-back-color2);
-    background-image: url(@/assets/img/Main-icon.svg);
-    background-repeat: no-repeat;
-    background-position: center center;
-
-    &:hover,
-    &.active {
-      background-color: var(--system-purple-color);
+  .home-link a {
+    &:not(.active) {
+      .avatar {
+        img {
+          background-color: var(--system-back-color2);
+        }
+      }
     }
-
   }
 
   .home-link,
@@ -369,53 +347,6 @@ const settingsOpen = () => {
     align-items: center;
     margin-block-end: 8px;
     position: relative;
-  }
-
-  .missed_messages {
-    .message {
-      a.link-message {
-        display: flex;
-        width: 100%;
-        aspect-ratio: 1/1;
-        background-color: transparent;
-        overflow: hidden;
-
-        .avatar {}
-
-        .multi-user-avatar {
-          width: 100%;
-          position: relative;
-
-          .multi-avatar {
-            width: 60%;
-            height: 60%;
-            position: absolute;
-            outline: 3px solid var(--system-back-color5);
-
-            &:first-child {
-              z-index: 1;
-              left: 0;
-              top: 0;
-            }
-
-            &:nth-child(2) {
-              z-index: 2;
-              right: 0;
-              bottom: 0;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .servers {
-    .server {
-      a.link-server {
-        overflow: hidden;
-      }
-
-    }
   }
 
   .actions {
@@ -460,7 +391,7 @@ const settingsOpen = () => {
     position: absolute;
     left: 10px;
     bottom: 10px;
-    z-index: 10;
+    z-index: 11;
     min-width: 0;
     border-radius: 8px;
     justify-content: space-between;
@@ -489,29 +420,7 @@ const settingsOpen = () => {
       }
 
       .avatar {
-        width: 40px;
-        aspect-ratio: 1/1;
-        outline: 1px solid grey;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
         margin-right: 8px;
-        min-width: 40px;
-
-
-        img {
-          background-position: center center;
-
-          &.user-custom-avatar {}
-
-          &.user-logo {
-            height: 21.22px;
-            width: 28px;
-          }
-        }
-
-        .status {}
       }
 
       .userinfo {

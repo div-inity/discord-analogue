@@ -44,7 +44,7 @@ export default {
         ],
       },
       {
-        id: 3,
+        id: 4,
         name: "Бастион ненависти",
         /* missed_messages: 1003, */
         last_message: "2025-10-03 21:32:15",
