@@ -38,7 +38,7 @@ const props = defineProps({
     arr.push(i.ava)
   }
 }) */
-const ava = ref(store.state.private_msg.missed_messages[1].avatars)
+const ava = ref(["", store.state.private_msg.missed_messages[0].avatars])
 console.log(ava.value)
 </script>
 <style lang="scss">
