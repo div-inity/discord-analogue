@@ -14,7 +14,7 @@
           Друзья
         </template>
         <template v-slot:other>
-          <div class="divider v-divider header-divider"></div>
+          <Divider v :height="40" color="var(--system-back-color1)" />
           <nav class="friends-header-nav flex row">
             <router-link v-for="nl in navLinks" :to="'/friends/' + nl.link">{{ nl.name }}</router-link>
             <a href="/friends/add" class="add-friend">Add Friend</a>
@@ -29,6 +29,7 @@
 <script setup>
 import Sidebar from '@/components/Sidebar.vue'
 import ContentHeader from '@/components/ContentHeader.vue';
+import Divider from '@/components/Divider.vue';
 import { reactive } from 'vue';
 const navLinks = reactive([
   {

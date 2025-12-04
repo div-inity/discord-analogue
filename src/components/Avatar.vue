@@ -60,7 +60,7 @@ const props = defineProps({
     required: false
   },
   mentions: { // Упоминания
-    type: String,
+    type: Number,
     required: false
   },
   square: { // Квадратный аватар

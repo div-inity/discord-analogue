@@ -43,8 +43,8 @@ const allFriends = ref(store.state.user.friends);
 const online = computed(() => {
   return allFriends.value.filter(friend => friend.status !== 'offline');
 })
-console.log(allFriends.value)
-console.log(online.value)
+/* console.log(allFriends.value)
+console.log(online.value) */
 </script>
 <style lang="scss">
 .input-wrapper {

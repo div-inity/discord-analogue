@@ -86,6 +86,23 @@ export function generalFunctions() {
     window.removeEventListener('resize', updateHeight);
     window.removeEventListener('resize', updateWidth);
   });
+
+  const textStatus = (status) => {
+    switch (status) {
+      case 'phone':
+        return 'В сети';
+      case 'offline':
+        return 'Не в сети';
+      case 'red':
+        return 'Не беспокоить';
+      case 'moon':
+        return 'Неактивен';
+      case 'online':
+        return 'В сети';
+      case 'streaming':
+        return 'В сети';
+    }
+  };
   return {
     dialogNames,
     memberWord,
@@ -93,6 +110,7 @@ export function generalFunctions() {
     updateSidebarWidth,
     navbarWidth,
     profileWidth,
-    headerWidth
+    headerWidth,
+    textStatus
   };
 }
