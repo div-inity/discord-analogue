@@ -14,7 +14,8 @@
           <router-link :class="(m.missed && m.missed > 0) ? 'missed' : null" :to="'/messages/' + m.id"
             class="link-message">
             <Avatar v-if="m.avatars && m.avatars.length == 1" size="48" :mentions="m.missed" :avatar="m.avatars" />
-            <Avatar v-else size="48" :mentions="m.missed" :avatars="m.avatars" multy />
+            <Avatar v-else size="48" :mentions="m.missed" :avatars="m.avatars" multy
+              outline="var(--system-back-color5)" />
           </router-link>
         </div>
       </div>

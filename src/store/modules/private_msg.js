@@ -38,6 +38,7 @@ export default {
         id: 35,
         names: ["Василий Николаев", "Михаил Шатов"],
         avatars: [require('@/assets/img/UserIcon2.jpg'), require('@/assets/img/UserIcon1.jpg')],
+        status: 'online',
       },
       {
         id: 101,

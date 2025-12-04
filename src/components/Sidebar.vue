@@ -23,14 +23,17 @@
         </div>
         <div class="dialogs flex column">
           <div class="dialog flex row" v-for="(d, i) in dialogs">
-            <div class="avatar" v-if="d.avatars.length == 1">
+            <!-- <div class="avatar" v-if="d.avatars.length == 1">
               <img :src="d.avatars[0]" alt="" class="radial">
               <div class="status radial" :class="d.status"></div>
             </div>
             <div class="multi-user-avatar" v-else>
               <img class="multi-avatar" :src="d.avatars[0]" alt="">
               <img class="multi-avatar" :src="d.avatars[1]" alt="">
-            </div>
+            </div> -->
+            <Avatar v-if="d.avatars?.length == 1" size="32" :status="d.status" :avatar="d.avatars[0]" />
+            <Avatar v-else size="32" :status="d.status" :avatars="d.avatars" multy
+              outline="var(--system-back-color3)" />
             <div class="flex column dialog-info">
               <div class="names" v-if="d.names.length > 1" v-tippy="{ content: dialogNames(d.id), placement: 'top' }">
                 {{ dialogNames(d.id) }}
@@ -60,6 +63,7 @@ import { reactive, ref, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 import { useStore } from 'vuex';
+import Avatar from './Avatar.vue';
 
 import { generalFunctions } from '@/composables/generalFunctions';
 const { dialogNames, memberWord, sidebarWidth, updateSidebarWidth, } = generalFunctions();
@@ -181,6 +185,10 @@ onBeforeUnmount(() => {
 
 </script>
 <style lang="scss">
+/* img.multi-avatar {
+  outline: 3px solid var(--system-back-color3) !important;
+} */
+
 .sidebar-wrapper {
   height: 100%;
   width: 240px;
@@ -306,12 +314,6 @@ onBeforeUnmount(() => {
         column-gap: 12px;
         position: relative;
 
-        .status {
-          background-color: var(--system-back-color3);
-          outline: 2px solid var(--system-back-color3);
-          height: 10px;
-        }
-
         &:hover {
           background-color: var(--system-back-color2);
           color: var(--main-text-color);
@@ -322,46 +324,6 @@ onBeforeUnmount(() => {
 
           .remove-dialog {
             visibility: visible;
-          }
-        }
-
-        img {
-          aspect-ratio: 1/1;
-          background-position: center center;
-        }
-
-        .avatar {
-          height: 32px;
-          position: relative;
-
-          img {
-            height: inherit;
-          }
-        }
-
-        .multi-user-avatar {
-          aspect-ratio: 1/1;
-          height: 32px;
-          position: relative;
-
-          .multi-avatar {
-            width: 60%;
-            height: 60%;
-            border-radius: 30px;
-            position: absolute;
-            outline: 3px solid var(--system-back-color3);
-
-            &:first-child {
-              z-index: 1;
-              left: 0;
-              top: 0;
-            }
-
-            &:nth-child(2) {
-              z-index: 2;
-              right: 0;
-              bottom: 0;
-            }
           }
         }
 

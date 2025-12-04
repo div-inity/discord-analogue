@@ -35,7 +35,9 @@
         <img class="multi-avatar radial" :src="props.avatars?.[0] || require('@/assets/img/svg/logo.svg')"
           :class="{ 'user-logo': !props.avatars?.[0] }" alt="User Avatar 1" />
         <img class="multi-avatar radial" :src="props.avatars?.[1] || require('@/assets/img/svg/logo.svg')"
-          :class="{ 'user-logo': !props.avatars?.[1] }" alt="User Avatar 2" />
+          :class="{ 'user-logo': !props.avatars?.[1] }" alt="User Avatar 2" :style="{
+            'outline-color': props.outline ? props.outline : null
+          }" />
         <div v-if="props.status" class="status radial" :class="props.status"></div>
         <div class="activity radial" v-if="props.activity"
           :class="[defineActivity(), { 'my_activity': props.active === true }]"></div>
@@ -79,6 +81,10 @@ const props = defineProps({
   },
   size: { // размер аватара
     type: Number,
+    required: false
+  },
+  outline: { // Для двойного аватара - цвет обводки
+    type: String,
     required: false
   }
 })
@@ -126,7 +132,8 @@ const defineActivity = () => {
       width: 60%;
       height: 60%;
       position: absolute;
-      outline: 3px solid var(--system-back-color5);
+
+
 
       &:first-child {
         z-index: 1;
@@ -138,6 +145,13 @@ const defineActivity = () => {
         z-index: 2;
         right: 0;
         bottom: 0;
+
+        outline: {
+          width: 3px;
+          style: solid;
+          color: transparent;
+          /* color: var(--system-back-color5); */
+        }
       }
     }
   }
