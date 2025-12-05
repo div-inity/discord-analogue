@@ -101,9 +101,9 @@ const actions = reactive( // Функционал сайдбара
     {
       id: 1,
       name: t('sidebar.friends'),
-      link: '/friends',
+      link: '/friends/online',
       handler: () => {
-        router.push({ name: 'friends' })
+        router.push({ name: 'online' })
       },
       avatar: menuIcons.friends,
       active: true,

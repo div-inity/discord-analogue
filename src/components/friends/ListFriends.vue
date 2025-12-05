@@ -1,5 +1,5 @@
 <template>
-  <TransitionGroup name="list" tag="div" class="list-friends-wrapper">
+  <div class="list-friends-wrapper">
     <p class="title-list-friends">
       <slot name="title">Название списка друзей</slot>
     </p>
@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-  </TransitionGroup>
+  </div>
 </template>
 <script setup>
 import Avatar from '../Avatar.vue';

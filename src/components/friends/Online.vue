@@ -2,14 +2,6 @@
   <ContentFlex>
     <Content :RightAside="350">
       <TextField icon="search">
-        <template v-slot:prefix>
-          <button>drhrh</button>
-          <button>drhrh</button>
-          <button>drhrh</button>
-        </template>
-        <template v-slot:actions>
-          <button>21212121</button>
-        </template>
       </TextField>
       <ListFriends :list="online">
         <template v-slot:title>В сети &#8211 {{ online.length }}</template>

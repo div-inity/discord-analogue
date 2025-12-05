@@ -51,6 +51,11 @@ const setHeaderClass = () => {
           color: var(--loud-text-color);
           background: var(--button-back-color);
         }
+
+        &.active {
+          color: var(--loud-text-color);
+          background: var(--button-back-color);
+        }
       }
 
       .add-friend {

@@ -1,7 +1,7 @@
 <template>
   <div class="input-wrapper flex row" :style="{
-    height: props.height ? props.height + 'px' : auto,
-    width: props.width ? props.width + '%' : auto
+    height: props.height ? props.height + 'px' : null,
+    width: props.width ? props.width + '%' : null
   }">
     <span class="icon" v-html="icons.search" v-if="props.icon == 'search'"></span>
     <div class="prefix flex row">
@@ -46,7 +46,7 @@ const icons = {
   border-radius: 8px;
   width: 100%;
   background-color: var(--system-back-color5);
-  height: 48px;
+  height: 55px;
   padding: 12px;
   column-gap: 12px;
   font-family: var(--font-family-400);
@@ -73,12 +73,21 @@ const icons = {
 
   input {
     flex-grow: 2;
+    font-size: 15px;
   }
 
   button {
     cursor: pointer;
     height: 100%;
-    padding-inline: 5px;
+    padding-inline: 10px;
+    background-color: var(--system-purple-color);
+    color: var(--loud-text-color);
+    filter: brightness(.9);
+    font-size: 14px;
+
+    &:hover {
+      filter: none;
+    }
   }
 }
 </style>
