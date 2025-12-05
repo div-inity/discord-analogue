@@ -1,0 +1,84 @@
+<template>
+  <div class="input-wrapper flex row" :style="{
+    height: props.height ? props.height + 'px' : auto,
+    width: props.width ? props.width + '%' : auto
+  }">
+    <span class="icon" v-html="icons.search" v-if="props.icon == 'search'"></span>
+    <div class="prefix flex row">
+      <slot name="prefix"></slot>
+    </div>
+    <input type="text" placeholder="Поиск" name="input">
+    <slot name="actions"></slot>
+    <button v-if="props.icon == 'search'">
+      <slot name="button">Поиск</slot>
+    </button>
+  </div>
+</template>
+<script setup>
+const props = defineProps({
+  icon: {
+    type: String,
+    required: false,
+  },
+  height: {
+    type: String,
+    required: false,
+  },
+  width: {
+    type: String,
+    required: false,
+  },
+});
+const icons = {
+  search: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M52.0667 56.7666C46.077 61.5549 38.4811 63.8678 30.8393 63.2301C23.1974 62.5924 16.0899 59.0526 10.9767 53.3377C5.8635 47.6229 3.13282 40.167 3.34561 32.5015C3.55839 24.8361 6.69848 17.5432 12.1209 12.1208C17.5432 6.69842 24.8362 3.55833 32.5016 3.34555C40.167 3.13276 47.623 5.86344 53.3378 10.9766C59.0526 16.0899 62.5924 23.1974 63.2301 30.8392C63.8679 38.481 61.555 46.077 56.7667 52.0666L72.3667 67.6333C72.6775 67.9441 72.924 68.3131 73.0922 68.7191C73.2604 69.1252 73.347 69.5604 73.347 70C73.347 70.4395 73.2604 70.8747 73.0922 71.2808C72.924 71.6869 72.6775 72.0558 72.3667 72.3666C72.0559 72.6774 71.6869 72.924 71.2809 73.0922C70.8748 73.2604 70.4396 73.3469 70 73.3469C69.5605 73.3469 69.1253 73.2604 68.7192 73.0922C68.3131 72.924 67.9442 72.6774 67.6334 72.3666L52.0667 56.7666ZM56.6667 33.3333C56.6667 36.3975 56.0632 39.4317 54.8906 42.2626C53.7179 45.0935 51.9992 47.6658 49.8325 49.8325C47.6658 51.9992 45.0936 53.7179 42.2626 54.8905C39.4317 56.0631 36.3975 56.6666 33.3334 56.6666C30.2692 56.6666 27.235 56.0631 24.4041 54.8905C21.5731 53.7179 19.0009 51.9992 16.8342 49.8325C14.6675 47.6658 12.9488 45.0935 11.7762 42.2626C10.6036 39.4317 10 36.3975 10 33.3333C10 27.1449 12.4584 21.21 16.8342 16.8341C21.2101 12.4583 27.145 9.99996 33.3334 9.99996C39.5217 9.99996 45.4567 12.4583 49.8325 16.8341C54.2084 21.21 56.6667 27.1449 56.6667 33.3333Z"
+        fill="#ABABAB" />
+    </svg>`,
+};
+</script>
+<style lang="scss">
+.input-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  width: 100%;
+  background-color: var(--system-back-color5);
+  height: 48px;
+  padding: 12px;
+  column-gap: 12px;
+  font-family: var(--font-family-400);
+
+  &:focus-within {
+    outline: 1px solid var(--link-color);
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    width: 20px;
+    height: 20px;
+
+    svg {}
+  }
+
+  .prefix {
+    height: 100%;
+    column-gap: 8px;
+  }
+
+  input {
+    flex-grow: 2;
+  }
+
+  button {
+    cursor: pointer;
+    height: 100%;
+    padding-inline: 5px;
+  }
+}
+</style>
