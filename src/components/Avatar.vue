@@ -1,6 +1,7 @@
 <template>
   <div class="avatar single-user-avatar radial" v-if="!props.multy && props.avatar" :style="{
     width: props.size ? props.size + 'px' : null,
+    'min-width': props.size ? props.size + 'px' : null,
     height: props.size ? props.size + 'px' : null
   }" :class="{ 'square': props.square }">
     <img class="single-avatar radial" :src="props.avatar" alt="User Avatar" />
@@ -15,6 +16,7 @@
     <!-- Альтернатива, если props.avatar отсутствует -->
     <div v-else-if="!props.multy && !props.avatar" class="avatar single-user-avatar radial user-logo" :style="{
       width: props.size ? props.size + 'px' : null,
+      'min-width': props.size ? props.size + 'px' : null,
       height: props.size ? props.size + 'px' : null
     }" :class="{ 'square': props.square }">
       <img class="single-avatar radial" src="@/assets/img/svg/logo.svg" alt="Default Logo" />
@@ -30,6 +32,7 @@
 
       <div class="avatar multi-user-avatar" v-else-if="props.multy || props.avatars" :style="{
         width: props.size ? props.size + 'px' : null,
+        'min-width': props.size ? props.size + 'px' : null,
         height: props.size ? props.size + 'px' : null
       }">
         <img class="multi-avatar radial" :src="props.avatars?.[0] || require('@/assets/img/svg/logo.svg')"
