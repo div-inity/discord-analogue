@@ -1,1 +1,0 @@
-<template>friends/pending</template>

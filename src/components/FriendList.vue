@@ -3,8 +3,9 @@
     <p class="title-list-friends">
       <slot name="title">Название списка друзей</slot>
     </p>
-    <div class="list-friends flex column">
-      <div class="list-friends-items flex column" v-for="item in props.list">
+    <TransitionGroup name="list" tag="div" class="list-friends flex column">
+      <div class="list-friends-items flex column" v-for="item in props.list" :key="item">
+
         <Divider h color="var(--system-back-color3)" :width="98" />
         <div class="list-friends-item flex row">
           <Avatar :avatar="item.avatar" :size="40" :status="item.status"></Avatar>
@@ -18,12 +19,12 @@
           </div>
         </div>
       </div>
-    </div>
+    </TransitionGroup>
   </div>
 </template>
 <script setup>
-import Avatar from '../Avatar.vue';
-import Divider from '../Divider.vue';
+import Avatar from './Avatar.vue';
+import Divider from './Divider.vue';
 import { generalFunctions } from '@/composables/generalFunctions';
 const { textStatus } = generalFunctions();
 const props = defineProps({
@@ -45,6 +46,23 @@ const icons = {
 };
 </script>
 <style lang="scss">
+// стили для TransitionGroup:
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.list-leave-active {
+  position: absolute;
+}
+
 .list-friends-wrapper {
 
   .title-list-friends {

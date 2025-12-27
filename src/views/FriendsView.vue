@@ -16,13 +16,34 @@
         <template v-slot:other>
           <Divider v :height="40" color="var(--system-back-color1)" />
           <nav class="friends-header-nav flex row">
-            <router-link v-for="nl in navLinks" :to="'/friends/' + nl.link"
-              :class="{ active: activeLink() == '/friends/' + nl.link }">{{ nl.name }}</router-link>
+            <!-- <router-link v-for="nl in navLinks" :to="'/friends/' + nl.link"
+              :class="{ active: activeLink() == '/friends/' + nl.link }">{{ nl.name }}</router-link> -->
+            <button @click="setMode(nl)" v-for="nl in navLinks" :class="{ active: mode == nl }">
+              {{ nl }}
+            </button>
+            <!-- здесь сделать кнопки без роутов - организовать функцию для вывода друзей в зависимости от нажатой кнопки -->
             <a href="/friends/add" class="add-friend">Add Friend</a>
           </nav>
+
         </template>
       </ContentHeader>
-      <router-view></router-view>
+      <ContentFlex>
+        <Content :RightAside="350">
+          <TextField icon="search">
+          </TextField>
+          <FriendList :list="friendsWithMode || []">
+            <template v-slot:title>В сети &#8211 {{ friendsWithMode?.length || 0 }}</template>
+          </FriendList>
+        </Content>
+        <RightAside :RightAside="350">
+          <p class="friends-aside-title">Active Now</p>
+          <div class="friends-aside-content flex column">
+            <span>It’s quiet for now...</span>
+            <p>When a friend start an activity - like playing a game or
+              hanging out on voice - we’ll show it here!</p>
+          </div>
+        </RightAside>
+      </ContentFlex>
     </div>
 
   </div>
@@ -31,36 +52,79 @@
 import Sidebar from '@/components/Sidebar.vue'
 import ContentHeader from '@/components/ContentHeader.vue';
 import Divider from '@/components/Divider.vue';
-import { reactive } from 'vue';
-import { useRoute } from 'vue-router';
-const route = useRoute();
-const activeLink = () => {
-  return route.path;
+import ContentFlex from '@/components/ContentFlex.vue';
+import Content from '@/components/Content.vue';
+import RightAside from '@/components/RightAside.vue';
+import FriendList from '@/components/FriendList.vue';
+import TextField from '@/components/TextField.vue';
+import { ref, onMounted } from 'vue';
+import { useStore } from 'vuex';
+const store = useStore();
+const allFriends = ref(store.state.user.friends.added);
+const friendsWithMode = ref(null);
+const mode = ref(null)
+const setMode = (m) => { // Устанавливает мод, по которому выводятся друзья - онлайн, все и т.д.
+  mode.value = m
+  //console.log(mode.value)
+  switch (m) {
+    case 'online': {
+      friendsWithMode.value = allFriends.value.filter(friend => friend.status !== 'offline')
+      break;
+    }
+    case 'all': {
+      friendsWithMode.value = allFriends.value;
+      break;
+    }
+    case 'pending': {
+      friendsWithMode.value = store.state.user.friends.pending;
+      break;
+    }
+    case 'blocked': {
+      friendsWithMode.value = store.state.user.friends.blocked;
+      break;
+    }
+  }
 }
-activeLink()
-const navLinks = reactive([
-  {
-    name: 'Online',
-    link: 'online'
-  },
-  {
-    name: 'All',
-    link: 'all'
-  },
-  {
-    name: 'Pending',
-    link: 'pending'
-  },
-  {
-    name: 'Blocked',
-    link: 'blocked'
-  },
-])
-
+const navLinks = [
+  'online', 'all', 'pending', 'blocked'
+];
+onMounted(() => {
+  setMode("online")
+})
 </script>
 <style lang="scss">
 .friends-container {
   display: flex;
   flex-direction: row;
+}
+
+.right-aside {
+  .friends-aside-title {
+    font-family: var(--font-family-600);
+    font-size: 20px;
+    line-height: 120%;
+    color: var(--main-text-color);
+    height: 56px;
+  }
+
+  .friends-aside-content {
+    align-items: center;
+    row-gap: 8px;
+
+    span {
+      font-family: var(--font-family-600);
+      font-size: 14px;
+      line-height: 171%;
+      color: var(--main-text-color);
+    }
+
+    p {
+      font-family: var(--font-family-400);
+      font-size: 11px;
+      line-height: 145%;
+      text-align: center;
+      color: var(--muted-text-color);
+    }
+  }
 }
 </style>
