@@ -32,7 +32,7 @@
           <TextField icon="search">
           </TextField>
           <FriendList :list="friendsWithMode || []">
-            <template v-slot:title>В сети &#8211 {{ friendsWithMode?.length || 0 }}</template>
+            <template v-slot:title>{{ title }} &#8211 {{ friendsWithMode?.length || 0 }}</template>
           </FriendList>
         </Content>
         <RightAside :RightAside="350">
@@ -62,24 +62,29 @@ import { useStore } from 'vuex';
 const store = useStore();
 const allFriends = ref(store.state.user.friends.added);
 const friendsWithMode = ref(null);
+const title = ref(null);
 const mode = ref(null)
 const setMode = (m) => { // Устанавливает мод, по которому выводятся друзья - онлайн, все и т.д.
   mode.value = m
   //console.log(mode.value)
   switch (m) {
     case 'online': {
+      title.value = "В сети";
       friendsWithMode.value = allFriends.value.filter(friend => friend.status !== 'offline')
       break;
     }
     case 'all': {
+      title.value = "Всего друзей";
       friendsWithMode.value = allFriends.value;
       break;
     }
     case 'pending': {
+      title.value = "Заявки в друзья";
       friendsWithMode.value = store.state.user.friends.pending;
       break;
     }
     case 'blocked': {
+      title.value = "Игнорируются";
       friendsWithMode.value = store.state.user.friends.blocked;
       break;
     }
