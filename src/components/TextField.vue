@@ -45,6 +45,7 @@ const icons = {
   align-items: center;
   border-radius: 8px;
   width: 100%;
+  min-width: 335px;
   background-color: var(--system-back-color5);
   height: 55px;
   padding: 12px;
@@ -74,6 +75,7 @@ const icons = {
   input {
     flex-grow: 2;
     font-size: 15px;
+    height: 100%;
   }
 
   button {
@@ -88,6 +90,12 @@ const icons = {
     &:hover {
       filter: none;
     }
+  }
+}
+
+@media screen and (max-width: 725px) {
+  .input-wrapper {
+    column-gap: 4px;
   }
 }
 </style>

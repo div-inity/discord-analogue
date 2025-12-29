@@ -1,6 +1,6 @@
 <template>
-  <div class="content flex column" :style="{ width: contentWidth + 'px', height: contentHeight + 'px' }"
-    @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" :class="{ hovered: isHovered }">
+  <div class="content flex column" :style="{ width: contentWidth + 'px' }" @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave" :class="{ hovered: isHovered }">
     <slot>
       content width:{{ headerWidth }}<br>
       content height:{{ contentHeight }}
@@ -15,9 +15,9 @@ const { headerWidth } = generalFunctions();
 const props = defineProps({
   RightAside: { type: Number, required: false } // Для определения размеров контента
 })
-const contentHeight = computed(() => {
+/* const contentHeight = computed(() => {
   return window.innerHeight - 50;
-});
+}); */
 const windowWidth = ref(window.innerWidth);
 const updateWidth = () => {
   windowWidth.value = window.innerWidth;
@@ -44,10 +44,13 @@ function onMouseLeave() {
 </script>
 <style lang="scss">
 .content {
-  height: 100%;
+  min-height: 100%;
   padding: 15px 25px;
+  height: calc(100vh - 50px);
   row-gap: 15px;
   overflow-y: auto;
+  min-width: 370px;
+  position: relative;
 
   /* базовые стили scrollbar */
   &::-webkit-scrollbar {

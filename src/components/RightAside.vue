@@ -50,6 +50,7 @@ const widthAside = computed(() => {
   background-color: var(--system-back-color1);
   border-left: 1px solid var(--system-back-color5);
   padding: 16px;
+  overflow: hidden;
 
   &>* {
     max-width: 100%;

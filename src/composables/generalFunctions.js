@@ -103,6 +103,7 @@ export function generalFunctions() {
         return 'В сети';
     }
   };
+
   return {
     dialogNames,
     memberWord,

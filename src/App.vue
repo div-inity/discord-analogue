@@ -48,6 +48,8 @@ html {
 #app {
   height: 100vh;
   width: 100vw;
+  min-width: 800px;
+  min-height: 380px;
 }
 
 .theme-switcher {

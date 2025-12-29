@@ -350,7 +350,7 @@ onBeforeUnmount(() => {
           cursor: pointer;
           visibility: hidden;
           position: absolute;
-          right: 5px;
+          right: 7px;
 
           &:hover svg * {
             fill: var(--main-text-color);
