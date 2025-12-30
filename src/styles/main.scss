@@ -194,8 +194,8 @@ a {
 }
 
 .status {
-  height: 12px;
-  width: 12px;
+  height: 37.5%;
+  width: 37.5%;
   background-repeat: no-repeat;
   background-position: center center;
   right: 0;
@@ -211,7 +211,7 @@ a {
 
   &.phone {
     background-image: url(@/assets/img/svg/status/phone.svg);
-    height: 15px !important;
+    height: 46.88% !important;
     border-radius: 1px !important;
   }
 

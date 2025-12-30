@@ -4,7 +4,7 @@
       <slot name="page-title">
         Без имени
       </slot>
-      <slot name="other">Прочие элементы header-а</slot>
+      <slot name="other"><!-- Прочие элементы header-а --></slot>
     </span>
     headerWidth: {{ headerWidth }}
   </div>
@@ -26,11 +26,14 @@ const setHeaderClass = () => {
   overflow-x: auto;
   scrollbar-width: none;
 
+  span {
+    align-items: center;
+    column-gap: 12px;
+  }
+
   &.friends-header {
     span {
-      align-items: center;
       justify-content: center;
-      column-gap: 12px;
     }
 
     .friends-header-nav {

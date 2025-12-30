@@ -1,5 +1,5 @@
 <template>
-  <div class="friends-container">
+  <div class="friends-container flex row">
     <Sidebar></Sidebar>
     <div class="content-wrapper flex column">
       <ContentHeader>
@@ -16,12 +16,9 @@
         <template v-slot:other>
           <Divider v :height="40" color="var(--system-back-color1)" />
           <nav class="friends-header-nav flex row">
-            <!-- <router-link v-for="nl in navLinks" :to="'/friends/' + nl.link"
-              :class="{ active: activeLink() == '/friends/' + nl.link }">{{ nl.name }}</router-link> -->
             <button @click="setMode(nl)" v-for="nl in navLinks" :class="{ active: mode == nl }">
               {{ nl }}
             </button>
-            <!-- здесь сделать кнопки без роутов - организовать функцию для вывода друзей в зависимости от нажатой кнопки -->
             <a href="/friends/add" class="add-friend">Add Friend</a>
           </nav>
 
@@ -98,10 +95,7 @@ onMounted(() => {
 })
 </script>
 <style lang="scss">
-.friends-container {
-  display: flex;
-  flex-direction: row;
-}
+.friends-container {}
 
 .right-aside {
   .friends-aside-title {

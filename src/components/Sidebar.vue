@@ -14,7 +14,6 @@
           </li>
         </ul>
       </menu>
-      <!--  <div class="divider h-divider sidebar-divider"></div> -->
       <menu class="private-msg">
         <div class="title">
           Личные сообщения
@@ -23,14 +22,6 @@
         </div>
         <div class="dialogs flex column">
           <div class="dialog flex row" v-for="(d, i) in dialogs">
-            <!-- <div class="avatar" v-if="d.avatars.length == 1">
-              <img :src="d.avatars[0]" alt="" class="radial">
-              <div class="status radial" :class="d.status"></div>
-            </div>
-            <div class="multi-user-avatar" v-else>
-              <img class="multi-avatar" :src="d.avatars[0]" alt="">
-              <img class="multi-avatar" :src="d.avatars[1]" alt="">
-            </div> -->
             <Avatar v-if="d.avatars?.length == 1" :size="32" :status="d.status" :avatar="d.avatars[0]" />
             <Avatar v-else :size="32" :status="d.status" :avatars="d.avatars" multy
               outline="var(--system-back-color3)" />
@@ -185,10 +176,6 @@ onBeforeUnmount(() => {
 
 </script>
 <style lang="scss">
-/* img.multi-avatar {
-  outline: 3px solid var(--system-back-color3) !important;
-} */
-
 .sidebar-wrapper {
   height: 100%;
   width: 240px;
@@ -206,7 +193,6 @@ onBeforeUnmount(() => {
     height: 50px;
     width: 100%;
     padding: 10px;
-    /* box-shadow: 0px 1px 2px #232527; */
     border-bottom: 1px solid var(--system-back-color5);
 
     .sidebar-search-dialog {
@@ -228,7 +214,6 @@ onBeforeUnmount(() => {
 
   .sidebar-actions {
     padding: 10px;
-    /* box-shadow: inset 0px -1px 2px #232527; */
 
     .sidebar-actions-link {
       color: var(--muted-text-color);
@@ -382,7 +367,5 @@ onBeforeUnmount(() => {
       background-color: var(--system-back-color4);
     }
   }
-
-
 }
 </style>

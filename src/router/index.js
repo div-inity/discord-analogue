@@ -2,7 +2,6 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import MainView from "../views/MainView.vue";
 import MessagesView from "../views/MessagesView.vue";
 import FriendsView from "../views/FriendsView.vue";
-import private_msg from "@/store/modules/private_msg";
 
 const routes = [
   {
