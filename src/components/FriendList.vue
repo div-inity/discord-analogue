@@ -17,11 +17,9 @@
             <button v-html="icons.chat" class="radial" v-tippy="{ content: 'Сообщение', placement: 'top' }"></button>
             <button v-html="icons.options" class="radial" v-tippy="{ content: 'Ещё', placement: 'top' }"
               @click="showPopup(i)"></button>
-            <PopUp :key="i" v-show="visiblePopup == i">
+            <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
               <template v-slot:items>
-                <a href="#" @click="handleButtonClick1" class="item">Начать видеозвонок</a>
-                <a href="#" @click="handleButtonClick2" class="item">Начать голосовой звонок</a>
-                <a href="#" @click="handleButtonClick3" class="item">Удалить из друзей</a>
+                <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
               </template>
             </PopUp>
           </div>
@@ -54,19 +52,36 @@ const icons = {
 </svg>
 `,
 };
+const popupItems = ref([
+  {
+    name: 'Начать видеозвонок',
+    handler: () => {
+      alert('Кнопка 1 нажата!');
+    }
+  },
+  {
+    name: 'Начать голосовой звонок',
+    handler: () => {
+      alert('Кнопка 2 нажата!');
+    }
+  },
+  {
+    name: 'Удалить из друзей',
+    class: 'red',
+    handler: () => {
+      alert('Кнопка 3 нажата!');
+    }
+  },
+])
 const visiblePopup = ref(null);
 const showPopup = (popup) => {
   visiblePopup.value = popup;
+  //console.log(visiblePopup.value)
 }
-const handleButtonClick1 = () => {
-  alert('Кнопка 1 нажата!');
-};
-const handleButtonClick2 = () => {
-  alert('Кнопка 2 нажата!');
-};
-const handleButtonClick3 = () => {
-  alert('Кнопка 3 нажата!');
-};
+const hidePopup = () => {
+  visiblePopup.value = null;
+  //console.log(visiblePopup.value)
+}
 </script>
 <style lang="scss">
 // стили для TransitionGroup:

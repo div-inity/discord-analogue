@@ -22,7 +22,7 @@
   top: 30px;
   z-index: 40;
 
-  a.item {
+  a {
     width: 100%;
     background: transparent;
     color: var(--main-text-color);
@@ -34,6 +34,14 @@
     &:hover {
       filter: none;
       background-color: var(--button-back-color);
+    }
+
+    &.red {
+      color: var(--notification-color);
+
+      &:hover {
+        background: #f23f421c;
+      }
     }
   }
 }

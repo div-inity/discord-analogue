@@ -9,7 +9,7 @@
     </div>
     <input type="text" placeholder="Поиск" name="input">
     <slot name="actions"></slot>
-    <button v-if="props.icon == 'search'">
+    <button v-if="props.icon == 'search' && props.button == true">
       <slot name="button">Поиск</slot>
     </button>
   </div>
@@ -26,6 +26,10 @@ const props = defineProps({
   },
   width: {
     type: String,
+    required: false,
+  },
+  button: {
+    type: Boolean,
     required: false,
   },
 });
