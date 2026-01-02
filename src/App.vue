@@ -23,9 +23,9 @@ const user = computed(() => store.getters['user/getUser'])
 const checkAuth = () => {
   //console.log('User', user.value);
   if (!user.value) {
-    router.push('/auth')
+    router.push('/register')
   } else {
-    /* router.push({ name: 'friends' }) */
+    router.push({ name: 'friends' })
   }
 }
 
@@ -40,16 +40,16 @@ onMounted(() => {
 
 html {
   background-image: none;
-  min-width: 796px;
-  min-height: 380px;
+  /* min-width: 796px;
+  min-height: 380px; */
   overflow: hidden;
 }
 
 #app {
   height: 100vh;
   width: 100vw;
-  min-width: 800px;
-  min-height: 380px;
+  /* min-width: 800px;
+  min-height: 380px; */
 }
 
 .theme-switcher {

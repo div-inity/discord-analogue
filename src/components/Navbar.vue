@@ -1,5 +1,5 @@
 <template>
-  <TransitionGroup name="fade" class="navbar" tag="div" :style="{ width: navbarWidth + 'px' }">
+  <TransitionGroup name="fade" class="navbar" tag="div" :style="{ width: navbarWidth + 'px' }" v-if="user">
     <div class="private-messages" :key="currentBlock">
       <div class="home-link" v-tippy="{ content: t('navbar.mymessages') }">
         <router-link to="/messages" :class="(activeServer > 0) ? null : 'active'" class="home">

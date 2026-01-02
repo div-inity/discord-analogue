@@ -1,15 +1,15 @@
 export default {
   namespaced: true,
   state: {
-    user: {
+    /* user: {
       id: 1,
       name: 'Discord User',
       nikname: 'veselaya_devka',
       //avatar: require('@/assets/img/ava.jpg'),
       status: 'online',
       info: 'Playing Counter-Strike 2',
-    },
-    //user: null
+    }, */
+    user: null,
     friends: {
       added: [
         {

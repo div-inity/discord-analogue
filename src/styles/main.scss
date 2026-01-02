@@ -63,10 +63,13 @@
   --Ubuntu: "Ubuntu", sans-serif;
 
   --notification-color: #f23f42;
+  --muted-notification-color: salmon;
   --system-green-color: #248046;
   --system-purple-color: #5865f2;
   --link-color: #00aff4;
 }
+
+
 
 *,
 *::after,
@@ -138,6 +141,7 @@ a {
   background-color: var(--system-purple-color);
   color: #fff;
   text-align: center;
+  cursor: pointer;
 
   &:hover {
     opacity: 0.7;
@@ -194,15 +198,15 @@ a {
 }
 
 .status {
-  height: 37.5%;
-  width: 37.5%;
+  height: 10px;
+  width: 10px;
   background-repeat: no-repeat;
   background-position: center center;
   right: 0;
   position: absolute;
   bottom: 0;
   background-color: var(--system-back-color3);
-  outline: 2px solid var(--system-back-color3);
+  outline: 3px solid var(--system-back-color3);
   z-index: 10;
 
   &.moon {
@@ -211,7 +215,7 @@ a {
 
   &.phone {
     background-image: url(@/assets/img/svg/status/phone.svg);
-    height: 46.88% !important;
+    height: 15px !important;
     border-radius: 1px !important;
   }
 
@@ -228,10 +232,7 @@ a {
   }
 
   &.online {
-    background-color: #3BA55D !important;
-    outline-width: 3px !important;
-    height: 10px;
-    width: 10px;
+    background-image: url(@/assets/img/svg/status/online.svg);
   }
 }
 

@@ -12,7 +12,8 @@
       <a href="#" class="forgot-pass">{{ t('auth.forgotpass') }}</a>
       <button class="button-auth button-purple log-in">{{ t('auth.button') }}</button>
       <p class="register-link">{{ t('auth.registerlink') }} &nbsp&nbsp
-        <a href="#" class="register">{{ t('auth.register') }}</a>
+        <RouterLink to="/register" class="register">{{ t('auth.register') }}
+        </RouterLink>
       </p>
     </form>
     <div class="qrcode-block">
@@ -21,26 +22,39 @@
       <p class="scan-qr">{{ t('auth.scanqr') }}</p>
     </div>
   </div>
+
 </template>
 <script setup>
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+import { useStore } from 'vuex';
+const store = useStore();
+import { useRouter } from 'vue-router'
+const router = useRouter()
+if (store.state.user.user != null) {
+  router.push('/friends')
+}
+
 </script>
 <style lang="scss">
 * {
   font-weight: 400;
 }
 
-#app {
+body {
   font-family: var(--Ubuntu);
   background-image: url(@/assets/img/BackgroungAuth.svg);
   background-size: cover;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  height: 100vh;
+
+  #app {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+  }
 }
 
 .auth-screen {
@@ -143,6 +157,7 @@ const { t } = useI18n()
 @media screen and (max-width: 800px) {
   html {
     height: auto;
+    overflow-y: auto;
 
     #app {
       width: auto;

@@ -1,5 +1,8 @@
 import { useStore } from 'vuex';
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted, watchEffect } from 'vue';
+import { useRouter } from 'vue-router'
+
+
 
 const getInitialSidebarWidth = () => {
   try {
@@ -20,6 +23,7 @@ const sidebarWidth = ref(getInitialSidebarWidth());
 const navbarWidth = ref(68);
 
 export function generalFunctions() {
+  const router = useRouter()
   const store = useStore();
 
   const dialogs = computed(() => store.state.private_msg.dialogs);
@@ -112,6 +116,6 @@ export function generalFunctions() {
     navbarWidth,
     profileWidth,
     headerWidth,
-    textStatus
+    textStatus,
   };
 }

@@ -71,10 +71,16 @@ const routes = [
           import(/* webpackChunkName: "tasks" */ "../views/TasksView.vue"),
       },
       {
-        path: "/auth",
-        name: "auth",
+        path: "/login",
+        name: "login",
         component: () =>
-          import(/* webpackChunkName: "auth" */ "../views/AuthView.vue"),
+          import(/* webpackChunkName: "login" */ "../views/AuthView.vue"),
+      },
+      {
+        path: "/register",
+        name: "register",
+        component: () =>
+          import(/* webpackChunkName: "register" */ "../views/RegisterView.vue"),
       },
       {
         path: "/add-server",
@@ -113,6 +119,7 @@ const routes = [
   },
 
 ];
+
 
 const router = createRouter({
   history: createWebHashHistory(),
