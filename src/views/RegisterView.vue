@@ -2,14 +2,31 @@
   <div class="register-screen flex row">
     <form action="" class="register-form flex column">
       <h1>Создать учётную запись</h1>
-      <div v-for="(field, key) in Object.values(fields)" :key="field.id" class="flex column form-row">
-        <label :for="field.id">{{ field.label }}</label>
-        <input :type="field.type || 'text'" :id="field.id" v-model="field.value" @focus="field.focused = true"
-          @blur="() => { field.focused = false; validateField(field) }" autocomplete="off" />
-        <Hint v-show="shouldShowHint(field.id)" :text="field.hint" :show="field.focused || field.error" />
+      <div v-for="(field, key) in Object.values(fields)" 
+        :key="field.id" 
+        class="flex column form-row">
+        <label :for="field.id">
+          {{ field.label }}
+          <span class="require" v-if="field.required">
+          </span>
+        </label>
+        <input 
+          :type="field.type || 'text'" 
+          :id="field.id" 
+          v-model="field.value" 
+          @focus="field.focused = true"
+          @blur="() => { field.focused = false; validateField(field) }" 
+          @input="validateField(field)"
+          autocomplete="off" />
+        <Hint 
+          v-show="shouldShowHint(field.id)" 
+          :text="field.error ? field.error : field.hint"
+          :show="field.focused || (field.error != null)" 
+          :color="field.error ? 'var(--muted-notification-color)' : null"
+          :icon="field.error ? 'info' : null" />
       </div>
 
-      <label>Дата рождения</label>
+      <label>Дата рождения <span class="require"></span></label>
       <button class="button-purple button-reg">Создать учётную запись</button>
       <p class="auth-link">
         <RouterLink to="/login" class="login">Уже зарегистрированы? Войти
@@ -37,7 +54,25 @@ const shouldShowHint = (fieldId) => {
 };
 const validateField = (field) => {
   // Например: минимальная длина для пароля
-  if (field.id === 'password') {
+  console.log(field.value == '')
+  if (field.value == '' && field.required) {
+    field.error = 'Обязательно';
+    return;
+  }
+  if (field.id === 'email') {
+    field.error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)
+      ? ''
+      : 'Некорректный адрес электронной почты';
+  } else if (field.id === 'nikname') {
+    return;
+  } else if (field.id === 'name') {
+    field.error = 
+      (field.value.length < 2 || field.value.length > 32) && 'Имя должно содержать от 2 до 3 символов.'
+      ||
+      (/[а-яёА-ЯЁ]/.test(field.value)) && 'Запрещено использование букв русского алфавита в имени.'
+      /* ||
+      checkLogin(); */
+  } else if (field.id === 'password') {
     field.error = field.value.length < 8;
   }
   // Для других полей можете аналогично
@@ -49,7 +84,8 @@ const fields = reactive({
     value: '',
     focused: false,
     error: false,
-    hint: 'Введите ваш email',
+    hint: 'Введите ваш email.',
+    required: true,
   },
   nikname: {
     label: 'Отображаемое имя',
@@ -57,7 +93,7 @@ const fields = reactive({
     value: '',
     focused: false,
     error: false,
-    hint: 'Это имя в профиле',
+    hint: 'Это имя увидят другие пользователи. Можно добавлять специальные символы и эмодзи.',
   },
   name: {
     label: 'Имя пользователя',
@@ -65,7 +101,8 @@ const fields = reactive({
     value: '',
     focused: false,
     error: false,
-    hint: 'Введите ваше имя',
+    hint: 'Используйте только цифры, буквы английского алфавита, нижнее подчёркивание и точки.',
+    required: true,
   },
   password: {
     label: 'Пароль',
@@ -74,7 +111,8 @@ const fields = reactive({
     focused: false,
     error: false,
     type: 'password',
-    hint: 'Минимум 8 символов',
+    hint: 'Минимум 8 символов.',
+    required: true,
   }
 });
 console.log(/* fields, */ Object.keys(fields))
@@ -104,6 +142,7 @@ body {
   display: flex;
   flex-direction: row;
   column-gap: 5%;
+  border-radius: 9px;
 
 
   .register-form {
@@ -134,17 +173,18 @@ body {
     }
 
     label {
-      color: var(--muted-text-color);
-      text-transform: uppercase;
-      font-size: 12px;
+      color: var(--main-text-color);
+      font-size: 16px;
       line-height: 133%;
       margin-top: 20px;
+      border-radius: 8px;
     }
 
     input {
       height: 40px;
       background-color: var(--system-back-color5);
       margin-block: 8px;
+      border-radius: 8px;
     }
 
     a {
@@ -152,11 +192,13 @@ body {
     }
 
     .button-reg {
-      font-size: 14px;
+      font-size: 15px;
       line-height: 171%;
       padding-block: 9px;
       margin-bottom: 12px;
       margin-top: 22px;
+      border-radius: 8px;
+      font-family: var(--font-family-500);
     }
 
     p.auth-link {

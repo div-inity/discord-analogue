@@ -80,6 +80,22 @@
   /* transition: 0.3s all; */
 }
 
+.require {
+  margin-left: 3px;
+  position: relative;
+  display: inline-block;
+
+  &::before {
+    content: "*";
+    position: absolute;
+    top: -1.8em;
+    left: 0;
+    font-size: 10px;
+    font-family: var(--font-family-500);
+    color: var(--muted-notification-color);
+  }
+}
+
 .flex {
   display: flex;
 

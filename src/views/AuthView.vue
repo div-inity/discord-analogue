@@ -3,10 +3,10 @@
     <form action="" class="auth-form">
       <h1 class="greetings">{{ t('auth.greetings') }}</h1>
       <p class="subgreetings">{{ t('auth.subgreetings') }}</p>
-      <label for="email">{{ t('auth.email') }}</label>
+      <label for="email">{{ t('auth.email') }}<span class="require"></span></label>
       <input type="text" id="email">
 
-      <label for="pass">{{ t('auth.pass') }}</label>
+      <label for="pass">{{ t('auth.pass') }}<span class="require"></span></label>
       <input type="password" id="pass">
 
       <a href="#" class="forgot-pass">{{ t('auth.forgotpass') }}</a>
@@ -42,12 +42,11 @@ if (store.state.user.user != null) {
 }
 
 body {
-  font-family: var(--Ubuntu);
+  font-family: var(--font-family-500);
   background-image: url(@/assets/img/BackgroungAuth.svg);
   background-size: cover;
 
   #app {
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -65,6 +64,7 @@ body {
   display: flex;
   flex-direction: row;
   column-gap: 5%;
+  border-radius: 9px;
 
   .auth-form {
     display: flex;
@@ -89,9 +89,8 @@ body {
     }
 
     label {
-      color: var(--muted-text-color);
-      text-transform: uppercase;
-      font-size: 12px;
+      color: var(--main-text-color);
+      font-size: 16px;
       line-height: 133%;
       margin-top: 20px;
     }
@@ -100,6 +99,7 @@ body {
       height: 40px;
       background-color: var(--system-back-color5);
       margin-block: 8px;
+      border-radius: 8px;
     }
 
     a {
@@ -107,11 +107,13 @@ body {
     }
 
     .button-auth {
-      font-size: 14px;
+      font-size: 15px;
       line-height: 171%;
       padding-block: 9px;
       margin-bottom: 12px;
       margin-top: 22px;
+      border-radius: 8px;
+      font-family: var(--font-family-500);
     }
 
     p.register-link {

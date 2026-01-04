@@ -70,9 +70,9 @@ body {
 
     p {
       color: var(--muted-text-color);
-      font-size: 11px;
-      line-height: 141%;
-      text-align: center;
+      font-size: 13px;
+      line-height: 163%;
+      text-align: left;
 
       i {
         width: 17px;
