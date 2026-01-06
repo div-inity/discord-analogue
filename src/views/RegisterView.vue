@@ -27,7 +27,7 @@
       </div>
 
       <label>Дата рождения <span class="require"></span></label>
-      <button class="button-purple button-reg">Создать учётную запись</button>
+      <button class="button-purple button-reg" @click="createAccount">Создать учётную запись</button>
       <p class="auth-link">
         <RouterLink to="/login" class="login">Уже зарегистрированы? Войти
         </RouterLink>
@@ -47,50 +47,20 @@ if (store.state.user.user != null) {
   router.push('/friends')
 }
 
-
-const shouldShowHint = (fieldId) => {
-  const field = fields[fieldId];
-  return field.focused || field.error;
-};
-const validateField = (field) => {
-  // Например: минимальная длина для пароля
-  console.log(field.value == '')
-  if (field.value == '' && field.required) {
-    field.error = 'Обязательно';
-    return;
-  }
-  if (field.id === 'email') {
-    field.error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)
-      ? ''
-      : 'Некорректный адрес электронной почты';
-  } else if (field.id === 'nikname') {
-    return;
-  } else if (field.id === 'name') {
-    field.error = 
-      (field.value.length < 2 || field.value.length > 32) && 'Имя должно содержать от 2 до 3 символов.'
-      ||
-      (/[а-яёА-ЯЁ]/.test(field.value)) && 'Запрещено использование букв русского алфавита в имени.'
-      /* ||
-      checkLogin(); */
-  } else if (field.id === 'password') {
-    field.error = field.value.length < 8;
-  }
-  // Для других полей можете аналогично
-};
 const fields = reactive({
   email: {
     label: 'E-mail',
     id: 'email',
-    value: '',
+    value: 'rgrg@rg.r',
     focused: false,
     error: false,
     hint: 'Введите ваш email.',
     required: true,
   },
-  nikname: {
+  nickname: {
     label: 'Отображаемое имя',
-    id: 'nikname',
-    value: '',
+    id: 'nickname',
+    value: 'wewe',
     focused: false,
     error: false,
     hint: 'Это имя увидят другие пользователи. Можно добавлять специальные символы и эмодзи.',
@@ -98,7 +68,7 @@ const fields = reactive({
   name: {
     label: 'Имя пользователя',
     id: 'name',
-    value: '',
+    value: 'wewewe',
     focused: false,
     error: false,
     hint: 'Используйте только цифры, буквы английского алфавита, нижнее подчёркивание и точки.',
@@ -107,15 +77,117 @@ const fields = reactive({
   password: {
     label: 'Пароль',
     id: 'password',
-    value: '',
+    value: 'WEe21212/',
     focused: false,
     error: false,
     type: 'password',
     hint: 'Минимум 8 символов.',
     required: true,
-  }
+  },
+  repassword: {
+    label: 'Повторите пароль',
+    id: 'repassword',
+    value: '',
+    focused: false,
+    error: false,
+    type: 'password',
+    hint: '321',
+    required: true,
+  },
 });
-console.log(/* fields, */ Object.keys(fields))
+
+function shouldShowHint (fieldId) {
+  const field = fields[fieldId];
+  return field.focused || field.error;
+};
+
+function validateField (field) {
+  var validated = false;
+
+  if (field.value == '' && field.required) {
+    field.error = 'Обязательно';
+    validated = false
+  }
+
+  if (field.id === 'email') {
+    field.error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)
+      ? ''
+      : 'Некорректный адрес электронной почты';
+
+    validated = false
+  } 
+
+  else if (field.id === 'nickname') {
+    validated = true
+  } 
+  
+  else if (field.id === 'name') {
+    field.error = 
+      (field.value.length < 2 || field.value.length > 32) && 'Имя должно содержать от 2 до 32 символов.'
+      ||
+      (/[а-яёА-ЯЁ]/.test(field.value)) && 'Запрещено использование букв русского алфавита в имени.';
+    validated = false
+  } 
+  
+  else if (field.id === 'password') {
+    const error = 'Слишком простой пароль. Используйте заглавные буквы и спецсимволы. Минимальная длина пароля - 8 символов.';
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+      field.error = (!passwordRegex.test(field.value)) && error;
+
+    validated = false
+  }
+
+  else if (field.id === 'repassword') {
+    field.error = (field.value != fields.password.value) && 'Пароли не совпадают.'
+
+    validated = false
+  }
+
+  if (!field.error) {
+    field.hint = '';
+    return true;
+  }
+
+  return validated;
+};
+
+
+function validateForm () {
+  var validated = false;
+  Object.values(fields).forEach(f => {
+      validated = validateField(f);
+  });
+  return validated;
+} 
+
+async function createAccount() {
+  if (!validateForm()) return;
+  console.log("Идет регистрация")
+  /* fetch('url', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ 
+      name: fields.name.value,
+      password: fields.password.value,
+      email: fields.email.value,
+      nickname: fields.nickname.value,
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Ответ сервера:', data);
+  })
+  .catch(error => {
+    console.error('Ошибка при POST-запросе:', error);
+  }); */
+}
 </script>
 <style lang="scss">
 body {
