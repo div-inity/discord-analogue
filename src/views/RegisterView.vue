@@ -27,6 +27,25 @@
       </div>
 
       <label>Дата рождения <span class="require"></span></label>
+      <div class="flex row brth">
+        <select v-model="selectedDay">
+          <option :value="d" v-for="d of 31">{{ d }}</option>
+        </select>
+        <select  v-model="selectedMonth">
+          <option :value="m" v-for="m in months">{{ m }}</option>
+        </select>
+        <select v-model="selectedYear">
+          <option v-for="year in years" :key="year" :value="year">
+            {{ year }}
+          </option>
+        </select>
+      </div>
+        <Hint 
+          :text="dateHint" 
+          :show="dateError" 
+          :color="'var(--muted-notification-color)'" 
+          icon="info"/>
+
       <button class="button-purple button-reg" @click="createAccount">Создать учётную запись</button>
       <p class="auth-link">
         <RouterLink to="/login" class="login">Уже зарегистрированы? Войти
@@ -46,6 +65,7 @@ const router = useRouter()
 if (store.state.user.user != null) {
   router.push('/friends')
 }
+
 
 const fields = reactive({
   email: {
@@ -101,12 +121,54 @@ function shouldShowHint (fieldId) {
   return field.focused || field.error;
 };
 
+const months = ref([
+  'Январь',
+  'Февраль',
+  'Март',
+  'Апрель',
+  'Май',
+  'Июнь',
+  'Июль',
+  'Август',
+  'Сентябрь',
+  'Октябрь',
+  'Ноябрь',
+  'Декабрь'
+]);
+
+const currentYear = new Date().getFullYear();
+const startYear = currentYear - 3;
+const totalYears = 100;
+
+const years = Array.from({ length: totalYears }, (_, index) => startYear - index);
+
+const selectedYear = ref(startYear);
+const selectedMonth = ref('Январь');
+const selectedDay = ref(1);
+const dateHint = ref('');
+const dateError = ref(false)
+
+function isValidDate(y, m, d) {
+  const month = months.value.indexOf(m)
+  if (month === undefined) {
+    console.log('Некорректное название месяца');
+    return false;
+  }
+  const date = new Date(y, month, d);
+  
+  return (
+    date.getFullYear() === y &&
+    date.getMonth() === month &&
+    date.getDate() === d
+  );
+}
+
 function validateField (field) {
   var validated = false;
 
   if (field.value == '' && field.required) {
     field.error = 'Обязательно';
-    validated = false
+    validated = false;
   }
 
   if (field.id === 'email') {
@@ -114,11 +176,11 @@ function validateField (field) {
       ? ''
       : 'Некорректный адрес электронной почты';
 
-    validated = false
+    validated = false;
   } 
 
   else if (field.id === 'nickname') {
-    validated = true
+    validated = true;
   } 
   
   else if (field.id === 'name') {
@@ -126,7 +188,7 @@ function validateField (field) {
       (field.value.length < 2 || field.value.length > 32) && 'Имя должно содержать от 2 до 32 символов.'
       ||
       (/[а-яёА-ЯЁ]/.test(field.value)) && 'Запрещено использование букв русского алфавита в имени.';
-    validated = false
+    validated = false;
   } 
   
   else if (field.id === 'password') {
@@ -134,15 +196,14 @@ function validateField (field) {
       const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
       field.error = (!passwordRegex.test(field.value)) && error;
 
-    validated = false
+    validated = false;
   }
 
   else if (field.id === 'repassword') {
     field.error = (field.value != fields.password.value) && 'Пароли не совпадают.'
 
-    validated = false
+    validated = false;
   }
-
   if (!field.error) {
     field.hint = '';
     return true;
@@ -157,6 +218,17 @@ function validateForm () {
   Object.values(fields).forEach(f => {
       validated = validateField(f);
   });
+  if (validated) { // Дата валидируется после остальных полей
+    if (!isValidDate(selectedYear.value, selectedMonth.value, selectedDay.value)) {
+      validated = false;
+      dateError.value = true;
+      dateHint.value = 'Дата не корректна';
+    }else {
+      validated = true;
+      dateError.value = false;
+      dateHint.value = '';
+    }
+  }
   return validated;
 } 
 
@@ -277,6 +349,15 @@ body {
       align-self: flex-start;
       font-size: 13px;
     }
+    .brth {
+      justify-content: space-between;
+      column-gap: 10px;
+      select {
+        flex-grow: 1;
+        width: 30%;
+        margin-block: 8px;
+      }
+    }
   }
 }
 
@@ -299,6 +380,7 @@ body {
 
       .register-form {
         width: 100%;
+        
       }
 
     }

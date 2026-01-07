@@ -135,6 +135,19 @@ input {
   }
 }
 
+select {
+  padding: 8px;
+  background-color: var(--system-back-color5);
+  font-family: var(--font-family-500);
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  border: none;
+  border-radius: 8px;
+  color: var(--muted-text-color);
+  outline: none;
+  cursor: pointer;
+}
+
 button.text {
   cursor: pointer;
   background-color: var(--system-back-color5);
