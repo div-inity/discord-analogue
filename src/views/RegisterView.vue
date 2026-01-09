@@ -1,7 +1,7 @@
 <template>
   <div class="register-screen flex row">
     <form action="" class="register-form flex column">
-      <h1>Создать учётную запись</h1>
+      <h1>{{ t('reg.h1') }}</h1>
       <div v-for="(field, key) in Object.values(fields)" 
         :key="field.id" 
         class="flex column form-row">
@@ -26,7 +26,7 @@
           :icon="field.error ? 'info' : null" />
       </div>
 
-      <label>Дата рождения <span class="require"></span></label>
+      <label>{{ t('reg.brth') }} <span class="require"></span></label>
       <div class="flex row brth">
         <select v-model="selectedDay">
           <option :value="d" v-for="d of 31">{{ d }}</option>
@@ -46,15 +46,17 @@
           :color="'var(--muted-notification-color)'" 
           icon="info"/>
 
-      <button class="button-purple button-reg" @click="createAccount">Создать учётную запись</button>
+      <button class="button-purple button-reg" @click="createAccount">{{ t('reg.createAccount') }}</button>
       <p class="auth-link">
-        <RouterLink to="/login" class="login">Уже зарегистрированы? Войти
+        <RouterLink to="/login" class="login">{{ t('reg.loginLink') }}
         </RouterLink>
       </p>
     </form>
   </div>
 </template>
 <script setup>
+import { useI18n } from 'vue-i18n';
+const { t, locale } = useI18n();
 import Hint from '@/components/Hint.vue';
 import { computed, reactive, ref } from 'vue';
 import { useStore } from 'vuex';
@@ -66,7 +68,6 @@ if (store.state.user.user != null) {
   router.push('/friends')
 }
 
-
 const fields = reactive({
   email: {
     label: 'E-mail',
@@ -74,44 +75,44 @@ const fields = reactive({
     value: 'rgrg@rg.r',
     focused: false,
     error: false,
-    hint: 'Введите ваш email.',
+    hint: t('reg.mailHint'),
     required: true,
   },
   nickname: {
-    label: 'Отображаемое имя',
+    label: t('reg.nicknameLabel'),
     id: 'nickname',
     value: 'wewe',
     focused: false,
     error: false,
-    hint: 'Это имя увидят другие пользователи. Можно добавлять специальные символы и эмодзи.',
+    hint: t('reg.nicknameHint'),
   },
   name: {
-    label: 'Имя пользователя',
+    label: t('reg.nameLabel'),
     id: 'name',
     value: 'wewewe',
     focused: false,
     error: false,
-    hint: 'Используйте только цифры, буквы английского алфавита, нижнее подчёркивание и точки.',
+    hint: t('reg.nameHint'),
     required: true,
   },
   password: {
-    label: 'Пароль',
+    label: t('reg.passLabel'),
     id: 'password',
     value: 'WEe21212/',
     focused: false,
     error: false,
     type: 'password',
-    hint: 'Минимум 8 символов.',
+    hint: t('reg.passHint'),
     required: true,
   },
   repassword: {
-    label: 'Повторите пароль',
+    label: t('reg.repassLabel'),
     id: 'repassword',
     value: '',
     focused: false,
     error: false,
     type: 'password',
-    hint: '321',
+    hint: '',
     required: true,
   },
 });
@@ -121,21 +122,18 @@ function shouldShowHint (fieldId) {
   return field.focused || field.error;
 };
 
-const months = ref([
-  'Январь',
-  'Февраль',
-  'Март',
-  'Апрель',
-  'Май',
-  'Июнь',
-  'Июль',
-  'Август',
-  'Сентябрь',
-  'Октябрь',
-  'Ноябрь',
-  'Декабрь'
-]);
-
+const months = computed(() => {
+  if (locale.value === 'en') {
+    return [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ]
+  }
+  return [
+    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+  ]
+})
 const currentYear = new Date().getFullYear();
 const startYear = currentYear - 3;
 const totalYears = 100;
@@ -143,7 +141,7 @@ const totalYears = 100;
 const years = Array.from({ length: totalYears }, (_, index) => startYear - index);
 
 const selectedYear = ref(startYear);
-const selectedMonth = ref('Январь');
+const selectedMonth = ref(months.value[0]);
 const selectedDay = ref(1);
 const dateHint = ref('');
 const dateError = ref(false)
@@ -167,14 +165,14 @@ function validateField (field) {
   var validated = false;
 
   if (field.value == '' && field.required) {
-    field.error = 'Обязательно';
+    field.error = t('reg.required');
     validated = false;
   }
 
   if (field.id === 'email') {
     field.error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)
       ? ''
-      : 'Некорректный адрес электронной почты';
+      : t('reg.mailError');
 
     validated = false;
   } 
@@ -185,14 +183,14 @@ function validateField (field) {
   
   else if (field.id === 'name') {
     field.error = 
-      (field.value.length < 2 || field.value.length > 32) && 'Имя должно содержать от 2 до 32 символов.'
+      (field.value.length < 2 || field.value.length > 32) && t('reg.nameError1')
       ||
-      (/[а-яёА-ЯЁ]/.test(field.value)) && 'Запрещено использование букв русского алфавита в имени.';
+      (/[а-яёА-ЯЁ]/.test(field.value)) && t('reg.nameError2');
     validated = false;
   } 
   
   else if (field.id === 'password') {
-    const error = 'Слишком простой пароль. Используйте заглавные буквы и спецсимволы. Минимальная длина пароля - 8 символов.';
+    const error = t('reg.passError');
       const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
       field.error = (!passwordRegex.test(field.value)) && error;
 
@@ -200,12 +198,12 @@ function validateField (field) {
   }
 
   else if (field.id === 'repassword') {
-    field.error = (field.value != fields.password.value) && 'Пароли не совпадают.'
+    field.error = (field.value != fields.password.value) && t('reg.repassError')
 
     validated = false;
   }
   if (!field.error) {
-    field.hint = '';
+    //field.hint = '';
     return true;
   }
 
@@ -387,12 +385,13 @@ body {
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 600px) {
   html {
     .register-screen {
       flex-direction: column;
       align-items: center;
       width: 100vw;
+      height: 100vh;
       margin-block: 0;
       border-radius: 0;
     }
