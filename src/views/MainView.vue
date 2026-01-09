@@ -1,24 +1,29 @@
 <template>
-  <div class="container main-container">
+  <div class="container main-container" v-if="user">
     <Navbar />
     <div class="content-wrapper">
       <router-view />
     </div>
 
   </div>
+  <div v-else class="container flex column">
+    <router-view />
+  </div>
 </template>
 
-<script>
-
+<script setup>
+import { useStore } from 'vuex'
+import { computed, onMounted } from 'vue'
 import Navbar from '@/components/Navbar.vue'
-export default {
-  name: "MainView",
-  components: {
-    Navbar
-  }
-};
+const store = useStore()
+const user = computed(() => store.getters['user/getUser'])
+//console.log(user)
 </script>
 <style lang="scss">
+body {
+  background-image: none;
+}
+
 .main-container {
   height: calc(100vh - 24px);
   width: 100vw;

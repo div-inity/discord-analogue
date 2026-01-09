@@ -3,16 +3,42 @@
     <form action="" class="auth-form">
       <h1 class="greetings">{{ t('auth.greetings') }}</h1>
       <p class="subgreetings">{{ t('auth.subgreetings') }}</p>
-      <label for="email">{{ t('auth.email') }}</label>
+
+      <!-- <label for="email">{{ t('auth.email') }}<span class="require"></span></label>
       <input type="text" id="email">
 
-      <label for="pass">{{ t('auth.pass') }}</label>
-      <input type="password" id="pass">
+      <label for="pass">{{ t('auth.pass') }}<span class="require"></span></label>
+      <input type="password" id="pass"> -->
+      <div v-for="field in Object.values(fields)" 
+        :key="field.id" 
+        class="flex column form-row">
+        <label :for="field.id">
+          {{ field.label }}
+          <span class="require" v-if="field.required">
+          </span>
+        </label>
+
+        <input 
+          :type="field.type || 'text'" 
+          :id="field.id" 
+          @input="validateField(field)"
+          v-model="field.value" />
+
+        <Hint 
+          v-show="field.error" 
+          :text="field.error"
+          :show="!!field.error" 
+          :color="'var(--muted-notification-color)'"
+          icon="info" />
+      </div>
 
       <a href="#" class="forgot-pass">{{ t('auth.forgotpass') }}</a>
-      <button class="button-auth button-purple log-in">{{ t('auth.button') }}</button>
+      <button class="button-auth button-purple log-in" @click="auth()">{{ t('auth.button') }}</button>
+
+
       <p class="register-link">{{ t('auth.registerlink') }} &nbsp&nbsp
-        <a href="#" class="register">{{ t('auth.register') }}</a>
+        <RouterLink to="/register" class="register">{{ t('auth.register') }}
+        </RouterLink>
       </p>
     </form>
     <div class="qrcode-block">
@@ -21,26 +47,112 @@
       <p class="scan-qr">{{ t('auth.scanqr') }}</p>
     </div>
   </div>
+
 </template>
 <script setup>
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+import Hint from '@/components/Hint.vue';
+import { useStore } from 'vuex';
+const store = useStore();
+import { useRouter } from 'vue-router'
+import { reactive } from 'vue';
+const router = useRouter()
+if (store.state.user.user != null) {
+  router.push('/friends')
+}
+
+const fields = reactive({
+  email: {
+    label: t('auth.email'),
+    value: '',
+    error: '',
+    //required: true,
+    id: 'email',
+  },
+  pass:{
+    label: t('auth.pass'),
+    value: '',
+    error: '',
+    //required: true,
+    id: 'pass',
+    type: 'password',
+  }
+})
+function validateForm () {
+  var validated = false;
+  Object.values(fields).forEach(f => {
+      validated = validateField(f);
+  });
+  return validated; 
+}
+
+
+function validateField (field) {
+  var validated = false;
+  if (field.value == '') {
+    field.error = t('auth.required');
+    validated = false;
+    return validated;
+  } else {
+    field.error = '';
+    validated = true;
+  }
+  if (field.id === 'email') {
+    field.error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)
+      ? ''
+      : t('auth.mailError');
+    //console.log(mail.error)
+    if (field.error) validated = false;
+  }
+  return validated;
+}
+
+function auth () {
+  if (!validateForm()) return;
+  console.log("Идет авторизация")
+  /* fetch('url', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ 
+      email: fields.email.value,
+      password: fields.password.value,
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Ответ сервера:', data);
+  })
+  .catch(error => {
+    console.error('Ошибка при POST-запросе:', error);
+  }); */
+}
 </script>
 <style lang="scss">
 * {
   font-weight: 400;
 }
 
-#app {
-  font-family: var(--Ubuntu);
+body {
+  font-family: var(--font-family-500);
   background-image: url(@/assets/img/BackgroungAuth.svg);
   background-size: cover;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  height: 100vh;
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+  }
 }
 
 .auth-screen {
@@ -51,6 +163,7 @@ const { t } = useI18n()
   display: flex;
   flex-direction: row;
   column-gap: 5%;
+  border-radius: 9px;
 
   .auth-form {
     display: flex;
@@ -75,9 +188,8 @@ const { t } = useI18n()
     }
 
     label {
-      color: var(--muted-text-color);
-      text-transform: uppercase;
-      font-size: 12px;
+      color: var(--main-text-color);
+      font-size: 16px;
       line-height: 133%;
       margin-top: 20px;
     }
@@ -86,6 +198,7 @@ const { t } = useI18n()
       height: 40px;
       background-color: var(--system-back-color5);
       margin-block: 8px;
+      border-radius: 8px;
     }
 
     a {
@@ -93,11 +206,13 @@ const { t } = useI18n()
     }
 
     .button-auth {
-      font-size: 14px;
+      font-size: 15px;
       line-height: 171%;
       padding-block: 9px;
       margin-bottom: 12px;
       margin-top: 22px;
+      border-radius: 8px;
+      font-family: var(--font-family-500);
     }
 
     p.register-link {
@@ -143,6 +258,7 @@ const { t } = useI18n()
 @media screen and (max-width: 800px) {
   html {
     height: auto;
+    overflow-y: auto;
 
     #app {
       width: auto;

@@ -1,5 +1,5 @@
 <template>
-  <TransitionGroup name="fade" class="navbar" tag="div" :style="{ width: navbarWidth + 'px' }">
+  <TransitionGroup name="fade" class="navbar" tag="div" :style="{ width: navbarWidth + 'px' }" v-if="user">
     <div class="private-messages" :key="currentBlock">
       <div class="home-link" v-tippy="{ content: t('navbar.mymessages') }">
         <router-link to="/messages" :class="(activeServer > 0) ? null : 'active'" class="home">
@@ -47,7 +47,7 @@
         <div class="userinfo flex column">
           <div class="name">{{ user.name }}</div>
           <div class="userprofile-info">{{ (user.info) ? user.info : user.status }}</div>
-          <div class="nikname">{{ user.nikname }}</div>
+          <div class="nickname">{{ user.nickname }}</div>
         </div>
       </div>
 
@@ -402,7 +402,7 @@ const settingsOpen = () => {
         max-height: 0 !important;
       }
 
-      .nikname {
+      .nickname {
         max-height: 17px !important;
       }
     }
@@ -438,7 +438,7 @@ const settingsOpen = () => {
         }
 
         .userprofile-info,
-        .nikname {
+        .nickname {
           font-family: var(--font-family-400);
           font-size: 12px;
           color: var(--muted-text-color);
@@ -449,7 +449,7 @@ const settingsOpen = () => {
           max-height: 17px;
         }
 
-        .nikname {
+        .nickname {
           max-height: 0;
         }
       }
