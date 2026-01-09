@@ -108,7 +108,7 @@ const fields = reactive({
   repassword: {
     label: t('reg.repassLabel'),
     id: 'repassword',
-    value: '',
+    value: 'WEe21212/',
     focused: false,
     error: false,
     type: 'password',
@@ -233,6 +233,7 @@ function validateForm () {
 async function createAccount() {
   if (!validateForm()) return;
   console.log("Идет регистрация")
+  const date = new Date(selectedYear.value, months.value.indexOf(selectedMonth.value), selectedDay.value);
   /* fetch('url', {
     method: 'POST',
     headers: {
@@ -243,6 +244,7 @@ async function createAccount() {
       password: fields.password.value,
       email: fields.email.value,
       nickname: fields.nickname.value,
+      brth: date,
     })
   })
   .then(response => {
