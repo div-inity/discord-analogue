@@ -2,7 +2,7 @@
   <div class="register-screen flex row">
     <form action="" class="register-form flex column">
       <h1>{{ t('reg.h1') }}</h1>
-      <div v-for="(field, key) in Object.values(fields)" 
+      <div v-for="field in Object.values(fields)" 
         :key="field.id" 
         class="flex column form-row">
         <label :for="field.id">

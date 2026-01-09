@@ -34,6 +34,8 @@ const messages = {
       register: "Register",
       loginwithqr: "Log in with QR Code",
       scanqr: "Scan this with the Discord mobile app to log in instantly.",
+      required: 'Necessarily',
+      mailError: 'Incorrect email address.', 
     },
     navbar: {
       mymessages: "Personal messages",
@@ -81,6 +83,8 @@ const messages = {
       register: "Зарегистрироваться",
       loginwithqr: "Войдите с помощью QR-кода",
       scanqr: "Отсканируйте код с помощью мобильного приложения Discord, чтобы сразу же войти в систему.",
+      required: 'Обязательно',
+      mailError: 'Некорректный адрес электронной почты.',
     },
     navbar: {
       mymessages: "Личные сообщения",

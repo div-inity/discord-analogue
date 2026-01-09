@@ -23,7 +23,7 @@ const user = computed(() => store.getters['user/getUser'])
 const checkAuth = () => {
   //console.log('User', user.value);
   if (!user.value) {
-    router.push('/register')
+    router.push('/login')
   } else {
     router.push({ name: 'friends' })
   }
