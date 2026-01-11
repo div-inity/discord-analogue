@@ -233,8 +233,8 @@ function validateForm () {
 async function createAccount() {
   if (!validateForm()) return;
   console.log("Идет регистрация")
-  const date = new Date(selectedYear.value, months.value.indexOf(selectedMonth.value), selectedDay.value);
-  /* fetch('url', {
+  const date = `${selectedYear.value}-${(String)(months.value.indexOf(selectedMonth.value)+1).padStart(2, '0')}-${(String)(selectedDay.value).padStart(2, '0')}`;
+  fetch('/api/v1/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -258,7 +258,7 @@ async function createAccount() {
   })
   .catch(error => {
     console.error('Ошибка при POST-запросе:', error);
-  }); */
+  });
 }
 </script>
 <style lang="scss">
