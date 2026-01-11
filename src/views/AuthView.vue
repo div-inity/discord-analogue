@@ -65,14 +65,14 @@ if (store.state.user.user != null) {
 const fields = reactive({
   email: {
     label: t('auth.email'),
-    value: '',
+    value: 'rgrg@rg.r',
     error: '',
     //required: true,
     id: 'email',
   },
   pass:{
     label: t('auth.pass'),
-    value: '',
+    value: 'WEe21212/',
     error: '',
     //required: true,
     id: 'pass',
@@ -111,14 +111,14 @@ function validateField (field) {
 function auth () {
   if (!validateForm()) return;
   console.log("Идет авторизация")
-  /* fetch('url', {
+  fetch('/api/v1/auth', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ 
       email: fields.email.value,
-      password: fields.password.value,
+      password: fields.pass.value,
     })
   })
   .then(response => {
@@ -132,7 +132,7 @@ function auth () {
   })
   .catch(error => {
     console.error('Ошибка при POST-запросе:', error);
-  }); */
+  });
 }
 </script>
 <style lang="scss">
