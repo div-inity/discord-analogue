@@ -1,11 +1,13 @@
 <template>
   <div class="content-header flex row" :class="setHeaderClass()" :style="{ width: headerWidth + 'px' }">
-    <span class="flex row">
-      <slot name="page-title">
-        Без имени
-      </slot>
+    <div class="flex row content-header-body">
+      <div class="page-title flex row">
+        <slot name="page-title">
+          Без имени
+        </slot>
+      </div>
       <slot name="other"><!-- Прочие элементы header-а --></slot>
-    </span>
+    </div>
     headerWidth: {{ headerWidth }}
   </div>
 </template>
@@ -26,13 +28,23 @@ const setHeaderClass = () => {
   overflow-x: auto;
   scrollbar-width: none;
 
-  span {
+  .content-header-body {
     align-items: center;
     column-gap: 12px;
+    font-family: var(--font-family-400);
+    color: var(--loud-text-color);    
+    padding-inline: 13px;
+    .page-title {
+      padding-inline: 12px;
+      column-gap: 14px;
+      align-items: center;
+      border-radius: 8px;
+      height: 76%;
+    }
   }
 
   &.friends-header {
-    span {
+    .content-header-body {
       justify-content: center;
     }
 
@@ -40,7 +52,6 @@ const setHeaderClass = () => {
       height: 100%;
       align-items: center;
       column-gap: 14px;
-      margin-left: 14px;
 
       button {
         color: var(--muted-text-color);

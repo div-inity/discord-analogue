@@ -72,7 +72,7 @@ const fields = reactive({
   email: {
     label: 'E-mail',
     id: 'email',
-    value: 'rgrg@rg.r',
+    value: 'veselaya.devka@ya.ru',
     focused: false,
     error: false,
     hint: t('reg.mailHint'),
@@ -81,7 +81,7 @@ const fields = reactive({
   nickname: {
     label: t('reg.nicknameLabel'),
     id: 'nickname',
-    value: 'wewe',
+    value: 'anka',
     focused: false,
     error: false,
     hint: t('reg.nicknameHint'),
@@ -89,7 +89,7 @@ const fields = reactive({
   name: {
     label: t('reg.nameLabel'),
     id: 'name',
-    value: 'wewewe',
+    value: 'veselaya-devka',
     focused: false,
     error: false,
     hint: t('reg.nameHint'),
@@ -229,11 +229,18 @@ function validateForm () {
   }
   return validated;
 } 
-
 async function createAccount() {
   if (!validateForm()) return;
   console.log("Идет регистрация")
   const date = `${selectedYear.value}-${(String)(months.value.indexOf(selectedMonth.value)+1).padStart(2, '0')}-${(String)(selectedDay.value).padStart(2, '0')}`;
+  
+  console.log(JSON.stringify({ 
+      name: fields.name.value,
+      password: fields.password.value,
+      email: fields.email.value,
+      nickname: fields.nickname.value,
+      brth: date,
+    }))
   fetch('/api/v1/register', {
     method: 'POST',
     headers: {
