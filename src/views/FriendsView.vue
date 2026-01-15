@@ -57,7 +57,7 @@ import TextField from '@/components/TextField.vue';
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 const store = useStore();
-const allFriends = ref(store.state.user.friends.added);
+const allFriends = ref(store.state.friends.friends.added);
 const friendsWithMode = ref(null);
 const title = ref(null);
 const mode = ref(null)
@@ -77,12 +77,12 @@ const setMode = (m) => { // Устанавливает мод, по которо
     }
     case 'pending': {
       title.value = "Заявки в друзья";
-      friendsWithMode.value = store.state.user.friends.pending;
+      friendsWithMode.value = store.state.friends.friends.pending;
       break;
     }
     case 'blocked': {
       title.value = "Игнорируются";
-      friendsWithMode.value = store.state.user.friends.blocked;
+      friendsWithMode.value = store.state.friends.friends.blocked;
       break;
     }
   }

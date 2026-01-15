@@ -65,7 +65,7 @@ if (store.state.user.user != null) {
 const fields = reactive({
   email: {
     label: t('auth.email'),
-    value: 'rgrg@rg.r',
+    value: 'veselaya.devka@ya.ru',
     error: '',
     //required: true,
     id: 'email',
@@ -129,6 +129,7 @@ function auth () {
   })
   .then(data => {
     console.log('Ответ сервера:', data);
+    localStorage.setItem('token', data.token);
   })
   .catch(error => {
     console.error('Ошибка при POST-запросе:', error);

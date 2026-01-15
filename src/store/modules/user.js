@@ -2,86 +2,68 @@ export default {
   namespaced: true,
   state: {
     user: {
-      id: 1,
+      /* id: 1,
       name: 'Discord User',
       nickname: 'veselaya_devka',
       //avatar: require('@/assets/img/ava.jpg'),
       status: 'online',
-      info: 'Playing Counter-Strike 2',
+      info: 'Playing Counter-Strike 2', */
+      id: null,
+      name: '',
+      nickname: '',
+      status: '',
+      info: '',
+      email: '',
+      birthdate: '',
+      status: 'online', // default
+      info: 'Playing Counter-Strike 2', // default
     },
-    //user: null,
-    friends: {
-      added: [
-        {
-          id: 1,
-          name: "Михаил Шатов",
-          nickname: "Thomas_Norris",
-          avatar: require('@/assets/img/UserIcon1.jpg'),
-          status: 'phone',
-        },
-        {
-          id: 1,
-          name: "Vasilevs_1987",
-          nickname: "vasilevs_1987",
-          avatar: require('@/assets/img/UserIcon2.jpg'),
-          status: 'offline',
-        },
-        {
-          id: 1,
-          name: "Анна Шатова",
-          nickname: "veselaya_devka",
-          avatar: require('@/assets/img/UserIcon.jpg'),
-          status: 'red',
-        },
-        {
-          id: 1,
-          name: "Бдыщь",
-          nickname: "bdyshch",
-          avatar: require('@/assets/img/UserIcon.jpg'),
-          status: 'moon',
-        },
-        {
-          id: 1,
-          name: "Карабас-Барабас",
-          nickname: "karabas_barabas",
-          avatar: require('@/assets/img/Server Icon.svg'),
-          status: 'online',
-        },
-        {
-          id: 1,
-          name: "Пам пам",
-          nickname: "pampam",
-          avatar: '',
-          status: 'streaming',
-        },
-      ],
-      pending: [
-
-        {
-          id: 201,
-          name: "Батон",
-          nickname: "button",
-          avatar: require('@/assets/img/UserIcon3.jpg'),
-          status: 'online',
-        },
-
-      ],
-      blocked: [
-
-        {
-          id: 401,
-          name: "Johny",
-          nickname: "Johny",
-          avatar: require('@/assets/img/UserIcon4.jpg'),
-          status: 'online',
-        },
-
-      ],
-    }
   },
   getters: {
-    getUser: (state) => state.user
+    getUser: (state) => state.user,
+    getUserName: (state) => state.user.name,
+    isAuthenticated: (state) => !!state.user.id
   },
-  mutations: {},
-  actions: {},
+  mutations: {
+    SET_USER(state, userData) {
+      state.user = { ...state.user, ...userData }
+    },
+    
+    UPDATE_USER_FIELD(state, { field, value }) {
+      if (field in state.user) {
+        state.user[field] = value
+      }
+    },
+    
+    CLEAR_USER(state) {
+      state.user = {
+      id: null,
+      name: '',
+      nickname: '',
+      status: '',
+      info: '',
+      email: '',
+      birthdate: '',
+      }
+    }
+  },
+  actions: {
+    /* async updateUser({ commit, state }, updates) {
+      try {
+        // Отправка обновлений на сервер
+        const response = await fetch(`/api/users/${state.user.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates)
+        })
+        
+        const updatedUser = await response.json()
+        commit('SET_USER', updatedUser)
+        return updatedUser
+      } catch (error) {
+        console.error('Ошибка обновления:', error)
+        throw error
+      }
+    } */
+  },
 }

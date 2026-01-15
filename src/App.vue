@@ -13,24 +13,27 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { computed, onMounted } from 'vue'
 import { useTheme } from '@/composables/useTheme'
-const { currentTheme, toggleTheme, isDark } = useTheme()
+const { currentTheme, toggleTheme, isDark } = useTheme();
+
+import { generalFunctions } from './composables/generalFunctions';
+const { loadUser, user } = generalFunctions();
 
 const store = useStore()
 const router = useRouter()
 
-const user = computed(() => store.getters['user/getUser'])
 
-const checkAuth = () => {
+/* const checkAuth = () => {
   //console.log('User', user.value);
-  /* if (!user.value) {
+  if (!user.value) {
     router.push('/login')
   } else {
     router.push({ name: 'friends' })
-  } */
-}
+  }
+} */
 
 onMounted(() => {
-  checkAuth()
+  //checkAuth();
+  loadUser();
 })
 </script>
 

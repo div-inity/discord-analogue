@@ -11,14 +11,29 @@
           <!-- Сингл-аватар -->
           <Avatar :status="dialog.status" :size="30" v-else :avatar="dialog.avatars[0]"></Avatar>
             
+          <!-- Мульти-имя -->
+          <div 
+            v-if="dialog.names.length > 1"
+            class="dialog-name-multy dialog-name" 
+            
+            @mouseenter="onMouseEnter"
+            @mouseleave="onMouseLeave" 
+            :class="{ hovered: isHovered }"
+            ><!-- :class="{ hovered: isHovered }" -->
+            <span v-tippy="{ content: 'Редактировать группу', placement: 'bottom'}">{{ dialogNames(dialog.id) }} {{ dialog.names.length > 1 }}</span>
+              
+          </div>
+
           <!-- Сингл-имя -->
-          <div class="dialog-name-single dialog-name" v-if="dialog.names.length == 1" v-tippy="{ content: dialog.name, placement: 'bottom'}">
+          <div 
+            v-else-if="dialog.names.length == 1"
+            class="dialog-name-single dialog-name" 
+            v-tippy="{ content: dialog.name, placement: 'bottom'}"
+          >
             {{ dialogNames(dialog.id) }}
           </div>
 
-          <!-- Мульти-имя -->
-          <div class="dialog-name-multy dialog-name" v-else v-tippy="{ content: 'Редактировать группу', placement: 'bottom'}" @mouseenter="onMouseEnter"
-    @mouseleave="onMouseLeave" :class="{ hovered: isHovered }">{{ dialogNames(dialog.id) }}</div>
+          
         </template>
 
         <!-- Алиасы для сингл-имени -->
