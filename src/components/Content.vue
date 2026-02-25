@@ -1,6 +1,7 @@
 <template>
-  <div class="content flex column" :style="{ width: contentWidth + 'px' }" @mouseenter="onMouseEnter"
+  <div class="content flex column" :style="{ width: contentWidth + 'px', height: contentHeight + 'px' }" @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave" :class="{ hovered: isHovered }">
+    contentHeight.value: {{ contentHeight }}
     <slot>
       content width:{{ headerWidth }}<br>
       content height:{{ contentHeight }}
@@ -11,7 +12,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { generalFunctions } from '@/composables/generalFunctions';
-const { headerWidth } = generalFunctions();
+const { headerWidth, contentHeight } = generalFunctions();
 const props = defineProps({
   RightAside: { type: Number, required: false } // Для определения размеров контента
 })
@@ -45,12 +46,18 @@ function onMouseLeave() {
 <style lang="scss">
 .content {
   min-height: 100%;
-  padding: 15px 25px;
+  /* padding: 15px 25px; */
   height: calc(100vh - 50px);
   row-gap: 15px;
   overflow-y: auto;
   min-width: 370px;
   position: relative;
+  border: red 1px solid;
+
+  /* & > * {
+    width: inherit;
+    max-width: 100%;
+  } */
 
   /* базовые стили scrollbar */
   &::-webkit-scrollbar {

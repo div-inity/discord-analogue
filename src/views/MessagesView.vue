@@ -55,11 +55,14 @@
 
       </ContentHeader>
       <ContentFlex>
-        <Content :RightAside="350">
-          {{ dialog }}
-          <router-view />messagesview 
+        <Content :RightAside="widthAside">
+          <!-- {{ dialog }}
+          <router-view />messagesview  -->
+          <div class="chat-wrapper flex">
+            <TextField height="68" :placeholder="'Написать @'+ dialog.name" postfix color="var(--system-back-color4)"/>
+          </div>
         </Content>
-        <RightAside :RightAside="350">
+        <RightAside :RightAside="widthAside">
         </RightAside>
       </ContentFlex>
     </div>
@@ -79,6 +82,9 @@ import { useStore } from 'vuex'
 import { useRoute } from 'vue-router';
 import { ref, computed } from 'vue';
 import { generalFunctions } from '@/composables/generalFunctions';
+
+const widthAside = 350;
+
 const { dialogNames, activeDialog } = generalFunctions();
 const route = useRoute();
 const store = useStore();
@@ -157,31 +163,35 @@ const icons = {
   .page-title:has(.dialog-name-multy.hovered) {
     background-color: var(--system-back-color1);
 }
-  .aliases {align-items: center;
-    .aka {
-      font-size: 13px;
-      margin-right: 14px;
-    }
-    .item {
-      padding: 0;
-      cursor: pointer;
-      color: var(--main-text-color);
-      font-size: 15px;
-      font-family: var(--font-family-400);
-      span {
-        padding: 0;
-      }
-    }
+.aliases {align-items: center;
+  .aka {
+    font-size: 13px;
+    margin-right: 14px;
   }
-  .dialog-name {
+  .item {
+    padding: 0;
     cursor: pointer;
-    &.dialog-name-multy {
-
-    }
-    &.dialog-name-single {
-    
+    color: var(--main-text-color);
+    font-size: 15px;
+    font-family: var(--font-family-400);
+    span {
+      padding: 0;
     }
   }
+}
+.dialog-name {
+  cursor: pointer;
+  &.dialog-name-multy {
+
+  }
+  &.dialog-name-single {
   
-</style>00.
-.
+  }
+}
+.chat-wrapper {
+  flex-direction: column-reverse;
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+}
+</style>

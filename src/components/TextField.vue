@@ -4,12 +4,14 @@
     width: props.width ? props.width + '%' : null,
     'border-radius': props.radius ? props.radius + 'px' : '8px',
     padding: props.padding ? props.padding + 'px' : '0 12px',
+    'background-color': props.color ? props.color : 'var(--system-back-color5)',
+    'border-color': props.border ? props.border : 'var(--system-back-color1)'
   }">
     <!-- <span class="icon" v-html="icons.search" v-if="props.icon == 'search'"></span> -->
     <div class="prefix flex row" v-if="props.prefix">
       <slot name="prefix"></slot>
     </div>
-    <input type="text" :placeholder="props.placeholder || 'Поиск'" name="input">
+    <input type="text" :placeholder="props.placeholder || 'Поиск'" name="input" autocomplete="off">
     <slot name="actions"></slot>
     <button v-if="props.icon == 'search' && props.button == true">
       <slot name="button">Поиск</slot>
@@ -31,6 +33,8 @@ const props = defineProps({
   radius: String,
   button: Boolean,
   placeholder: String,
+  color: String,
+  border: String,
 });
 const icons = {
   search: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"
@@ -49,15 +53,15 @@ const icons = {
   /* border-radius: 8px; */
   width: 100%;
   min-width: 250px;
-  background-color: var(--system-back-color5);
   height: 55px;
   /* padding: 12px; */
   column-gap: 12px;
   font-family: var(--font-family-400);
+  border: 1px solid;
 
-  &:focus-within {
+  /* &:focus-within {
     outline: 1px solid var(--link-color);
-  }
+  } */
 
   .icon {
     display: flex;
@@ -79,6 +83,12 @@ const icons = {
     flex-grow: 2;
     font-size: 15px;
     height: 100%;
+    background-color: transparent;
+    font-family: var(--font-family-400);
+
+    &::placeholder {
+      color: var(--icon-color);
+    }
   }
 
   button {

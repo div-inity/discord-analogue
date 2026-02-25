@@ -114,6 +114,12 @@ export function generalFunctions() {
     return windowWidth.value - navbarWidth.value - sidebarWidth.value;
   })
 
+  const mainHeaderHeight = ref(24);
+  const headerHeight = ref(50);
+  const contentHeight = computed(() => {
+    return windowHeight.value - headerHeight.value - mainHeaderHeight.value;
+  })
+
 
   const updateWidth = () => {
     windowWidth.value = window.innerWidth;
@@ -155,6 +161,7 @@ export function generalFunctions() {
     memberWord,
     sidebarWidth,
     updateSidebarWidth,
+    contentHeight,
     navbarWidth,
     profileWidth,
     headerWidth,

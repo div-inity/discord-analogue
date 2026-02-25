@@ -10,7 +10,7 @@
       
       
     </div>
-    headerWidth: {{ headerWidth }}
+    <!-- headerWidth: {{ headerWidth }} -->
     <div class="header-actions flex row">
       <slot name="actions">
       
@@ -33,7 +33,9 @@ const setHeaderClass = () => {
 .content-header {
   min-height: 50px;
   width: 561px;
+  min-width: 552px;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
 
   .content-header-body {
@@ -43,6 +45,8 @@ const setHeaderClass = () => {
     color: var(--loud-text-color);    
     padding-inline: 13px;
     flex-grow: 1;
+    position: relative;
+    z-index: 1;
 
     .page-title {
       padding-inline: 12px;
@@ -55,9 +59,14 @@ const setHeaderClass = () => {
 
 
   .header-actions {
-    height: 100%;
+    height: inherit;
     align-items: center;
     padding-right: 13px;
+    position: absolute;
+    z-index: 100;
+    right: 0;
+    background-color: var(--system-back-color2);
+    border-bottom: 1px solid var(--system-back-color5);
 
     button {
       height: 100%;
