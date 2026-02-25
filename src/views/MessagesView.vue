@@ -19,9 +19,10 @@
             @mouseenter="onMouseEnter"
             @mouseleave="onMouseLeave" 
             :class="{ hovered: isHovered }"
-            ><!-- :class="{ hovered: isHovered }" -->
-            <span v-tippy="{ content: 'Редактировать группу', placement: 'bottom'}">{{ dialogNames(dialog.id) }} {{ dialog.names.length > 1 }}</span>
-              
+            >
+            <span v-tippy="{ content: 'Редактировать группу', placement: 'bottom'}">
+              {{ dialogNames(dialog.id) }}
+            </span>
           </div>
 
           <!-- Сингл-имя -->
@@ -37,7 +38,7 @@
         </template>
 
         <!-- Алиасы для сингл-имени -->
-        <template v-slot:other v-if="dialog.names.length == 1">
+        <template v-slot:other v-if="dialog?.names.length == 1">
           <Divider v :height="50" color="var(--system-back-color1)"/>
           <div class="aliases flex row" v-if="aliases.length">
             <span class="aka">AKA</span>
@@ -71,13 +72,14 @@ import { useStore } from 'vuex'
 import { useRoute } from 'vue-router';
 import { ref, computed } from 'vue';
 import { generalFunctions } from '@/composables/generalFunctions';
-const { dialogNames } = generalFunctions();
+const { dialogNames, activeDialog } = generalFunctions();
 const route = useRoute();
 const store = useStore();
 const dialog = computed(() => {
   return store.state.private_msg.dialogs.find(d => d.id == route.params.id);
 });
-
+activeDialog.value = route.params.id
+console.log(activeDialog.value)
 /* const name = computed(() => {
   return store.state.private_msg.dialogs.find(d => d.id == route.params.id);
 }) */
@@ -89,8 +91,8 @@ const aliases = ref([
     server: 'Мишкина каморка',
   },
 ])
-console.log(aliases.value.length)
-console.log(aliases.value[0]);
+//console.log(aliases.value.length)
+//console.log(aliases.value[0]);
 
 const isHovered = ref(false);
 

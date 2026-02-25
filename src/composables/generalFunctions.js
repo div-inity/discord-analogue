@@ -3,9 +3,10 @@ import { computed, ref, onMounted, onUnmounted, watchEffect } from 'vue';
 import { useRouter } from 'vue-router'
 
 const userToken = ref(localStorage.getItem('token'));
-console.log(userToken.value)
+//console.log(userToken.value)
 
 
+const activeDialog = ref(null); // Открытый диалог (id диалога) - если есть открытый
 
 function parseJwt(token) { // Парсинг токена в инфо юзера
   try {
@@ -43,6 +44,8 @@ const sidebarWidth = ref(getInitialSidebarWidth());
 const navbarWidth = ref(68);
 
 export function generalFunctions() {
+  
+  
   const router = useRouter()
   const store = useStore();
   
@@ -156,5 +159,6 @@ export function generalFunctions() {
     textStatus,
     loadUser,
     user,
+    activeDialog
   };
 }

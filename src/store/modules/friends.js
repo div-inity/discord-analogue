@@ -71,7 +71,6 @@ export default {
     }
   },
   getters: {
-    getUser: (state) => state.user
   },
   mutations: {},
   actions: {},
