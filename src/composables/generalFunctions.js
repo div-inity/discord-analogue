@@ -2,6 +2,8 @@ import { useStore } from 'vuex';
 import { computed, ref, onMounted, onUnmounted, watchEffect } from 'vue';
 import { useRouter } from 'vue-router'
 
+// рендерится один раз
+
 const userToken = ref(localStorage.getItem('token'));
 //console.log(userToken.value)
 
@@ -44,7 +46,7 @@ const sidebarWidth = ref(getInitialSidebarWidth());
 const navbarWidth = ref(68);
 
 export function generalFunctions() {
-  
+  //рендерится для каждого компонента
   
   const router = useRouter()
   const store = useStore();

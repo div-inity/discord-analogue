@@ -1,37 +1,36 @@
 <template>
   <div class="input-wrapper flex row" :style="{
     height: props.height ? props.height + 'px' : null,
-    width: props.width ? props.width + '%' : null
+    width: props.width ? props.width + '%' : null,
+    'border-radius': props.radius ? props.radius + 'px' : '8px',
+    padding: props.padding ? props.padding + 'px' : '0 12px',
   }">
-    <span class="icon" v-html="icons.search" v-if="props.icon == 'search'"></span>
-    <div class="prefix flex row">
+    <!-- <span class="icon" v-html="icons.search" v-if="props.icon == 'search'"></span> -->
+    <div class="prefix flex row" v-if="props.prefix">
       <slot name="prefix"></slot>
     </div>
-    <input type="text" placeholder="Поиск" name="input">
+    <input type="text" :placeholder="props.placeholder || 'Поиск'" name="input">
     <slot name="actions"></slot>
     <button v-if="props.icon == 'search' && props.button == true">
       <slot name="button">Поиск</slot>
     </button>
+    <div class="postfix flex row" v-if="props.postfix">
+      <slot name="postfix">
+        <span class="icon" v-html="icons.search"></span>
+      </slot>
+    </div>
   </div>
 </template>
 <script setup>
 const props = defineProps({
-  icon: {
-    type: String,
-    required: false,
-  },
-  height: {
-    type: String,
-    required: false,
-  },
-  width: {
-    type: String,
-    required: false,
-  },
-  button: {
-    type: Boolean,
-    required: false,
-  },
+  prefix: Boolean,
+  postfix: Boolean,
+  icon: String,
+  height: String,
+  width: String,
+  radius: String,
+  button: Boolean,
+  placeholder: String,
 });
 const icons = {
   search: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"
@@ -47,12 +46,12 @@ const icons = {
   position: relative;
   display: inline-flex;
   align-items: center;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   width: 100%;
-  min-width: 335px;
+  min-width: 250px;
   background-color: var(--system-back-color5);
   height: 55px;
-  padding: 12px;
+  /* padding: 12px; */
   column-gap: 12px;
   font-family: var(--font-family-400);
 

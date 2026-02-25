@@ -7,8 +7,15 @@
         </slot>
       </div>
       <slot name="other"><!-- Прочие элементы header-а --></slot>
+      
+      
     </div>
     headerWidth: {{ headerWidth }}
+    <div class="header-actions flex row">
+      <slot name="actions">
+      
+      </slot>
+    </div>
   </div>
 </template>
 <script setup>
@@ -19,6 +26,7 @@ const route = useRoute();
 //console.log(route.matched[1].path)
 const setHeaderClass = () => {
   if (route.matched[1].path == '/friends') return 'friends-header';
+  else if (route.matched[1].path == '/messages') return 'messages-header';
 };
 </script>
 <style lang="scss">
@@ -34,6 +42,8 @@ const setHeaderClass = () => {
     font-family: var(--font-family-400);
     color: var(--loud-text-color);    
     padding-inline: 13px;
+    flex-grow: 1;
+
     .page-title {
       padding-inline: 12px;
       column-gap: 14px;
@@ -43,9 +53,39 @@ const setHeaderClass = () => {
     }
   }
 
+
+  .header-actions {
+    height: 100%;
+    align-items: center;
+    padding-right: 13px;
+
+    button {
+      height: 100%;
+      width: 50px;
+      padding: 13px;
+      display: inline-flex;
+      background-color: transparent;
+      cursor: pointer;
+
+      &:hover {
+        svg * {
+          fill: var(--main-text-color);
+        }
+      }
+
+      svg {
+        height: 100%;
+        width: inherit;
+        * {
+          transition: 0.3s fill;
+        }
+      }
+    }
+  }
+  
   &.friends-header {
     .content-header-body {
-      justify-content: center;
+      justify-content: unset;
     }
 
     .friends-header-nav {
