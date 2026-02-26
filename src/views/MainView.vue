@@ -1,5 +1,5 @@
 <template>
-  <div class="container main-container" v-if="user">
+  <div class="container main-container" v-if="user.id">
     <Navbar />
     <div class="content-wrapper">
       <router-view />
@@ -12,12 +12,9 @@
 </template>
 
 <script setup>
-import { useStore } from 'vuex'
-import { computed, onMounted } from 'vue'
 import Navbar from '@/components/Navbar.vue'
-const store = useStore()
-const user = computed(() => store.getters['user/getUser'])
-//console.log(user)
+import { generalFunctions } from '@/composables/generalFunctions';
+const { user } = generalFunctions();
 </script>
 <style lang="scss">
 body {

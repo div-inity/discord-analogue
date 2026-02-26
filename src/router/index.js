@@ -2,12 +2,18 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import MainView from "../views/MainView.vue";
 import MessagesView from "../views/MessagesView.vue";
 import FriendsView from "../views/FriendsView.vue";
+import store from '@/store'
+/* import { generalFunctions } from "@/composables/generalFunctions";
+const {user} = generalFunctions() */
 
 const routes = [
   {
     path: "/",
     name: "main",
     component: MainView,
+    meta: {
+      requiresAuth: true, // Требуется авторизация
+    },
     children: [
       {
         path: "/messages",
@@ -125,5 +131,32 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
+
+/* router.beforeEach((to, from, next) => {
+  // Проверяем авторизацию
+  const isAuthenticated = store.getters['user/isAuthenticated'] || 
+                         !!store.state.user.user?.id
+  console.log("isAuthenticated: ", isAuthenticated)
+  
+  // Список публичных страниц
+  const publicPages = ['login', 'register']
+  
+  // Если страница требует авторизации (все кроме login/register)
+  if (!publicPages.includes(to.name)) {
+    // Если не авторизован - на логин
+    if (!isAuthenticated) {
+      next({ name: 'login' })
+    } else {
+      next() // авторизован - пропускаем
+    }
+  } else {
+    // Если авторизован и пытается зайти на login/register - на главную
+    if (isAuthenticated) {
+      next({ name: 'main' })
+    } else {
+      next() // не авторизован - пропускаем на login/register
+    }
+  }
+}) */
 
 export default router;

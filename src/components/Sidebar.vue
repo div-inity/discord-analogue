@@ -22,8 +22,8 @@
         </div>
         <div class="dialogs flex column">
           <div class="dialog flex row" v-for="(d, i) in dialogs">
-            <Avatar v-if="d.avatars?.length == 1" :size="32" :status="d.status" :avatar="d.avatars[0]" />
-            <Avatar v-else :size="32" :status="d.status" :avatars="d.avatars" multy
+            <Avatar v-if="d.avatars?.length == 1" size="32" :status="d.status" :avatar="d.avatars[0]" />
+            <Avatar v-else size="32" :status="d.status" :avatars="d.avatars" multy
               outline="var(--system-back-color3)" />
             <div class="flex column dialog-info">
               <div class="names" v-if="d.names.length > 1" v-tippy="{ content: dialogNames(d.id), placement: 'top' }">

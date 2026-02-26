@@ -12,6 +12,14 @@ import VueTippy from 'vue-tippy';
 //Глобальные компоненты - важно сразу загрузить
 import Header from './components/Header.vue'
 
+// Простая проверка при старте
+const token = localStorage.getItem('token')
+if (token && !store.state.user.user.id) {
+  // Если есть токен, но нет пользователя - разлогиниваем
+  localStorage.removeItem('token')
+  store.commit('user/CLEAR_USER')
+}
+
 const app = createApp(App)
 
 app.use(i18n)

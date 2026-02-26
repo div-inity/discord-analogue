@@ -3,7 +3,7 @@
     <div class="private-messages" :key="currentBlock">
       <div class="home-link" v-tippy="{ content: t('navbar.mymessages') }">
         <router-link :to="(activeDialog == null) ? '/friends' : '/messages/'+activeDialog" :class="(activeServer > 0) ? null : 'active'" class="home">
-          <Avatar :size="48" square />
+          <Avatar size="48" square />
         </router-link>
       </div>
 
@@ -13,8 +13,8 @@
         <div class="message" v-tippy="{ content: dialogNames(m.id) }">
           <router-link :class="(m.missed && m.missed > 0) ? 'missed' : null" :to="'/messages/' + m.id"
             class="link-message">
-            <Avatar v-if="m.avatars?.length == 1" :size="48" :mentions="m.missed" :avatar="m.avatars[0]" />
-            <Avatar v-else :size="48" :mentions="m.missed" :avatars="m.avatars" multy
+            <Avatar v-if="m.avatars?.length == 1" size="48" :mentions="m.missed" :avatar="m.avatars[0]" />
+            <Avatar v-else size="48" :mentions="m.missed" :avatars="m.avatars" multy
               outline="var(--system-back-color5)" />
           </router-link>
         </div>
@@ -27,7 +27,7 @@
         <router-link
           :class="{ 'missed-messages': s.missed_messages && s.missed_messages > 0, 'active': activeServer == s.id }"
           :to="'/server/' + s.id" class="link-server">
-          <Avatar :avatar="s.avatar" square :size="48" :mentions="s.mentions" :activity="s.activity_type"
+          <Avatar :avatar="s.avatar" square size="48" :mentions="s.mentions" :activity="s.activity_type"
             :active="s.my_activity" />
         </router-link>
       </div>
@@ -43,7 +43,7 @@
     <!-- Блок юзер-функций (профиль, заглушить, откл.звук, настройки, статус) -->
     <div :key="currentBlock" class="userprofile flex row" :style="{ width: profileWidth + 'px' }">
       <div class="profile flex row">
-        <Avatar :size="40" :avatar="user.avatar" :status="user.status" />
+        <Avatar size="40" :avatar="user.avatar" :status="user.status" />
         <div class="userinfo flex column">
           <div class="name">{{ user.name }}</div>
           <div class="userprofile-info">{{ (user.info) ? user.info : user.status }}</div>

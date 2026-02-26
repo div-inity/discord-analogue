@@ -5,11 +5,11 @@
       <ContentHeader>
         <template v-slot:page-title v-if="dialog?.id">
           <!-- Мульти-аватар -->
-          <Avatar  :size="30" v-if="dialog.names.length > 1" multy :avatars="dialog.avatars"
+          <Avatar  size="30" v-if="dialog.names.length > 1" multy :avatars="dialog.avatars"
             outline="var(--system-back-color2)"></Avatar>
 
           <!-- Сингл-аватар -->
-          <Avatar :status="dialog.status" :size="30" v-else :avatar="dialog.avatars[0]"></Avatar>
+          <Avatar :status="dialog.status" size="30" v-else :avatar="dialog.avatars[0]"></Avatar>
             
           <!-- Мульти-имя -->
           <div 
@@ -56,10 +56,9 @@
       </ContentHeader>
       <ContentFlex>
         <Content :RightAside="widthAside">
-          <!-- {{ dialog }}
-          <router-view />messagesview  -->
           <div class="chat-wrapper flex">
             <TextField height="68" :placeholder="'Написать @'+ dialog.name" postfix color="var(--system-back-color4)"/>
+            <Chat/>
           </div>
         </Content>
         <RightAside :RightAside="widthAside">
@@ -78,6 +77,7 @@ import Content from '@/components/Content.vue';
 import RightAside from '@/components/RightAside.vue';
 import Avatar from '@/components/Avatar.vue';
 import TextField from '@/components/TextField.vue';
+import Chat from '@/components/Chat.vue';
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router';
 import { ref, computed } from 'vue';
@@ -192,6 +192,8 @@ const icons = {
   flex-direction: column-reverse;
   height: 100%;
   overflow-y: auto;
-  padding: 10px;
+  padding: 0 10px 10px;
+  
+  
 }
 </style>

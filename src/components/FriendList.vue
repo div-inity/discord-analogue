@@ -8,7 +8,7 @@
 
         <Divider h color="var(--system-back-color3)" :width="98" />
         <div class="list-friends-item flex row">
-          <Avatar :avatar="item.avatar" :size="40" :status="item.status"></Avatar>
+          <Avatar :avatar="item.avatar" size="40" :status="item.status"></Avatar>
           <div class="item-info flex column">
             <p>{{ item.name }}</p>
             <span>{{ textStatus(item.status) }}</span>

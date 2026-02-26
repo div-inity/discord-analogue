@@ -1,7 +1,7 @@
 <template>
   <div class="content flex column" :style="{ width: contentWidth + 'px', height: contentHeight + 'px' }" @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave" :class="{ hovered: isHovered }">
-    contentHeight.value: {{ contentHeight }}
+    <!-- contentHeight.value: {{ contentHeight }} -->
     <slot>
       content width:{{ headerWidth }}<br>
       content height:{{ contentHeight }}

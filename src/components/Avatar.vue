@@ -83,7 +83,7 @@ const props = defineProps({
     required: false
   },
   size: { // размер аватара
-    type: Number,
+    type: String,
     required: false
   },
   outline: { // Для двойного аватара - цвет обводки

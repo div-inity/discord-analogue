@@ -3,36 +3,19 @@
     <button @click="toggleTheme" class="theme-switcher">
       {{ isDark ? '☀️' : '🌙' }} {{ currentTheme }}
     </button>
-    <Header v-if="user"></Header>
+    <Header v-if="user.id"></Header>
     <router-view></router-view>
   </div>
 </template>
 
 <script setup>
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
-import { computed, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useTheme } from '@/composables/useTheme'
 const { currentTheme, toggleTheme, isDark } = useTheme();
 
 import { generalFunctions } from './composables/generalFunctions';
 const { loadUser, user } = generalFunctions();
-
-const store = useStore()
-const router = useRouter()
-
-
-/* const checkAuth = () => {
-  //console.log('User', user.value);
-  if (!user.value) {
-    router.push('/login')
-  } else {
-    router.push({ name: 'friends' })
-  }
-} */
-
 onMounted(() => {
-  //checkAuth();
   loadUser();
 })
 </script>

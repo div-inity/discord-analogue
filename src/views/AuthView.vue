@@ -58,9 +58,6 @@ const store = useStore();
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue';
 const router = useRouter()
-if (store.state.user.user != null) {
-  router.push('/friends')
-}
 
 const fields = reactive({
   email: {
@@ -130,6 +127,7 @@ function auth () {
   .then(data => {
     console.log('Ответ сервера:', data);
     localStorage.setItem('token', data.token);
+    router.push('/')
   })
   .catch(error => {
     console.error('Ошибка при POST-запросе:', error);

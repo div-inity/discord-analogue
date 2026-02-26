@@ -67,7 +67,7 @@ export function generalFunctions() {
   //loadUser
 
   const user = computed(() => store.getters['user/getUser'])
-  
+  console.log(user.value)
   const dialogs = computed(() => store.state.private_msg.dialogs);
 
   const dialogNames = (dialogId) => { //Для перечисления имен в чате через запятую
