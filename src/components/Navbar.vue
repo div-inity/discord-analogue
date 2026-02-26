@@ -82,10 +82,13 @@ import display from '@/assets/img/svg/display.svg'
 import camera from '@/assets/img/svg/camera.svg'
 
 import { generalFunctions } from '@/composables/generalFunctions'
-const { dialogNames, navbarWidth, profileWidth, activeDialog, clearToken } = generalFunctions()
+const { navbarWidth, profileWidth } = generalFunctions()
+import { userComposable } from '@/composables/userComposable'
+const {clearToken, user} = userComposable()
+import { dialogComposable } from '@/composables/dialogComposable'
+const {dialogNames, activeDialog} = dialogComposable()
 //console.log(activeDialog.value)
 const store = useStore()
-const user = store.state.user.user;
 const servers = store.state.servers.servers;
 const missed_messages = store.state.private_msg.missed_messages;
 const activeServer = ref(0) // Начальное значение - сервер не выбран

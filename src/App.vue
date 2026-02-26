@@ -9,14 +9,19 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useTheme } from '@/composables/useTheme'
 const { currentTheme, toggleTheme, isDark } = useTheme();
 
-import { generalFunctions } from './composables/generalFunctions';
-const { loadUser, user } = generalFunctions();
+import { userComposable } from './composables/userComposable';
+const { loadUser } = userComposable();
+
+import { useStore } from 'vuex';
+const store = useStore();
 onMounted(() => {
   loadUser();
+  store.dispatch('private_msg/getDialogs')
+  
 })
 </script>
 

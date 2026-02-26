@@ -57,7 +57,9 @@ import { useStore } from 'vuex';
 import Avatar from './Avatar.vue';
 
 import { generalFunctions } from '@/composables/generalFunctions';
-const { dialogNames, memberWord, sidebarWidth, updateSidebarWidth, } = generalFunctions();
+const {  sidebarWidth, updateSidebarWidth, } = generalFunctions();
+import { dialogComposable } from '@/composables/dialogComposable'
+const {dialogNames, memberWord} = dialogComposable()
 
 const store = useStore();
 const route = useRoute();

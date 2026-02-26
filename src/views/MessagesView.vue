@@ -81,11 +81,11 @@ import Chat from '@/components/Chat.vue';
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router';
 import { ref, computed } from 'vue';
-import { generalFunctions } from '@/composables/generalFunctions';
+import { dialogComposable } from '@/composables/dialogComposable';
 
 const widthAside = 350;
 
-const { dialogNames, activeDialog } = generalFunctions();
+const { dialogNames, activeDialog } = dialogComposable();
 const route = useRoute();
 const store = useStore();
 const dialog = computed(() => {

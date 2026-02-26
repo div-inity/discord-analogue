@@ -133,9 +133,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // Проверяем авторизацию
-  console.log("Мне нужно на ", to)
+  //console.log("Мне нужно на ", to)
   const isAuthenticated = computed(() => store.getters['user/getUser']).value.id && true; // Булево значение
-  console.log("isAuthenticated: ", isAuthenticated)
+  //console.log("isAuthenticated: ", isAuthenticated)
   
   // Список публичных страниц
   const publicPages = ['login', 'register']

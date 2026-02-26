@@ -32,9 +32,9 @@
 import { ref } from 'vue';
 import Avatar from './Avatar.vue';
 import Divider from './Divider.vue';
-import { generalFunctions } from '@/composables/generalFunctions';
+import { userComposable } from '@/composables/userComposable';
 import PopUp from '@/components/PopUp.vue';
-const { textStatus } = generalFunctions();
+const { textStatus } = userComposable();
 const props = defineProps({
   list: {
     type: Object,

@@ -1,3 +1,6 @@
+import { userComposable } from '@/composables/userComposable';
+const {userToken} = userComposable()
+//console.log(userToken.value)
 export default {
   namespaced: true,
   state: {
@@ -16,7 +19,7 @@ export default {
       },
     ],
     dialogs: [
-      {
+      /* {
         id: 2,
         names: ["Михаил Шатов"],
         name: '', // Уникальное имя для сингл-диалогов
@@ -63,12 +66,38 @@ export default {
         name: '', // Уникальное имя для сингл-диалогов
         avatars: [require('@/assets/img/UserIcon.jpg')],
         status: 'moon',
-      },
+      }, */
     ],
   },
   getters: {
-    //getUser: (state) => state.user
+    getDialogs: (state) => state.dialogs
+
   },
-  mutations: {},
-  actions: {},
+  mutations: {
+    SET_DIALOGS(state, dialogs) {
+      state.dialogs = dialogs;
+    }
+  },
+  actions: {
+    async getDialogs({ commit }) {
+      // Получаем токен из другого модуля стора
+      const token = userToken.value; // предположим, токен хранится в user модуле
+      
+      try {
+        const response = await fetch('/api/v1/dialogs', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        console.log(data)
+        commit('SET_DIALOGS', data);
+        return data;
+      } catch (error) {
+        console.error('Ошибка при GET-запросе getDialogs:', error);
+      }
+    }
+  },
 }

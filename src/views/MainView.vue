@@ -13,8 +13,8 @@
 
 <script setup>
 import Navbar from '@/components/Navbar.vue'
-import { generalFunctions } from '@/composables/generalFunctions';
-const { user } = generalFunctions();
+import { userComposable } from '@/composables/userComposable';
+const { user } = userComposable();
 //console.log(!!user.id, user.value.id)
 </script>
 <style lang="scss">

@@ -58,8 +58,8 @@ const store = useStore();
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue';
 const router = useRouter()
-import { generalFunctions } from '@/composables/generalFunctions';
-const { loadUser } = generalFunctions()
+import { userComposable } from '@/composables/userComposable';
+const { loadUser } = userComposable()
 
 const fields = reactive({
   email: {

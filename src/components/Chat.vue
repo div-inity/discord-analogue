@@ -20,8 +20,6 @@
   </div>
 </template>
 <script setup>
-/* import { generalFunctions } from '@/composables/generalFunctions';
-const {user} = generalFunctions(); */
 import Avatar from './Avatar.vue';
 const findUserInfo = (id) => {
   return json.data.dialog.participants.find(e => e.userId == id)
