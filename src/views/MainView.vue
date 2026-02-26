@@ -1,5 +1,5 @@
 <template>
-  <div class="container main-container" v-if="user.id">
+  <div class="container main-container" v-if="!!user.id">
     <Navbar />
     <div class="content-wrapper">
       <router-view />

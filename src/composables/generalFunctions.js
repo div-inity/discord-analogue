@@ -4,8 +4,14 @@ import { useRouter } from 'vue-router'
 
 // рендерится один раз
 
-const userToken = ref(localStorage.getItem('token'));
-//console.log(userToken.value)
+const userToken = ref(localStorage.getItem('token') || null);
+console.log(userToken.value || "userToken.value=null")
+
+const clearToken = () => {
+  userToken.value = null
+  localStorage.setItem('token', null)
+  window.location.reload()
+}
 
 
 const activeDialog = ref(null); // Открытый диалог (id диалога) - если есть открытый
@@ -51,23 +57,55 @@ export function generalFunctions() {
   const router = useRouter()
   const store = useStore();
   
-  function loadUser() { // Загрузка инфо юзера из токена в vuex
-    if (userToken.value) {
-      const payload = parseJwt(userToken.value);
-      const userData = {
-        id: payload.id,
-        name: payload.name,
-        nickname: payload.nickname,
-        email: payload.email,
-        birthdate: payload.birthdate,
-      };
-      store.commit('user/SET_USER', userData)
-    }
+  function loadUser(token = null) {
+  // Если передан новый токен, обновляем его
+  if (token) {
+    userToken.value = token;
+    localStorage.setItem("token", token);
   }
+  
+  // Проверяем наличие токена
+  if (!userToken.value) {
+    console.log("Токен отсутствует");
+    return;
+  }
+
+  try {
+    console.log("Загрузка loadUser");
+    console.log("Токен:", userToken.value);
+    
+    const payload = parseJwt(userToken.value);
+    
+    // Проверяем, что payload содержит нужные поля
+    if (!payload || !payload.id) {
+      throw new Error("Невалидный токен");
+    }
+    
+    console.log("Payload:", payload);
+    
+    const userData = {
+      id: payload.id,
+      name: payload.name || '',
+      nickname: payload.nickname || '',
+      email: payload.email || '',
+      birthdate: payload.birthdate || '',
+    };
+    
+    store.commit('user/SET_USER', userData);
+    console.log("Данные пользователя загружены в store");
+    
+  } catch (error) {
+    console.error("Ошибка при загрузке пользователя:", error);
+    // В случае ошибки очищаем токен
+    userToken.value = null;
+    localStorage.removeItem("token");
+    store.commit('user/SET_USER', null);
+  }
+}
   //loadUser
 
   const user = computed(() => store.getters['user/getUser'])
-  console.log(user.value)
+  //console.log(user.value)
   const dialogs = computed(() => store.state.private_msg.dialogs);
 
   const dialogNames = (dialogId) => { //Для перечисления имен в чате через запятую
@@ -168,6 +206,7 @@ export function generalFunctions() {
     textStatus,
     loadUser,
     user,
-    activeDialog
+    activeDialog,
+    clearToken,
   };
 }

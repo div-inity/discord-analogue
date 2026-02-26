@@ -63,6 +63,7 @@
         </button>
       </div>
     </div>
+    <button @click="clearToken()" :key="457247">Выход</button>
   </TransitionGroup>
 </template>
 <script setup>
@@ -81,8 +82,8 @@ import display from '@/assets/img/svg/display.svg'
 import camera from '@/assets/img/svg/camera.svg'
 
 import { generalFunctions } from '@/composables/generalFunctions'
-const { dialogNames, navbarWidth, profileWidth, activeDialog } = generalFunctions()
-console.log(activeDialog.value)
+const { dialogNames, navbarWidth, profileWidth, activeDialog, clearToken } = generalFunctions()
+//console.log(activeDialog.value)
 const store = useStore()
 const user = store.state.user.user;
 const servers = store.state.servers.servers;

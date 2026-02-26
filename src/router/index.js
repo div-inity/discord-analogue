@@ -3,8 +3,7 @@ import MainView from "../views/MainView.vue";
 import MessagesView from "../views/MessagesView.vue";
 import FriendsView from "../views/FriendsView.vue";
 import store from '@/store'
-/* import { generalFunctions } from "@/composables/generalFunctions";
-const {user} = generalFunctions() */
+import { computed } from 'vue'
 
 const routes = [
   {
@@ -132,10 +131,9 @@ const router = createRouter({
   routes,
 });
 
-/* router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
   // Проверяем авторизацию
-  const isAuthenticated = store.getters['user/isAuthenticated'] || 
-                         !!store.state.user.user?.id
+  const isAuthenticated = computed(() => store.getters['user/getUser']).value.id && true; // Булево значение
   console.log("isAuthenticated: ", isAuthenticated)
   
   // Список публичных страниц
@@ -157,6 +155,6 @@ const router = createRouter({
       next() // не авторизован - пропускаем на login/register
     }
   }
-}) */
+})
 
 export default router;
