@@ -76,18 +76,6 @@ const routes = [
           import(/* webpackChunkName: "tasks" */ "../views/TasksView.vue"),
       },
       {
-        path: "/login",
-        name: "login",
-        component: () =>
-          import(/* webpackChunkName: "login" */ "../views/AuthView.vue"),
-      },
-      {
-        path: "/register",
-        name: "register",
-        component: () =>
-          import(/* webpackChunkName: "register" */ "../views/RegisterView.vue"),
-      },
-      {
         path: "/add-server",
         name: "add-server",
         component: () =>
@@ -122,6 +110,18 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
+  {
+    path: "/login",
+    name: "login",
+    component: () =>
+      import(/* webpackChunkName: "login" */ "../views/AuthView.vue"),
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: () =>
+      import(/* webpackChunkName: "register" */ "../views/RegisterView.vue"),
+  },
 
 ];
 
@@ -133,6 +133,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // Проверяем авторизацию
+  console.log("Мне нужно на ", to)
   const isAuthenticated = computed(() => store.getters['user/getUser']).value.id && true; // Булево значение
   console.log("isAuthenticated: ", isAuthenticated)
   

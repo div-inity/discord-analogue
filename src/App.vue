@@ -1,9 +1,9 @@
 <template>
+  <Header></Header>
   <div id="app" :class="`theme-${currentTheme}`">
     <button @click="toggleTheme" class="theme-switcher">
       {{ isDark ? '☀️' : '🌙' }} {{ currentTheme }}
     </button>
-    <Header v-if="user.id"></Header>
     <router-view></router-view>
   </div>
 </template>

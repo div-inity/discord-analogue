@@ -4,8 +4,13 @@ import { useRouter } from 'vue-router'
 
 // рендерится один раз
 
-const userToken = ref(localStorage.getItem('token') || null);
-console.log(userToken.value || "userToken.value=null")
+const userToken = ref(null)
+
+const setToken = () => {
+  userToken.value = localStorage.getItem('token') || null;
+  console.log(userToken.value || "userToken.value=null")
+}
+setToken()
 
 const clearToken = () => {
   userToken.value = null
@@ -60,8 +65,8 @@ export function generalFunctions() {
   function loadUser(token = null) {
   // Если передан новый токен, обновляем его
   if (token) {
-    userToken.value = token;
     localStorage.setItem("token", token);
+    setToken()
   }
   
   // Проверяем наличие токена
@@ -101,8 +106,7 @@ export function generalFunctions() {
     localStorage.removeItem("token");
     store.commit('user/SET_USER', null);
   }
-}
-  //loadUser
+}//loadUser
 
   const user = computed(() => store.getters['user/getUser'])
   //console.log(user.value)

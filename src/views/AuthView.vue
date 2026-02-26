@@ -131,7 +131,7 @@ function auth () {
     localStorage.setItem('token', data.token);
     console.log(localStorage.getItem('token'))
     loadUser(data.token)
-    //window.location.reload();
+    window.location.reload();
   })
   .catch(error => {
     console.error('Ошибка при POST-запросе:', error);

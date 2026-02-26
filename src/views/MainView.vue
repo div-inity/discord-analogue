@@ -1,5 +1,5 @@
 <template>
-  <div class="container main-container" v-if="!!user.id">
+  <div class="container main-container" v-if="!!user.id == true">
     <Navbar />
     <div class="content-wrapper">
       <router-view />
@@ -15,6 +15,7 @@
 import Navbar from '@/components/Navbar.vue'
 import { generalFunctions } from '@/composables/generalFunctions';
 const { user } = generalFunctions();
+//console.log(!!user.id, user.value.id)
 </script>
 <style lang="scss">
 body {

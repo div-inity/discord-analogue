@@ -38,7 +38,6 @@ header {
   align-content: space-between;
   padding-left: 8px;
 
-
   .logo {
     font-family: 'inter-600';
     font-size: 12px;

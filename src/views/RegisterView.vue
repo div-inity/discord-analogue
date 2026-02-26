@@ -64,9 +64,6 @@ const store = useStore();
 
 import { useRouter } from 'vue-router'
 const router = useRouter()
-if (store.state.user.user != null) {
-  router.push('/friends')
-}
 
 const fields = reactive({
   email: {
