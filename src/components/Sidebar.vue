@@ -20,7 +20,7 @@
           <button v-html="menuIcons.add" class="dialog-add" v-tippy="{ content: 'Создать ЛС', placement: 'top' }"
             @click="createDialog"></button>
         </div>
-        <div class="dialogs flex column">
+        <!-- <div class="dialogs flex column">
           <div class="dialog flex row" v-for="(d, i) in dialogs">
             <Avatar v-if="d.avatars?.length == 1" size="32" :status="d.status" :avatar="d.avatars[0]" />
             <Avatar v-else size="32" :status="d.status" :avatars="d.avatars" multy
@@ -36,7 +36,39 @@
             </div>
             <button class="remove-dialog" v-html="menuIcons.remove" @click="removeDialog"></button>
           </div>
-        </div>
+        </div> -->
+        <template v-if="dialogs && dialogs.length">
+          <div class="dialogs flex column">
+            <div class="dialog flex row" v-for="(d, i) in dialogs" :key="i">
+              
+            <Avatar v-if="d.avatars?.length == 1" size="32" :status="d.status" :avatar="d.avatars[0]" />
+            <Avatar v-else size="32" :status="d.status" :avatars="d.avatars" multy
+              outline="var(--system-back-color3)" />
+              
+              <div class="flex column dialog-info">
+                <div 
+                  class="names" 
+                  v-if="d.members.length > 1" 
+                  v-tippy="{ content: dialogNames(d), placement: 'top' }"
+                >
+                  {{ dialogNames(d) }}
+                </div>
+                <div class="names" v-else>{{ dialogNames(d) }}</div>
+                
+                <div class="members" v-if="d.members.length > 1">
+                  {{d.members.length}} {{ memberWord(d.members.length) }}
+                </div>
+              </div>
+              
+              <button 
+                class="remove-dialog" 
+                v-html="menuIcons.remove" 
+                @click="removeDialog(d?.uuid)"
+              ></button>
+            </div>
+          </div>
+        </template>
+        
       </menu>
     </template>
 
@@ -50,7 +82,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
-import { reactive, ref, onBeforeUnmount } from 'vue';
+import { reactive, ref, onBeforeUnmount, computed} from 'vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 import { useStore } from 'vuex';
@@ -59,11 +91,13 @@ import Avatar from './Avatar.vue';
 import { generalFunctions } from '@/composables/generalFunctions';
 const {  sidebarWidth, updateSidebarWidth, } = generalFunctions();
 import { dialogComposable } from '@/composables/dialogComposable'
-const {dialogNames, memberWord} = dialogComposable()
+const {dialogNames, memberWord, dialogs} = dialogComposable()
 
 const store = useStore();
 const route = useRoute();
-const dialogs = store.state.private_msg.dialogs;
+console.log(dialogs.value, 'Sidebar')
+
+
 const menuIcons = { // Иконки сайдбар-actions
   add: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M43.3334 20C43.3334 19.1159 42.9822 18.2681 42.3571 17.6429C41.732 17.0178 40.8841 16.6666 40.0001 16.6666C39.116 16.6666 38.2682 17.0178 37.6431 17.6429C37.0179 18.2681 36.6667 19.1159 36.6667 20V36.6666H20.0001C19.116 36.6666 18.2682 37.0178 17.6431 37.6429C17.0179 38.2681 16.6667 39.1159 16.6667 40C16.6667 40.884 17.0179 41.7319 17.6431 42.357C18.2682 42.9821 19.116 43.3333 20.0001 43.3333H36.6667V60C36.6667 60.884 37.0179 61.7319 37.6431 62.357C38.2682 62.9821 39.116 63.3333 40.0001 63.3333C40.8841 63.3333 41.732 62.9821 42.3571 62.357C42.9822 61.7319 43.3334 60.884 43.3334 60V43.3333H60.0001C60.8841 43.3333 61.732 42.9821 62.3571 42.357C62.9822 41.7319 63.3334 40.884 63.3334 40C63.3334 39.1159 62.9822 38.2681 62.3571 37.6429C61.732 37.0178 60.8841 36.6666 60.0001 36.6666H43.3334V20Z" fill="#ABABAB"/>

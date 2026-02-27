@@ -36,7 +36,7 @@ function parseJwt(token) { // Парсинг токена в инфо юзера
 export function userComposable() {
   //рендерится для каждого компонента
   const store = useStore();
-
+  
   const user = computed(() => store.getters['user/getUser'])
   //console.log(user.value)
 

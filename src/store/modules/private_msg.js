@@ -79,7 +79,7 @@ export default {
     }
   },
   actions: {
-    async getDialogs({ commit }) {
+    async setDialogs({ commit }) {
       // Получаем токен из другого модуля стора
       const token = userToken.value; // предположим, токен хранится в user модуле
       
@@ -96,7 +96,7 @@ export default {
         commit('SET_DIALOGS', data);
         return data;
       } catch (error) {
-        console.error('Ошибка при GET-запросе getDialogs:', error);
+        console.error('Ошибка при GET-запросе setDialogs:', error);
       }
     }
   },

@@ -1,28 +1,41 @@
 import { useStore } from 'vuex';
 import { computed, ref, watchEffect } from 'vue';
+import { userComposable } from './userComposable';
 
 const activeDialog = ref(null); // Открытый диалог (id диалога) - если есть открытый
 
 export function dialogComposable () {
   //рендерится для каждого компонента
   const store = useStore();
+  const {user} = userComposable()
 
-  const dialogs = ref(store.state.private_msg.dialogs);
-  console.log(dialogs)
+  const dialogs = computed(() => store.getters['private_msg/getDialogs'])
+  console.log(dialogs.value)
 
   watchEffect(() => {
-    dialogs.value = store.state.private_msg.dialogs;
+    //dialogs = computed(() => store.getters['private_msg/getDialogs'])
     console.log('dialogs обновлены:', dialogs.value);
   });
 
-  const dialogNames = (dialogId) => { //Для перечисления имен в чате через запятую
-    // Находим диалог по ID
-    const dialog = dialogs?.value.find(d => d.id === dialogId);
-
-    if (!dialog || !Array.isArray(dialog.names)) {
+  const dialogNames = (row) => { //Для перечисления имен в чате через запятую
+    const dialog = row;
+    if (!!dialog == false) {
+      console.log("dialogNames - dialog не найден")
+      return
+    }
+    console.log("dialogNames - dialog: ", dialog)
+    let members_info = dialog.members_info.filter(item => item.id !== user.value.id);
+    
+    console.log("members_info", members_info)
+    const members_names = members_info?.map(e => e.name);
+    
+    console.log('members_names', members_names)
+    console.log("user.value.id", user.value.id)
+    
+    if (!members_names || !Array.isArray(members_names)) {
       return '';
     }
-    return dialog.names.join(', ');
+    return members_names.join(', ');
   };// dialogNames
 
   const memberWord = (count) => { // Для указания кол-ва участников
@@ -45,6 +58,6 @@ export function dialogComposable () {
       dialogNames,
       memberWord,
       activeDialog,
-
+      dialogs,
     }
 }

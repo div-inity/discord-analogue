@@ -10,7 +10,7 @@
       <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" />
 
       <div class="missed_messages" v-for="(m, i) in missed_messages">
-        <div class="message" v-tippy="{ content: dialogNames(m.id) }">
+        <div class="message"> <!-- v-tippy="{ content: dialogNames(m.id) }" -->
           <router-link :class="(m.missed && m.missed > 0) ? 'missed' : null" :to="'/messages/' + m.id"
             class="link-message">
             <Avatar v-if="m.avatars?.length == 1" size="48" :mentions="m.missed" :avatar="m.avatars[0]" />
