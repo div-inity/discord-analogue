@@ -20,7 +20,7 @@ import { useStore } from 'vuex';
 const store = useStore();
 onMounted(() => {
   loadUser();
-  store.dispatch('private_msg/getDialogs')
+  //store.dispatch('private_msg/getDialogs')
   
 })
 </script>

@@ -259,6 +259,7 @@ async function createAccount() {
   })
   .then(data => {
     console.log('Ответ сервера:', data);
+    router.push({name: 'login'})
   })
   .catch(error => {
     console.error('Ошибка при POST-запросе:', error);
