@@ -35,12 +35,12 @@
                   v-if="d.members.length > 1" 
                   v-tippy="{ content: dialogNames(d), placement: 'top' }"
                 >
-                  {{ dialogNames(d) }}
+                  {{ (d.custom_name) ? d.custom_name : dialogNames(d) }} <!-- Несколько имен или название чата -->
                 </div>
-                <div class="names" v-else>{{ dialogNames(d) }}</div>
+                <div class="names" v-else>{{ dialogNames(d) }}</div><!--  Одно имя  -->
                 
                 <div class="members" v-if="d.members.length > 1">
-                  {{d.members.length}} {{ memberWord(d.members.length) }}
+                  {{d.members.length}} {{ memberWord(d.members.length) }} <!--  Кол-во участников -->
                 </div>
               </div>
               
