@@ -17,61 +17,57 @@ const getInitialSidebarWidth = () => { // Установка ширины сай
   }
 };//getInitialSidebarWidth
 
-const sidebarWidth = ref(getInitialSidebarWidth());
-const navbarWidth = ref(68);
+// Внутреннее состояние (синглтон)
+const state = {
+  sidebarWidth: ref(getInitialSidebarWidth()),
+  navbarWidth: ref(68),
+  windowWidth: ref(window.innerWidth),
+  windowHeight: ref(window.innerHeight),
+  mainHeaderHeight: ref(24),
+  headerHeight: ref(50),
+  instanceCount: 0,
+  isResizeListenerActive: false
+};
 
+// Вычисляемые значения (синглтон)
+const profileWidth = computed(() => state.navbarWidth.value + state.sidebarWidth.value - 20);
+const headerWidth = computed(() => state.windowWidth.value - state.navbarWidth.value - state.sidebarWidth.value);
+const contentHeight = computed(() => state.windowHeight.value - state.headerHeight.value - state.mainHeaderHeight.value);
+
+function updateDimensions() {
+  state.windowWidth.value = window.innerWidth;
+  state.windowHeight.value = window.innerHeight;
+}
 
 export function generalFunctions() {
-  //рендерится для каждого компонента
-
-  const updateSidebarWidth = (newVal) => {
-    sidebarWidth.value = newVal;
-    localStorage.setItem('sidebarWidth', newVal.toString());
-    //console.log('Sidebar width saved to localStorage:', newVal);
-  }
-
-  const profileWidth = computed(() => { // нижнее левое меню юзера 
-    return navbarWidth.value + sidebarWidth.value - 20;
-  })
-
-  const windowWidth = ref(window.innerWidth);
-  const windowHeight = ref(window.innerHeight);
-  const headerWidth = computed(() => {
-    return windowWidth.value - navbarWidth.value - sidebarWidth.value;
-  })
-
-  const mainHeaderHeight = ref(24);
-  const headerHeight = ref(50);
-  const contentHeight = computed(() => {
-    return windowHeight.value - headerHeight.value - mainHeaderHeight.value;
-  })
-
-
-  const updateWidth = () => {
-    windowWidth.value = window.innerWidth;
-  };
-
-  const updateHeight = () => {
-    windowHeight.value = window.innerHeight;
-  };
-
+  // Увеличиваем счетчик при монтировании
   onMounted(() => {
-    window.addEventListener('resize', updateHeight);
-    window.addEventListener('resize', updateWidth);
+    state.instanceCount++;
+    if (!state.isResizeListenerActive) {
+      window.addEventListener('resize', updateDimensions);
+      state.isResizeListenerActive = true;
+    }
   });
-
-  onUnmounted(() => {
-    window.removeEventListener('resize', updateHeight);
-    window.removeEventListener('resize', updateWidth);
-  });
-
   
-
+  // Уменьшаем счетчик при размонтировании
+  onUnmounted(() => {
+    state.instanceCount--;
+    if (state.instanceCount === 0 && state.isResizeListenerActive) {
+      window.removeEventListener('resize', updateDimensions);
+      state.isResizeListenerActive = false;
+    }
+  });
+  
+  const updateSidebarWidth = (newVal) => {
+    state.sidebarWidth.value = newVal;
+    localStorage.setItem('sidebarWidth', newVal.toString());
+  };
+  
   return {
-    sidebarWidth,
+    sidebarWidth: state.sidebarWidth,
     updateSidebarWidth,
     contentHeight,
-    navbarWidth,
+    navbarWidth: state.navbarWidth,
     profileWidth,
     headerWidth,
   };

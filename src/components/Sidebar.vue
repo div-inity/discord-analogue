@@ -20,23 +20,7 @@
           <button v-html="menuIcons.add" class="dialog-add" v-tippy="{ content: 'Создать ЛС', placement: 'top' }"
             @click="createDialog"></button>
         </div>
-        <!-- <div class="dialogs flex column">
-          <div class="dialog flex row" v-for="(d, i) in dialogs">
-            <Avatar v-if="d.avatars?.length == 1" size="32" :status="d.status" :avatar="d.avatars[0]" />
-            <Avatar v-else size="32" :status="d.status" :avatars="d.avatars" multy
-              outline="var(--system-back-color3)" />
-            <div class="flex column dialog-info">
-              <div class="names" v-if="d.names.length > 1" v-tippy="{ content: dialogNames(d.id), placement: 'top' }">
-                {{ dialogNames(d.id) }}
-              </div>
-              <div class="names" v-else>{{ dialogNames(d.id) }}</div>
-              <div class="members" v-if="d.names.length > 1">
-                {{ d.names.length }} {{ memberWord(d.names.length) }}
-              </div>
-            </div>
-            <button class="remove-dialog" v-html="menuIcons.remove" @click="removeDialog"></button>
-          </div>
-        </div> -->
+        
         <template v-if="dialogs && dialogs.length">
           <div class="dialogs flex column">
             <div class="dialog flex row" v-for="(d, i) in dialogs" :key="i">
@@ -85,17 +69,15 @@ const { t } = useI18n();
 import { reactive, ref, onBeforeUnmount, computed} from 'vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
-import { useStore } from 'vuex';
 import Avatar from './Avatar.vue';
 
 import { generalFunctions } from '@/composables/generalFunctions';
-const {  sidebarWidth, updateSidebarWidth, } = generalFunctions();
+const {  sidebarWidth, updateSidebarWidth} = generalFunctions();
 import { dialogComposable } from '@/composables/dialogComposable'
 const {dialogNames, memberWord, dialogs} = dialogComposable()
 
-const store = useStore();
 const route = useRoute();
-console.log(dialogs.value, 'Sidebar')
+//console.log(dialogs.value, 'Sidebar')
 
 
 const menuIcons = { // Иконки сайдбар-actions

@@ -14,12 +14,13 @@ import { useTheme } from '@/composables/useTheme'
 const { currentTheme, toggleTheme, isDark } = useTheme();
 
 import { userComposable } from './composables/userComposable';
-const { loadUser, user } = userComposable();
+const { loadUser, user, userToken } = userComposable();
 
 import { useStore } from 'vuex';
 const store = useStore();
 onMounted(() => {
-  loadUser();
+  if (userToken.value && !user.value.id)
+    loadUser();
   //console.log(!!user.value.id, user.value)
   if (!!user.value.id)
     store.dispatch('private_msg/setDialogs')

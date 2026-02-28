@@ -63,7 +63,7 @@
         </button>
       </div>
     </div>
-    <button @click="clearToken()" :key="457247">Выход</button>
+    <button @click="logout()" :key="457247">Выход</button>
   </TransitionGroup>
 </template>
 <script setup>
@@ -84,7 +84,7 @@ import camera from '@/assets/img/svg/camera.svg'
 import { generalFunctions } from '@/composables/generalFunctions'
 const { navbarWidth, profileWidth } = generalFunctions()
 import { userComposable } from '@/composables/userComposable'
-const {clearToken, user} = userComposable()
+const {logout, user} = userComposable()
 import { dialogComposable } from '@/composables/dialogComposable'
 const {dialogNames, activeDialog} = dialogComposable()
 //console.log(activeDialog.value)

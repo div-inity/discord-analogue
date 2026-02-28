@@ -54,6 +54,7 @@ const icons = {
   width: 100%;
   min-width: 250px;
   height: 55px;
+  min-height: 55px;
   /* padding: 12px; */
   column-gap: 12px;
   font-family: var(--font-family-400);
