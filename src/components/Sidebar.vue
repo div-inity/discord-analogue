@@ -43,7 +43,7 @@
                   {{d.members.length}} {{ memberWord(d.members.length) }} <!--  Кол-во участников -->
                 </div>
               </div>
-              <Mentions>{{ d.unread_count }}</Mentions>
+              <!-- <Mentions>{{ d.unread_count }}</Mentions> -->
               <button 
                 class="remove-dialog" 
                 v-html="sidebarIcons.remove" 
@@ -52,7 +52,6 @@
             </div>
           </div>
         </template>
-        
       </menu>
     </template>
 
@@ -70,7 +69,7 @@ import { reactive, ref, onBeforeUnmount, computed} from 'vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 import Avatar from './Avatar.vue';
-import Mentions from './Mentions.vue';
+/* import Mentions from './Mentions.vue'; */
 
 import { generalFunctions } from '@/composables/generalFunctions';
 const {  sidebarWidth, updateSidebarWidth} = generalFunctions();
@@ -224,6 +223,7 @@ onBeforeUnmount(() => {
       width: 100%;
       border-radius: 3px;
       padding: 8px;
+      transition: 0.3s background-color, color;
 
       &:hover {
         background-color: var(--system-back-color2);
@@ -241,6 +241,7 @@ onBeforeUnmount(() => {
         svg {
           height: inherit;
           width: inherit;
+          
         }
       }
     }
@@ -305,9 +306,9 @@ onBeforeUnmount(() => {
           background-color: var(--system-back-color2);
           color: var(--main-text-color);
 
-          .mentions {
+          /* .mentions {
             transform: translateX(-10%);
-          }
+          } */
 
           .dialog-info {
             max-width: calc(70% - 10px);

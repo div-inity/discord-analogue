@@ -80,6 +80,10 @@
   /* transition: 0.3s all; */
 }
 
+svg, svg * {
+  transition: .3s fill;
+} 
+
 .require {
   margin-left: 3px;
   position: relative;

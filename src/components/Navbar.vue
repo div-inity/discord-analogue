@@ -9,18 +9,18 @@
 
       <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" />
 
-      <div class="missed_messages" v-for="(m, i) in missed_messages">
-        <div class="message"> <!-- v-tippy="{ content: dialogNames(m.id) }" -->
-          <router-link :class="(m.missed && m.missed > 0) ? 'missed' : null" :to="'/messages/' + m.id"
+      <div class="missed_messages" v-for="(d, i) in unreadDialogs">
+        <div class="message" v-tippy="{ content: dialogNames(d) }">
+          <router-link :class="(d?.unread_count > 0) ? 'missed' : null" :to="'/messages/' + d.uuid"
             class="link-message">
-            <Avatar v-if="m.avatars?.length == 1" size="48" :mentions="m.missed" :avatar="m.avatars[0]" />
-            <Avatar v-else size="48" :mentions="m.missed" :avatars="m.avatars" multy
+            <Avatar v-if="d.avatars?.length == 1" size="48" :mentions="d.unread_count" :avatar="d.avatars[0]" />
+            <Avatar v-else size="48" :mentions="d.unread_count" :avatars="d.avatars" multy
               outline="var(--system-back-color5)" />
           </router-link>
         </div>
       </div>
     </div>
-    <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" v-if="missed_messages?.length" />
+    <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" v-if="unreadDialogs?.length" />
 
     <div :key="currentBlock" class="servers" v-for="(s, i) in servers">
       <div class="server" v-tippy="{ content: computeServerData(i) }">
@@ -64,7 +64,6 @@
       </div>
     </div>
     <button @click="logout()" :key="457247">Выход</button>
-  
   </TransitionGroup>
 </template>
 <script setup>
@@ -87,7 +86,7 @@ import { userComposable } from '@/composables/userComposable'
 const {logout, user} = userComposable()
 
 import { dialogComposable } from '@/composables/dialogComposable'
-const {dialogNames, activeDialog} = dialogComposable()
+const {dialogNames, activeDialog, unreadDialogs} = dialogComposable()
 //console.log(activeDialog.value)
 const store = useStore()
 const servers = store.state.servers.servers;

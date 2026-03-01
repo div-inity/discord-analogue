@@ -4,7 +4,7 @@ import { userComposable } from './userComposable';
 
 const activeDialog = ref(null); // Открытый диалог (id диалога) - если есть открытый
 const unreadCount = ref(0); // Общее количество непрочитанных сообщений
-
+let unreadDialogs = ref(null); // Непрочитанные диалоги
 
 
 
@@ -14,15 +14,11 @@ export function dialogComposable () {
 
   
   const store = useStore();
-  const {user} = userComposable()
+  const {user, userToken} = userComposable()
 
   const dialogs = computed(() => store.getters['private_msg/getDialogs'] || []);
   //console.log(dialogs.value)
 
-  watchEffect(() => {
-    //dialogs = computed(() => store.getters['private_msg/getDialogs'])
-    //console.log('dialogs обновлены:', dialogs.value);
-  });
 
   const dialogNames = (row) => { //Для перечисления имен в чате через запятую
     const dialog = row;
@@ -54,6 +50,34 @@ export function dialogComposable () {
     }
   };// memberWord
 
+
+  async function setDialogs() {
+      // Получаем токен из другого модуля стора
+    const token = userToken.value; // предположим, токен хранится в user модуле
+    
+    try {
+      const response = await fetch('/api/v1/dialogs', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      console.log(data)
+      store.commit('private_msg/SET_DIALOGS', data);
+      setUnreadDialogs()
+      return data;
+    } catch (error) {
+      console.error('Ошибка при GET-запросе SET_DIALOGS:', error);
+    }
+  }
+  
+  function setUnreadDialogs () {
+    unreadDialogs = computed(() => dialogs.value.filter(n => parseInt(n?.unread_count) > 0))
+    console.log(unreadDialogs.value)
+  }
+
   const setActiveDialog = (id) => { // Установить открытый диалог
     activeDialog.value = id
   }
@@ -67,5 +91,7 @@ export function dialogComposable () {
       memberWord,
       activeDialog,
       dialogs,
+      setDialogs,
+      unreadDialogs,
     }
 }
