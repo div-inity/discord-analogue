@@ -3,17 +3,17 @@
     <Sidebar></Sidebar>
     <div class="content-wrapper flex column">
       <ContentHeader>
-        <template v-slot:page-title v-if="dialog?.id">
+        <template v-slot:page-title v-if="route.params?.id && chat[0]?.members">
           <!-- Мульти-аватар -->
-          <Avatar  size="30" v-if="dialog.names.length > 1" multy :avatars="dialog.avatars"
+          <Avatar  size="30" v-if="chat[0].members.length > 1" multy :avatars="chat[0].avatars"
             outline="var(--system-back-color2)"></Avatar>
 
           <!-- Сингл-аватар -->
-          <Avatar :status="dialog.status" size="30" v-else :avatar="dialog.avatars[0]"></Avatar>
+          <Avatar :status="chat[0].members.status || null" size="30" v-else :avatar="chat[0].avatars"></Avatar>
             
           <!-- Мульти-имя -->
           <div 
-            v-if="dialog.names.length > 1"
+            v-if="chat[0].members.length > 1"
             class="dialog-name-multy dialog-name" 
             
             @mouseenter="onMouseEnter"
@@ -21,17 +21,17 @@
             :class="{ hovered: isHovered }"
             >
             <span v-tippy="{ content: 'Редактировать группу', placement: 'bottom'}">
-              {{ dialogNames(dialog.id) }}
+              {{ dialogNames(members_info) }}
             </span>
           </div>
 
           <!-- Сингл-имя -->
           <div 
-            v-else-if="dialog.names.length == 1"
+            v-else-if="chat[0].members.length == 1"
             class="dialog-name-single dialog-name" 
-            v-tippy="{ content: dialog.name, placement: 'bottom'}"
+            v-tippy="{ content: members_info[0].name, placement: 'bottom'}"
           >
-            {{ dialogNames(dialog.id) }}
+            {{ dialogNames(members_info) }}
           </div>
 
           
@@ -60,16 +60,18 @@
         <Content :RightAside="WIDTHASIDE">
           
           <div class="chat-wrapper flex">
-            members_info: <pre>{{ members_info }}</pre>
-            dialogInfo: <pre>{{ dialogInfo }}</pre>
-            <TextField height="68" :placeholder="'Написать @'+ chat.custom_name || dialogNames(dialogInfo)" postfix color="var(--system-back-color4)"/>
+            <TextField 
+              height="68" 
+              :placeholder="'Написать '+ ((chat.custom_name != null) ? chat.custom_name : dialogNames(members_info))" 
+              postfix 
+              color="var(--system-back-color4)"
+            />
             
-            <Chat/>
-            
+            <Chat :messages="chat"/>
           </div>
         </Content>
         <RightAside :RightAside="WIDTHASIDE">
-          chat: <pre>{{ chat }}</pre>
+          <!-- chat: <pre>{{ chat }}</pre> -->
         </RightAside>
       </ContentFlex>
     </div>
@@ -97,6 +99,7 @@ import { dialogComposable } from '@/composables/dialogComposable';
 const { dialogs, dialogNames, activeDialogID, setChat, getMembers_info, setActiveDialogID, members_info } = dialogComposable();
 
 
+
 // icons
 import { chatActions } from '@/assets/icons'
 
@@ -106,8 +109,8 @@ const route = useRoute();
 const store = useStore();
 const chat = computed(() => store.getters['private_msg/getLoadedChat']) || [];
 
-const dialogInfo = ref(null)
-dialogInfo.value = computed(() => dialogs.value.filter(n => n.uuid == route.params?.id))
+
+
 
 const aliases = ref([
   {
@@ -144,9 +147,10 @@ async function loadChat() {
 onMounted(()=> {
   if (!!user.value.id && userToken.value != null) // Если юзер загружен и токен актуален
     loadChat();
-  
 })
 
+    console.log("members_info", members_info.value)
+console.log("chat",chat.value)
 </script>
 <style lang="scss">
   .page-title:has(.dialog-name-multy.hovered) {
@@ -182,5 +186,6 @@ onMounted(()=> {
   height: 100%;
   overflow-y: auto;
   padding: 0 10px 10px;
+  row-gap: 30px;
 }
 </style>

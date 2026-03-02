@@ -52,7 +52,6 @@ function onMouseLeave() {
   overflow-y: auto;
   min-width: 370px;
   position: relative;
-  border: red 1px solid;
 
   /* & > * {
     width: inherit;

@@ -22,14 +22,13 @@ export function dialogComposable () {
   //console.log(dialogs.value)
 
 
-  const dialogNames = (row) => { //Для перечисления имен в чате через запятую
-    console.log("row", row)
-    const dialog = row;
-    if (!dialog) {
+  const dialogNames = (m_info) => { //Для перечисления имен в чате через запятую - передавать members_info
+    if (!m_info) {
       return
     }
-    let members_info = dialog.members_info.filter(item => item.id !== Number(user.value.id));
-    const members_names = members_info?.map(e => e.name);
+    //console.log(m_info)
+    m_info = m_info.filter(item => item.id !== Number(user.value.id)); // Удаление из списка имени хозяина аккаунта
+    const members_names = m_info?.map(e => e.name);
     
     if (!members_names || !Array.isArray(members_names)) {
       return '';

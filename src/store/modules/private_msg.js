@@ -76,7 +76,6 @@ export default {
       return members_info || [];
     },
     getLoadedChat: (state) => {
-      console.log(state.loaded_chat)
       return state.loaded_chat;
     }
   },
@@ -85,7 +84,6 @@ export default {
       state.dialogs = dialogs;
     },
     SET_LOADED_CHAT(state, messages) {
-      console.log(state.messages)
       //state.loaded_chat.push(messages);
       state.loaded_chat = messages;
     }

@@ -9,7 +9,7 @@
 
       <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" />
       <div class="missed_messages" v-for="(d, i) in unreadDialogs">
-        <div class="message" v-tippy="{ content: dialogNames(d) }">
+        <div class="message" v-tippy="{ content: dialogNames(d.members_info) }">
           <router-link :class="(d?.unread_count > 0) ? 'missed' : null" :to="'/messages/' + d.uuid"
             class="link-message">
             <Avatar v-if="d.avatars?.length == 1" size="48" :mentions="d.unread_count" :avatar="d.avatars[0]" />
