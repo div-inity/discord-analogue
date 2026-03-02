@@ -55,14 +55,21 @@
 
       </ContentHeader>
       <ContentFlex>
+        
+        
         <Content :RightAside="WIDTHASIDE">
+          
           <div class="chat-wrapper flex">
-            <!-- <TextField height="68" :placeholder="'Написать @'+ dialog.name || 'user'" postfix color="var(--system-back-color4)"/>
-            <Chat/> -->
-            {{ members_info }}
+            members_info: <pre>{{ members_info }}</pre>
+            dialogInfo: <pre>{{ dialogInfo }}</pre>
+            <TextField height="68" :placeholder="'Написать @'+ chat.custom_name || dialogNames(dialogInfo)" postfix color="var(--system-back-color4)"/>
+            
+            <Chat/>
+            
           </div>
         </Content>
         <RightAside :RightAside="WIDTHASIDE">
+          chat: <pre>{{ chat }}</pre>
         </RightAside>
       </ContentFlex>
     </div>
@@ -87,7 +94,7 @@ import { userComposable } from '@/composables/userComposable';
 const {user, userToken} = userComposable()
 
 import { dialogComposable } from '@/composables/dialogComposable';
-const { dialogNames, activeDialog, setChat, getMembers_info, setActiveDialog, members_info } = dialogComposable();
+const { dialogs, dialogNames, activeDialogID, setChat, getMembers_info, setActiveDialogID, members_info } = dialogComposable();
 
 
 // icons
@@ -97,14 +104,10 @@ const WIDTHASIDE = 350;
 
 const route = useRoute();
 const store = useStore();
-const dialog = computed(() => {
-  return store.state.private_msg.dialogs.find(d => d.id == route.params.id);
-});
-//console.log(activeDialog.value)
-/* const name = computed(() => {
-  return store.state.private_msg.dialogs.find(d => d.id == route.params.id);
-}) */
+const chat = computed(() => store.getters['private_msg/getLoadedChat']) || [];
 
+const dialogInfo = ref(null)
+dialogInfo.value = computed(() => dialogs.value.filter(n => n.uuid == route.params?.id))
 
 const aliases = ref([
   {
@@ -113,8 +116,6 @@ const aliases = ref([
     server: 'Мишкина каморка',
   },
 ])
-//console.log(aliases.value.length)
-//console.log(aliases.value[0]);
 
 const isHovered = ref(false);
 
@@ -128,16 +129,16 @@ function onMouseLeave() {
 
 async function loadChat() {
   console.log("loadChat")
-  //console.log(activeDialog.value != route.params?.id,  members_info.value == null)
-  if (activeDialog.value != route.params?.id || members_info.value == null) {
-    // Если совершен переход в другой диалог или актуального диалога нет
-    //console.log("loadChat started")
-    setActiveDialog(route.params?.id); // Устанавливаем активный диалог
-    setChat(route.params?.id) // Получаем инфо по нему - чат
-    await getMembers_info(route.params?.id) // Загружаем в глобальную переменную members_info инфо о юзерах
-    //console.log(members_info.value)
-    //console.log("loadChat end")
-  }
+  //console.log(activeDialogID.value != route.params?.id,  members_info.value == null)
+  if (activeDialogID.value == route.params?.id && members_info.value != null) return;
+  // Если совершен переход в другой диалог или актуального диалога нет
+  //console.log("loadChat started")
+  setActiveDialogID(route.params?.id); // Устанавливаем активный диалог
+  setChat(route.params?.id) // Получаем инфо по нему - чат
+  await getMembers_info(route.params?.id) // Загружаем в глобальную переменную members_info инфо о юзерах
+  //console.log(members_info.value)
+  console.log("loadChat end - выводится, потому что подгружал новый чат")
+  
 }
 
 onMounted(()=> {
@@ -181,7 +182,5 @@ onMounted(()=> {
   height: 100%;
   overflow-y: auto;
   padding: 0 10px 10px;
-  
-  
 }
 </style>

@@ -79,7 +79,7 @@ import Avatar from './Avatar.vue';
 import { generalFunctions } from '@/composables/generalFunctions';
 const {  sidebarWidth, updateSidebarWidth} = generalFunctions();
 import { dialogComposable } from '@/composables/dialogComposable'
-const {dialogNames, memberWord, dialogs, setActiveDialog} = dialogComposable()
+const {dialogNames, memberWord, dialogs, setActiveDialogID} = dialogComposable()
 
 
 import { sidebarIcons } from '@/assets/icons'
@@ -134,7 +134,7 @@ const createDialog = () => {
   alert("Created")
 };
 const goToChat = (uuid) => {
-  //if (uuid != route.params?.id) setActiveDialog(uuid);
+  //if (uuid != route.params?.id) setActiveDialogID(uuid);
   router.push(`/messages/${uuid}`);
 }
 

@@ -17,7 +17,6 @@ export default {
       },
     ],
     loaded_chat: [], // Сообщения из активного диалога
-    loaded_members_info: [], // Юзеры из активного диалога
     dialogs: [
       /* {
         id: 2,
@@ -75,6 +74,10 @@ export default {
       const dialog = state.dialogs.find(d => d.uuid === uuid);
       const members_info = dialog?.members_info;
       return members_info || [];
+    },
+    getLoadedChat: (state) => {
+      console.log(state.loaded_chat)
+      return state.loaded_chat;
     }
   },
   mutations: {
@@ -82,7 +85,9 @@ export default {
       state.dialogs = dialogs;
     },
     SET_LOADED_CHAT(state, messages) {
-      state.loaded_chat.push(messages);
+      console.log(state.messages)
+      //state.loaded_chat.push(messages);
+      state.loaded_chat = messages;
     }
   },
   actions: {

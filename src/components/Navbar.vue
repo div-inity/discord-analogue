@@ -2,7 +2,7 @@
   <TransitionGroup name="fade" class="navbar" tag="div" :style="{ width: navbarWidth + 'px' }" v-if="user">
     <div class="private-messages" :key="currentBlock">
       <div class="home-link" v-tippy="{ content: t('navbar.mymessages') }">
-        <router-link :to="(activeDialog == null) ? '/friends' : '/messages/'+activeDialog" :class="(activeServer > 0) ? null : 'active'" class="home">
+        <router-link :to="(activeDialogID == null) ? '/friends' : '/messages/'+activeDialogID" :class="(activeServer > 0) ? null : 'active'" class="home">
           <Avatar size="48" square />
         </router-link>
       </div>
@@ -85,8 +85,8 @@ import { userComposable } from '@/composables/userComposable'
 const {logout, user} = userComposable()
 
 import { dialogComposable } from '@/composables/dialogComposable'
-const {dialogNames, activeDialog, unreadDialogs} = dialogComposable()
-//console.log(activeDialog.value)
+const {dialogNames, activeDialogID, unreadDialogs} = dialogComposable()
+//console.log(activeDialogID.value)
 const store = useStore()
 const servers = store.state.servers.servers;
 const missed_messages = store.state.private_msg.missed_messages;

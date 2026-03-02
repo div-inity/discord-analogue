@@ -3,10 +3,10 @@ import { computed, ref, watchEffect } from 'vue';
 import { userComposable } from './userComposable';
 import { sleep } from './generalFunctions';
 
-const activeDialog = ref(null); // Открытый диалог (id диалога) - если есть открытый
+const activeDialogID = ref(null); // Открытый диалог (id диалога) - если есть открытый
+const members_info = ref(null); // Инфо открытого диалога
 const unreadCount = ref(0); // Общее количество непрочитанных сообщений
 const unreadDialogs = ref(null); // Непрочитанные диалоги
-const members_info = ref(null);
 
 
 
@@ -23,6 +23,7 @@ export function dialogComposable () {
 
 
   const dialogNames = (row) => { //Для перечисления имен в чате через запятую
+    console.log("row", row)
     const dialog = row;
     if (!dialog) {
       return
@@ -74,6 +75,8 @@ export function dialogComposable () {
     }
   }
 
+  
+
   async function setChat(uuid) { // Получение инфо об одном диалоге по id диалога
     const token = userToken.value; 
 
@@ -86,9 +89,9 @@ export function dialogComposable () {
         }
       });
       const data = await response.json();
-      //console.log(data)
       store.commit('private_msg/SET_LOADED_CHAT', data);
-      setActiveDialog(uuid);
+      setActiveDialogID(uuid);
+      
       return data;
     } catch (error) {
       console.error('Ошибка при GET-запросе setChat:', error);
@@ -101,13 +104,11 @@ export function dialogComposable () {
     //console.log(unreadDialogs.value)
   }
 
-  const setActiveDialog = (uuid) => { // Установить открытый диалог
-    activeDialog.value = uuid;
+  const setActiveDialogID = (uuid) => { // Установить айди открытого диалога
+    activeDialogID.value = uuid;
   }
 
-  const closeActiveDialog = () => { // Закрыть диалог
-    activeDialog.value = null;
-  };
+
   
   
 
@@ -125,19 +126,18 @@ export function dialogComposable () {
     // Получаем данные из хранилища и присваиваем реактивной переменной
     const membersData = store.getters['private_msg/getMembers_info'](uuid) || [];
     members_info.value = membersData;
-    //return membersData;
   }
 
   return {
     dialogNames,
     memberWord,
-    activeDialog,
+    activeDialogID,
     dialogs,
     setDialogs,
     unreadDialogs,
     setChat,
     getMembers_info,
-    setActiveDialog,
+    setActiveDialogID,
     members_info,
   }
 }
