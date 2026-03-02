@@ -38,7 +38,7 @@
         </template>
 
         <!-- Алиасы для сингл-имени -->
-        <template v-slot:other v-if="dialog?.names.length == 1">
+        <!-- <template v-slot:other v-if="dialog?.names.length == 1">
           <Divider v :height="50" color="var(--system-back-color1)"/>
           <div class="aliases flex row" v-if="aliases.length">
             <span class="aka">AKA</span>
@@ -49,19 +49,20 @@
         </template>
         <template v-slot:actions>
           <button v-for="i in chatActions.header" v-html="i"></button>
-          <TextField height="30" radius="4" :placeholder="'Искать «'+ dialog.name +'»'" postfix style="margin-left: 13px;"/>
-        </template>
+          <TextField height="30" radius="4" :placeholder="'Искать «'+ dialog.custom_name || 'диалоге' +'»'" postfix style="margin-left: 13px;"/>
+        </template> -->
 
 
       </ContentHeader>
       <ContentFlex>
-        <Content :RightAside="widthAside">
+        <Content :RightAside="WIDTHASIDE">
           <div class="chat-wrapper flex">
-            <TextField height="68" :placeholder="'Написать @'+ dialog.name" postfix color="var(--system-back-color4)"/>
-            <Chat/>
+            <!-- <TextField height="68" :placeholder="'Написать @'+ dialog.name || 'user'" postfix color="var(--system-back-color4)"/>
+            <Chat/> -->
+            {{ members_info }}
           </div>
         </Content>
-        <RightAside :RightAside="widthAside">
+        <RightAside :RightAside="WIDTHASIDE">
         </RightAside>
       </ContentFlex>
     </div>
@@ -80,23 +81,30 @@ import TextField from '@/components/TextField.vue';
 import Chat from '@/components/Chat.vue';
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+
+import { userComposable } from '@/composables/userComposable';
+const {user, userToken} = userComposable()
+
 import { dialogComposable } from '@/composables/dialogComposable';
+const { dialogNames, activeDialog, setChat, getMembers_info, setActiveDialog, members_info } = dialogComposable();
+
+
+// icons
 import { chatActions } from '@/assets/icons'
 
-const widthAside = 350;
+const WIDTHASIDE = 350;
 
-const { dialogNames, activeDialog } = dialogComposable();
 const route = useRoute();
 const store = useStore();
 const dialog = computed(() => {
   return store.state.private_msg.dialogs.find(d => d.id == route.params.id);
 });
-activeDialog.value = route.params.id
 //console.log(activeDialog.value)
 /* const name = computed(() => {
   return store.state.private_msg.dialogs.find(d => d.id == route.params.id);
 }) */
+
 
 const aliases = ref([
   {
@@ -117,6 +125,26 @@ function onMouseEnter() {
 function onMouseLeave() {
   isHovered.value = false;
 }
+
+async function loadChat() {
+  console.log("loadChat")
+  //console.log(activeDialog.value != route.params?.id,  members_info.value == null)
+  if (activeDialog.value != route.params?.id || members_info.value == null) {
+    // Если совершен переход в другой диалог или актуального диалога нет
+    //console.log("loadChat started")
+    setActiveDialog(route.params?.id); // Устанавливаем активный диалог
+    setChat(route.params?.id) // Получаем инфо по нему - чат
+    await getMembers_info(route.params?.id) // Загружаем в глобальную переменную members_info инфо о юзерах
+    //console.log(members_info.value)
+    //console.log("loadChat end")
+  }
+}
+
+onMounted(()=> {
+  if (!!user.value.id && userToken.value != null) // Если юзер загружен и токен актуален
+    loadChat();
+  
+})
 
 </script>
 <style lang="scss">

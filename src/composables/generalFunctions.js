@@ -26,7 +26,7 @@ const state = {
   mainHeaderHeight: ref(24),
   headerHeight: ref(50),
   instanceCount: 0,
-  isResizeListenerActive: false
+  isResizeListenerActive: false,
 };
 
 // Вычисляемые значения (синглтон)
@@ -37,6 +37,11 @@ const contentHeight = computed(() => state.windowHeight.value - state.headerHeig
 function updateDimensions() {
   state.windowWidth.value = window.innerWidth;
   state.windowHeight.value = window.innerHeight;
+}
+
+export function sleep(ms) { // Функция ожидания
+  console.log('tick');
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export function generalFunctions() {
@@ -70,5 +75,6 @@ export function generalFunctions() {
     navbarWidth: state.navbarWidth,
     profileWidth,
     headerWidth,
+
   };
 }

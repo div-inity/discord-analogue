@@ -8,7 +8,6 @@
       </div>
 
       <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" />
-
       <div class="missed_messages" v-for="(d, i) in unreadDialogs">
         <div class="message" v-tippy="{ content: dialogNames(d) }">
           <router-link :class="(d?.unread_count > 0) ? 'missed' : null" :to="'/messages/' + d.uuid"

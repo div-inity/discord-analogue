@@ -1,6 +1,4 @@
-import { userComposable } from '@/composables/userComposable';
-const {userToken} = userComposable()
-//console.log(userToken.value)
+
 export default {
   namespaced: true,
   state: {
@@ -18,6 +16,8 @@ export default {
         missed: 2,
       },
     ],
+    loaded_chat: [], // Сообщения из активного диалога
+    loaded_members_info: [], // Юзеры из активного диалога
     dialogs: [
       /* {
         id: 2,
@@ -70,12 +70,19 @@ export default {
     ],
   },
   getters: {
-    getDialogs: (state) => state.dialogs
-
+    getDialogs: (state) => state.dialogs,
+    getMembers_info: (state) => (uuid) => {
+      const dialog = state.dialogs.find(d => d.uuid === uuid);
+      const members_info = dialog?.members_info;
+      return members_info || [];
+    }
   },
   mutations: {
     SET_DIALOGS(state, dialogs) {
       state.dialogs = dialogs;
+    },
+    SET_LOADED_CHAT(state, messages) {
+      state.loaded_chat.push(messages);
     }
   },
   actions: {

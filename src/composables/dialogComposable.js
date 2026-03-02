@@ -1,11 +1,12 @@
 import { useStore } from 'vuex';
 import { computed, ref, watchEffect } from 'vue';
 import { userComposable } from './userComposable';
+import { sleep } from './generalFunctions';
 
 const activeDialog = ref(null); // Открытый диалог (id диалога) - если есть открытый
 const unreadCount = ref(0); // Общее количество непрочитанных сообщений
-let unreadDialogs = ref(null); // Непрочитанные диалоги
-
+const unreadDialogs = ref(null); // Непрочитанные диалоги
+const members_info = ref(null);
 
 
 
@@ -15,6 +16,7 @@ export function dialogComposable () {
   
   const store = useStore();
   const {user, userToken} = userComposable()
+
 
   const dialogs = computed(() => store.getters['private_msg/getDialogs'] || []);
   //console.log(dialogs.value)
@@ -51,9 +53,8 @@ export function dialogComposable () {
   };// memberWord
 
 
-  async function setDialogs() {
-      // Получаем токен из другого модуля стора
-    const token = userToken.value; // предположим, токен хранится в user модуле
+  async function setDialogs() { // Поиск всей информации обо всех диалогах
+    const token = userToken.value; 
     
     try {
       const response = await fetch('/api/v1/dialogs', {
@@ -64,34 +65,79 @@ export function dialogComposable () {
         }
       });
       const data = await response.json();
-      console.log(data)
+      //console.log(data)
       store.commit('private_msg/SET_DIALOGS', data);
       setUnreadDialogs()
       return data;
     } catch (error) {
-      console.error('Ошибка при GET-запросе SET_DIALOGS:', error);
+      console.error('Ошибка при GET-запросе setDialogs:', error);
+    }
+  }
+
+  async function setChat(uuid) { // Получение инфо об одном диалоге по id диалога
+    const token = userToken.value; 
+
+    try {
+      const response = await fetch(`/api/v1/dialogs/${uuid}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      //console.log(data)
+      store.commit('private_msg/SET_LOADED_CHAT', data);
+      setActiveDialog(uuid);
+      return data;
+    } catch (error) {
+      console.error('Ошибка при GET-запросе setChat:', error);
     }
   }
   
-  function setUnreadDialogs () {
-    unreadDialogs = computed(() => dialogs.value.filter(n => parseInt(n?.unread_count) > 0))
-    console.log(unreadDialogs.value)
+  function setUnreadDialogs () { // Вывод инфо обо всех непрочитанных диалогах
+    const r = computed(() => dialogs.value.filter(n => parseInt(n?.unread_count) > 0))
+    unreadDialogs.value = r.value;
+    //console.log(unreadDialogs.value)
   }
 
-  const setActiveDialog = (id) => { // Установить открытый диалог
-    activeDialog.value = id
+  const setActiveDialog = (uuid) => { // Установить открытый диалог
+    activeDialog.value = uuid;
   }
 
   const closeActiveDialog = () => { // Закрыть диалог
     activeDialog.value = null;
   };
+  
+  
 
-    return {
-      dialogNames,
-      memberWord,
-      activeDialog,
-      dialogs,
-      setDialogs,
-      unreadDialogs,
+  async function getMembers_info(uuid) { // Получить инфо о членах диалогов
+    while (dialogs.value.length == 0) {
+      await sleep(2000);
     }
+    // Проверяем наличие диалога с этим uuid
+    const dialog = dialogs.value.find(d => d.uuid === uuid);
+    if (!dialog) {
+      console.warn('Диалог не найден!');
+      return [];
+    }
+
+    // Получаем данные из хранилища и присваиваем реактивной переменной
+    const membersData = store.getters['private_msg/getMembers_info'](uuid) || [];
+    members_info.value = membersData;
+    //return membersData;
+  }
+
+  return {
+    dialogNames,
+    memberWord,
+    activeDialog,
+    dialogs,
+    setDialogs,
+    unreadDialogs,
+    setChat,
+    getMembers_info,
+    setActiveDialog,
+    members_info,
+  }
 }

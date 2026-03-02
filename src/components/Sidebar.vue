@@ -23,7 +23,12 @@
         
         <template v-if="dialogs && dialogs.length">
           <div class="dialogs flex column">
-            <div class="dialog flex row" v-for="(d, i) in dialogs" :key="i">
+            <div 
+              @click="goToChat(d.uuid)" 
+              :class="{'active': d.uuid == route.params?.id}" 
+              class="dialog flex row" 
+              v-for="(d, i) in dialogs" 
+              :key="i">
               
             <Avatar v-if="d.avatars?.length == 1" size="32" :status="d.status" :avatar="d.avatars[0]" />
             <Avatar v-else size="32" :status="d.status" :avatars="d.avatars" multy
@@ -74,14 +79,12 @@ import Avatar from './Avatar.vue';
 import { generalFunctions } from '@/composables/generalFunctions';
 const {  sidebarWidth, updateSidebarWidth} = generalFunctions();
 import { dialogComposable } from '@/composables/dialogComposable'
-const {dialogNames, memberWord, dialogs} = dialogComposable()
+const {dialogNames, memberWord, dialogs, setActiveDialog} = dialogComposable()
 
 
 import { sidebarIcons } from '@/assets/icons'
 
 const route = useRoute();
-//console.log(dialogs.value, 'Sidebar')
-
 
 
 const actions = reactive( // Функционал сайдбара
@@ -130,7 +133,10 @@ const removeDialog = () => {
 const createDialog = () => {
   alert("Created")
 };
-
+const goToChat = (uuid) => {
+  //if (uuid != route.params?.id) setActiveDialog(uuid);
+  router.push(`/messages/${uuid}`);
+}
 
 
 /** Блок кода для изменения ширины сайдбара */
@@ -302,7 +308,7 @@ onBeforeUnmount(() => {
           transition: 0.3s all;
         } */
 
-        &:hover {
+        &:hover, &.active {
           background-color: var(--system-back-color2);
           color: var(--main-text-color);
 
