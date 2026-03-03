@@ -30,8 +30,8 @@
               v-for="(d, i) in dialogs" 
               :key="i">
               
-            <Avatar v-if="d.avatars?.length == 1" size="32" :status="d.status" :avatar="d.avatars[0]" />
-            <Avatar v-else size="32" :status="d.status" :avatars="d.avatars" multy
+            <Avatar v-if="d.members.length == 2" size="32" :status="d.status" :avatar="d.avatars || null" />
+            <Avatar v-else size="32" :status="d.status" :avatars="d.avatars || null" multy
               outline="var(--system-back-color3)" />
               
               <div class="flex column dialog-info">
@@ -134,7 +134,7 @@ const createDialog = () => {
   alert("Created")
 };
 const goToChat = (uuid) => {
-  //if (uuid != route.params?.id) setActiveDialogID(uuid);
+  if (uuid != route.params?.id) setActiveDialogID(uuid);
   router.push(`/messages/${uuid}`);
 }
 
@@ -307,8 +307,12 @@ onBeforeUnmount(() => {
         /* * {
           transition: 0.3s all;
         } */
+        &.active {
+        background-color: var(--system-back-color2);
+        color: var(--main-text-color);
+        }
 
-        &:hover, &.active {
+        &:hover {
           background-color: var(--system-back-color2);
           color: var(--main-text-color);
 

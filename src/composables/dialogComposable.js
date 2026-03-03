@@ -22,13 +22,15 @@ export function dialogComposable () {
   //console.log(dialogs.value)
 
 
-  const dialogNames = (m_info) => { //Для перечисления имен в чате через запятую - передавать members_info
+  const dialogNames = (m_info, field = 'name') => { //Для перечисления имен в чате через запятую - передавать members_info
     if (!m_info) {
-      return
+      return '';
     }
     //console.log(m_info)
-    m_info = m_info.filter(item => item.id !== Number(user.value.id)); // Удаление из списка имени хозяина аккаунта
-    const members_names = m_info?.map(e => e.name);
+    const filtered_info = m_info.filter(item => item.id !== Number(user.value.id)); // Удаление из списка имени хозяина аккаунта
+    const members_names = filtered_info
+    ?.map(item => item[field])   // использовать переданное поле
+    .filter(name => name !== undefined && name !== null); // исключить undefined/null
     
     if (!members_names || !Array.isArray(members_names)) {
       return '';
@@ -113,7 +115,7 @@ export function dialogComposable () {
 
   async function getMembers_info(uuid) { // Получить инфо о членах диалогов
     while (dialogs.value.length == 0) {
-      await sleep(2000);
+      await sleep(200);
     }
     // Проверяем наличие диалога с этим uuid
     const dialog = dialogs.value.find(d => d.uuid === uuid);

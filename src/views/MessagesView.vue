@@ -3,9 +3,10 @@
     <Sidebar></Sidebar>
     <div class="content-wrapper flex column">
       <ContentHeader>
-        <template v-slot:page-title v-if="route.params?.id && chat[0]?.members">
+        <template v-slot:page-title v-if="route.params?.id && chat[0]?.members.length > 2">
           <!-- Мульти-аватар -->
-          <Avatar  size="30" v-if="chat[0].members.length > 1" multy :avatars="chat[0].avatars"
+          <!-- chat[0] - это первый элемент объекта сообщений -->
+          <Avatar  size="30" v-if="chat[0].members.length > 2" multy :avatars="chat[0].avatars"
             outline="var(--system-back-color2)"></Avatar>
 
           <!-- Сингл-аватар -->
@@ -13,7 +14,7 @@
             
           <!-- Мульти-имя -->
           <div 
-            v-if="chat[0].members.length > 1"
+            v-if="chat[0].members.length > 2"
             class="dialog-name-multy dialog-name" 
             
             @mouseenter="onMouseEnter"
@@ -27,7 +28,7 @@
 
           <!-- Сингл-имя -->
           <div 
-            v-else-if="chat[0].members.length == 1"
+            v-else-if="chat[0].members.length == 2"
             class="dialog-name-single dialog-name" 
             v-tippy="{ content: members_info[0].name, placement: 'bottom'}"
           >
@@ -38,7 +39,7 @@
         </template>
 
         <!-- Алиасы для сингл-имени -->
-        <!-- <template v-slot:other v-if="dialog?.names.length == 1">
+        <template v-slot:other v-if="route.params?.id && chat[0]?.members.length == 2">
           <Divider v :height="50" color="var(--system-back-color1)"/>
           <div class="aliases flex row" v-if="aliases.length">
             <span class="aka">AKA</span>
@@ -49,8 +50,8 @@
         </template>
         <template v-slot:actions>
           <button v-for="i in chatActions.header" v-html="i"></button>
-          <TextField height="30" radius="4" :placeholder="'Искать «'+ dialog.custom_name || 'диалоге' +'»'" postfix style="margin-left: 13px;"/>
-        </template> -->
+          <!-- <TextField height="30" radius="4" :placeholder="'Искать «'+ ((chat[0].custom_name != null) ? chat[0].custom_name: dialogNames(members_info)) +'»'" postfix style="margin-left: 13px;"/> -->
+        </template>
 
 
       </ContentHeader>
@@ -71,7 +72,6 @@
           </div>
         </Content>
         <RightAside :RightAside="WIDTHASIDE">
-          <!-- chat: <pre>{{ chat }}</pre> -->
         </RightAside>
       </ContentFlex>
     </div>
@@ -90,7 +90,7 @@ import TextField from '@/components/TextField.vue';
 import Chat from '@/components/Chat.vue';
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watchEffect } from 'vue';
 
 import { userComposable } from '@/composables/userComposable';
 const {user, userToken} = userComposable()
@@ -144,10 +144,15 @@ async function loadChat() {
   
 }
 
-onMounted(()=> {
+watchEffect(() => {
+  console.log(`route.params.id сменился, загрузка нового чата`);
+  loadChat();
+});
+
+/* onMounted(()=> {
   if (!!user.value.id && userToken.value != null) // Если юзер загружен и токен актуален
     loadChat();
-})
+}) */
 
     console.log("members_info", members_info.value)
 console.log("chat",chat.value)

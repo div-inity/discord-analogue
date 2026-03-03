@@ -42,7 +42,7 @@
     <!-- Блок юзер-функций (профиль, заглушить, откл.звук, настройки, статус) -->
     <div :key="currentBlock" class="userprofile flex row" :style="{ width: profileWidth + 'px' }">
       <div class="profile flex row">
-        <Avatar size="40" :avatar="user.avatar" :status="user.status" />
+        <Avatar size="35" :avatar="user.avatar" :status="user.status" />
         <div class="userinfo flex column">
           <div class="name">{{ user.name }}</div>
           <div class="userprofile-info">{{ (user.info) ? user.info : user.status }}</div>
@@ -361,7 +361,7 @@ const settingsOpen = () => {
 
   .userprofile {
     /* height: 56px; */
-    padding: 8px;
+    padding: 5px;
     border: 1px solid var(--system-back-color2);
     background: var(--system-back-color4);
     position: absolute;

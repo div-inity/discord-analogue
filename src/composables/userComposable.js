@@ -1,5 +1,5 @@
 import { useStore } from 'vuex';
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 // Константы для избежания магических строк
 const STORAGE_KEYS = {
@@ -148,8 +148,6 @@ export function userComposable() {
   function logout() {
     clearToken();
     window.location.reload();
-    // Перенаправление на страницу входа можно добавить здесь
-    // или обрабатывать в компоненте через watch
   }
   
   // Текстовое представление статуса
@@ -172,11 +170,7 @@ export function userComposable() {
       loadUser();
     }
   });
-  
-  // Очистка при размонтировании (если есть watcher'ы)
-  onUnmounted(() => {
-    // Здесь можно очистить watcher'ы, если они будут добавлены
-  });
+
   
   return {
     // Состояние
