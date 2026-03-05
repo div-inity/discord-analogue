@@ -1,5 +1,6 @@
 <template>
   <div class="chat flex">
+    <!-- {{ props.messages }} -->
     <div class="chat-item flex row"  v-for="n of props.messages">
       <Avatar 
         size="45" 
@@ -24,7 +25,7 @@
 import { formatDate } from '@/composables/generalFunctions';
 
 import { dialogComposable } from '@/composables/dialogComposable';
-const { dialogs, dialogNames, activeDialogID, setChat, getMembers_info, setActiveDialogID, members_info } = dialogComposable();
+const { dialogs, dialogNames, activeDialogID, setChat, setActiveDialogID, members_info } = dialogComposable();
 import Avatar from './Avatar.vue';
 const props = defineProps({
   messages: Object,

@@ -24,35 +24,54 @@
         <template v-if="dialogs && dialogs.length">
           <div class="dialogs flex column">
             <div 
+              v-for="d in dialogs" 
+              :key="d.uuid" 
               @click="goToChat(d.uuid)" 
-              :class="{'active': d.uuid == route.params?.id}" 
-              class="dialog flex row" 
-              v-for="(d, i) in dialogs" 
-              :key="i">
+              :class="{ 'active': d.uuid === route.params?.id }" 
+              class="dialog flex row"
+            >
+              <!-- Аватар -->
+              <Avatar 
+                v-if="d.members_info?.length === 2"
+                size="32"
+                :status="d.status"
+                :avatar="d.avatars || null"
+              />
               
-            <Avatar v-if="d.members.length == 2" size="32" :status="d.status" :avatar="d.avatars || null" />
-            <Avatar v-else size="32" :status="d.status" :avatars="d.avatars || null" multy
-              outline="var(--system-back-color3)" />
-              
+              <Avatar 
+                v-else
+                size="32"
+                :status="d.status"
+                :avatars="d.avatars || null"
+                multy
+                outline="var(--system-back-color3)"
+              />
+
+              <!-- Информация о диалоге -->
               <div class="flex column dialog-info">
+                <!-- Название диалога или участников -->
                 <div 
                   class="names" 
-                  v-if="d.members.length > 1" 
+                  v-if="d.members_info?.length > 2" 
                   v-tippy="{ content: dialogNames(d.members_info), placement: 'top' }"
                 >
-                  {{ (d.custom_name) ? d.custom_name : dialogNames(d.members_info) }} <!-- Несколько имен или название чата -->
+                  {{ dialogNames(d.members_info) }}
                 </div>
-                <div class="names" v-else>{{ dialogNames(d.members_info) }}</div><!--  Одно имя  -->
+                <div class="names" v-else>
+                  {{ dialogNames(d.members_info) }}
+                </div>
                 
-                <div class="members" v-if="d.members.length > 1">
-                  {{d.members.length}} {{ memberWord(d.members.length) }} <!--  Кол-во участников -->
+                <!-- Количество участников -->
+                <div class="members" v-if="d.members?.length > 1">
+                  {{ d.members.length }} {{ memberWord(d.members.length) }}
                 </div>
               </div>
-              <!-- <Mentions>{{ d.unread_count }}</Mentions> -->
+              
+              <!-- Иконка удаления диалога -->
               <button 
                 class="remove-dialog" 
                 v-html="sidebarIcons.remove" 
-                @click="removeDialog(d?.uuid)"
+                @click.stop="removeDialog(d?.uuid)"
               ></button>
             </div>
           </div>

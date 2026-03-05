@@ -8,16 +8,16 @@
 </template>
 
 <script setup>
-import { mainIcons, profileIcons, userActions } from '@/assets/icons'
+import { mainIcons, profileIcons, userActionsIcons } from '@/assets/icons'
 
 const props = defineProps({
   name: { type: String, required: true },
   size: { type: Number, default: 24 }
 })
 
-/* const iconSvg = userActions[props.name]?.replace(
+/* const iconSvg = userActionsIcons[props.name]?.replace(
   /<svg /, 
   `<svg width="${props.size}" height="${props.size}" `
 ) */
-const iconSvg = userActions[props.name] || mainIcons[props.name] || profileIcons[props.name] || null
+const iconSvg = userActionsIcons[props.name] || mainIcons[props.name] || profileIcons[props.name] || null
 </script>

@@ -8,7 +8,7 @@
     'border-color': props.border ? props.border : 'var(--system-back-color1)'
   }">
     <!-- <span class="icon" v-html="mainIcons.search" v-if="props.icon == 'search'"></span> -->
-    <div class="prefix flex row" v-if="props.prefix">
+    <div class="prefix flex row">
       <slot name="prefix"></slot>
     </div>
     <input type="text" :placeholder="props.placeholder || 'Поиск'" name="input" autocomplete="off">
@@ -16,9 +16,8 @@
     <button v-if="props.icon == 'search' && props.button == true">
       <slot name="button">Поиск</slot>
     </button>
-    <div class="postfix flex row" v-if="props.postfix">
+    <div class="postfix flex row">
       <slot name="postfix">
-        <span class="icon" v-html="mainIcons.search"></span>
       </slot>
     </div>
   </div>
@@ -26,8 +25,8 @@
 <script setup>
 import { mainIcons } from '@/assets/icons'
 const props = defineProps({
-  prefix: Boolean,
-  postfix: Boolean,
+  //prefix: Boolean,
+  //postfix: Boolean,
   icon: String,
   height: String,
   width: String,
@@ -68,9 +67,10 @@ const props = defineProps({
     svg {}
   }
 
-  .prefix {
+  .prefix, .postfix {
     height: 100%;
     column-gap: 8px;
+    align-items: center
   }
 
   input {
@@ -87,15 +87,38 @@ const props = defineProps({
 
   button {
     cursor: pointer;
-    height: 100%;
+    height: 30px;
+    width: 30px;
     padding-inline: 10px;
-    background-color: var(--system-purple-color);
+    /* background-color: var(--system-purple-color); */
+    background-color: transparent;
     color: var(--loud-text-color);
-    filter: brightness(.9);
+    /* filter: brightness(.9); */
     font-size: 14px;
+    transition: .3s background-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
 
     &:hover {
       filter: none;
+      background-color: var(--system-back-color1);
+      svg * {
+        fill: white;
+      }
+    }
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      width: inherit;
+      height: inherit;
+
+      svg *{
+        transition: .3s fill;
+      }
     }
   }
 }

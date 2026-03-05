@@ -151,7 +151,7 @@ router.beforeEach((to, from, next) => {
   } else {
     // Если авторизован и пытается зайти на login/register - на главную
     if (isAuthenticated) {
-      next({ name: 'main' })
+      next({ name: 'friends' })
     } else {
       next() // не авторизован - пропускаем на login/register
     }

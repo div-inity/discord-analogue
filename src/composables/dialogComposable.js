@@ -22,7 +22,7 @@ export function dialogComposable () {
   //console.log(dialogs.value)
 
 
-  const dialogNames = (m_info, field = 'name') => { //Для перечисления имен в чате через запятую - передавать members_info
+  const dialogNames = (m_info, field = 'nickname') => { //Для перечисления имен в чате через запятую - передавать members_info
     if (!m_info) {
       return '';
     }
@@ -127,6 +127,7 @@ export function dialogComposable () {
     // Получаем данные из хранилища и присваиваем реактивной переменной
     const membersData = store.getters['private_msg/getMembers_info'](uuid) || [];
     members_info.value = membersData;
+    return members_info;
   }
 
   return {
