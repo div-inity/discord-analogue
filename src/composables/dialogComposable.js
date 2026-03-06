@@ -90,8 +90,6 @@ export function dialogComposable () {
         }
       });
       const data = await response.json();
-      store.commit('private_msg/SET_LOADED_CHAT', data);
-      setActiveDialogID(uuid);
       
       return data;
     } catch (error) {

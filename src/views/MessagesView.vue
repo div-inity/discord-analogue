@@ -23,7 +23,7 @@
               :class="{ hovered: isHovered }"
               >
               <span v-tippy="{ content: 'Редактировать группу', placement: 'bottom'}">
-                {{ dialogNames(members_info) }}
+                {{ dNames }}
               </span>
             </div>
           </template>
@@ -41,7 +41,7 @@
               class="dialog-name-single dialog-name" 
               v-tippy="{ content: `@${dialogNames(members_info, 'name')}`, placement: 'bottom'}"
             >
-              {{ dialogNames(members_info) }}
+              {{ dNames }}
             </div>
           </template>
         </template>
@@ -52,7 +52,7 @@
           <div class="chat-wrapper flex">
             <TextField 
               height="58" 
-              :placeholder="'Написать '+ ((chat?.custom_name != null) ? chat.custom_name : dialogNames(members_info))" 
+              :placeholder="'Написать '+ ((chat?.custom_name != null) ? chat.custom_name : dNames)" 
               color="var(--system-back-color4)"
             >
               <template v-slot:prefix>
@@ -88,7 +88,7 @@ import TextField from '@/components/TextField.vue';
 import Chat from '@/components/Chat.vue';
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router';
-import { ref, computed, onMounted, watchEffect } from 'vue';
+import { ref, computed, onMounted, watchEffect, watch } from 'vue';
 
 import { userComposable } from '@/composables/userComposable';
 const {user, userToken} = userComposable()
@@ -104,21 +104,20 @@ import { chatActionsIcons, textFieldIcons } from '@/assets/icons'
 const WIDTHASIDE = 350;
 
 const route = useRoute();
+const dNames = ref(null);
 const store = useStore();
-const chat = computed(() => store.getters['private_msg/getLoadedChat']) || [];
+const chat = ref([]);
 async function loadChat() {
-  console.log("loadChat")
-  //console.log(activeDialogID.value != route.params?.id,  members_info.value == null)
-  if (activeDialogID.value == route.params?.id && members_info.value != null) return;
+  if (!activeDialogID.value && members_info.value != null) {
+    setActiveDialogID(route.params?.id); // Устанавливаем активный диалог
+  }
+
+  const data = await setChat(route.params?.id);
+
   // Если совершен переход в другой диалог или актуального диалога нет
-  //console.log("loadChat started")
-  setActiveDialogID(route.params?.id); // Устанавливаем активный диалог
-  setChat(route.params?.id) // Получаем инфо по нему - чат
   await getMembers_info(route.params?.id) // Загружаем в глобальную переменную members_info инфо о юзерах
-  //console.log(members_info.value)
-  console.log("loadChat end - выводится, потому что подгружал новый чат")
-  console.log(members_info.value)
-  //console.log(r.value)
+  dNames.value = dialogNames(members_info.value);
+  chat.value = data;
 }
 
 const isHovered = ref(false);
@@ -132,10 +131,22 @@ function onMouseLeave() {
 }
 
 
-watchEffect(() => {
+/* watchEffect(() => {
   console.log(`${route.params.id} сменился, загрузка нового чата`);
   loadChat();
-});
+}); */
+
+watch(
+  () => route.params.id,
+  (id, oldid) => {
+    //console.log(`${route.params.id} сменился, загрузка нового чата`);
+    console.log('Определяем ID: ', id, oldid, id != oldid)
+    if (id != oldid) {
+      loadChat();
+    }
+  },
+  { immediate: true }
+)
 
 /* onMounted(()=> {
   if (!!user.value.id && userToken.value != null) // Если юзер загружен и токен актуален
