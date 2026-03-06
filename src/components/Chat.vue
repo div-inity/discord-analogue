@@ -1,7 +1,6 @@
 <template>
   <div class="chat flex">
-    <!-- {{ props.messages }} -->
-    <div class="chat-item flex row"  v-for="n of props.messages">
+    <div class="chat-item flex row"  v-for="n of props.messages" :key="n.id">
       <Avatar 
         size="45" 
         :avatar="n.avatar || null"
