@@ -17,10 +17,6 @@
             <!-- Мульти-имя -->
             <div 
               class="dialog-name-multy dialog-name" 
-              
-              @mouseenter="onMouseEnter"
-              @mouseleave="onMouseLeave" 
-              :class="{ hovered: isHovered }"
               >
               <span v-tippy="{ content: 'Редактировать группу', placement: 'bottom'}">
                 {{ dNames }}
@@ -48,26 +44,23 @@
       </ContentHeader>
       <ContentFlex>
         <Content :RightAside="WIDTHASIDE">
-        
-          <div class="chat-wrapper flex" >
-            <TextField 
-              height="58" 
-              :placeholder="'Написать '+ ((chat?.custom_name != null) ? chat.custom_name : dNames)" 
-              color="var(--system-back-color4)"
-              @send="(message) => {newMessage = message; sendMessage()}"
-            >
-              <template v-slot:prefix>
-                <button><span v-html="textFieldIcons.add" class="icon"></span></button>
-              </template>
-              <template v-slot:postfix>
-                <button><span v-html="textFieldIcons.gif" class="icon"></span></button>
-                <button><span v-html="textFieldIcons.sticker" class="icon"></span></button>
-                <button><span v-html="textFieldIcons.emoji" class="icon"></span></button>
-                <button><span v-html="textFieldIcons.apps" class="icon"></span></button>
-              </template>
-            </TextField>
-            <Chat :messages="chat" v-if="chat?.length"  ref="scrollChat"/><!--   -->
-          </div>
+          <Chat :messages="chat" v-if="chat?.length"  ref="scrollChat"/>
+          <TextField 
+            height="62" 
+            :placeholder="'Написать '+ ((chat?.custom_name != null) ? chat.custom_name : dNames)" 
+            color="var(--system-back-color4)"
+            @send="(message) => {newMessage = message; sendMessage()}"
+          >
+            <template v-slot:prefix>
+              <button><span v-html="textFieldIcons.add" class="icon"></span></button>
+            </template>
+            <template v-slot:postfix>
+              <button><span v-html="textFieldIcons.gif" class="icon"></span></button>
+              <button><span v-html="textFieldIcons.sticker" class="icon"></span></button>
+              <button><span v-html="textFieldIcons.emoji" class="icon"></span></button>
+              <button><span v-html="textFieldIcons.apps" class="icon"></span></button>
+            </template>
+          </TextField>
         </Content>
         <RightAside :RightAside="WIDTHASIDE">
         </RightAside>
@@ -164,15 +157,7 @@ function loadmessages() {
   socket.emit('chat:load', payload);
 }
 
-const isHovered = ref(false);
 
-function onMouseEnter() {
-  isHovered.value = true;
-}
-
-function onMouseLeave() {
-  isHovered.value = false;
-}
 
 onBeforeUnmount(() => {
   socket.emit('chat:leave', activeDialogID.value);
@@ -250,13 +235,7 @@ watch(
   
   }
 }
-.chat-wrapper {
-  flex-direction: column-reverse;
-  height: 100%;
-  overflow-y: auto;
-  padding: 0 10px 10px;
-  row-gap: 30px;
-}
+
 .input-wrapper .postfix button .icon {
   height: 20px;
   width: 20px;

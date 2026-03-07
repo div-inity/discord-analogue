@@ -1,6 +1,6 @@
 <template>
   <div class="content flex column" :style="{ width: contentWidth + 'px', height: contentHeight + 'px' }" @mouseenter="onMouseEnter"
-    @mouseleave="onMouseLeave" :class="{ hovered: isHovered }">
+    @mouseleave="onMouseLeave"> <!-- :class="{ hovered: isHovered }" -->
     <!-- contentHeight.value: {{ contentHeight }} -->
     <slot>
       content width:{{ headerWidth }}<br>
@@ -33,7 +33,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', updateWidth);
 });
-const isHovered = ref(false);
+/* const isHovered = ref(false);
 
 function onMouseEnter() {
   isHovered.value = true;
@@ -41,17 +41,19 @@ function onMouseEnter() {
 
 function onMouseLeave() {
   isHovered.value = false;
-}
+} */
 </script>
 <style lang="scss">
 .content {
-  min-height: 100%;
+  /* min-height: 100%; */
+  height: 100vh;
   /* padding: 15px 25px; */
   height: calc(100vh - 50px);
   row-gap: 15px;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   min-width: 370px;
   position: relative;
+  padding-bottom: 10px;
 
   /* & > * {
     width: inherit;
@@ -59,25 +61,25 @@ function onMouseLeave() {
   } */
 
   /* базовые стили scrollbar */
-  &::-webkit-scrollbar {
+  /* &::-webkit-scrollbar {
     width: 8px;
-  }
+  } */
 
   /* Target the scrollbar track (the background) */
-  &::-webkit-scrollbar-track {
+  /* &::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 10px;
-  }
+  } */
 
   /* Target the scrollbar thumb (the draggable handle) */
-  &::-webkit-scrollbar-thumb {
+  /* &::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background: transparent;
-  }
+  } */
 
   /* Меняем стиль при наведении на весь контейнер */
-  &.hovered::-webkit-scrollbar-thumb {
+  /* &.hovered::-webkit-scrollbar-thumb {
     background: var(--system-back-color1);
-  }
+  } */
 }
 </style>

@@ -1,26 +1,32 @@
 <template>
-  <div class="chat flex">
-    <div class="chat-item flex row"  v-for="n of props.messages" :key="n.id">
-      <Avatar 
-        size="45" 
-        :avatar="n.avatar || null"
-      />
-      <div class="message-item flex column">
-        <div class="messages-info flex row">
-          <p class="message-author">{{ getAuthor(n.sender_id) }}</p>
-          <span class="emoji" v-if="n.emoji">{{ n.emoji }}</span>
-          <span class="datetime">{{ formatDate(n.date_time) }}</span>
+  <div class="chat-wrapper flex" 
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave" 
+    :class="{ hovered: isHovered }">
+    <div class="chat flex">
+      <div class="chat-item flex row"  v-for="n of props.messages" :key="n.id">
+        <Avatar 
+          size="45" 
+          :avatar="n.avatar || null"
+        />
+        <div class="message-item flex column">
+          <div class="messages-info flex row">
+            <p class="message-author">{{ getAuthor(n.sender_id) }}</p>
+            <span class="emoji" v-if="n.emoji">{{ n.emoji }}</span>
+            <span class="datetime">{{ formatDate(n.date_time) }}</span>
+          </div>
+          <div class="message flex">
+            <p>{{ n.message.text }}</p>
+          </div>
         </div>
-        <div class="message flex">
-          <p>{{ n.message.text }}</p>
-        </div>
+        
       </div>
       
     </div>
-    
   </div>
 </template>
 <script setup>
+import { ref } from 'vue';
 import { formatDate } from '@/composables/generalFunctions';
 
 import { dialogComposable } from '@/composables/dialogComposable';
@@ -34,45 +40,87 @@ const getAuthor = (id) => {
   return members_info?.value?.find(e => e.id == id)?.nickname;
 }
 
+const isHovered = ref(false);
+
+function onMouseEnter() {
+  isHovered.value = true;
+}
+
+function onMouseLeave() {
+  isHovered.value = false;
+}
+
 </script>
 <style lang="scss">
-.chat {
-  height: calc(100% - 68px);
-  row-gap: 20px;
-  justify-content: flex-start;
+.chat-wrapper {
   flex-direction: column-reverse;
-  padding-inline: 7px;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0 10px 10px;
+  row-gap: 30px;
 
-  .chat-item {
-    column-gap: 15px;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
 
-    .message-item {
-      .messages-info {
-        align-items: flex-end;
-        column-gap: 10px;
+  /* Target the scrollbar track (the background) */
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
 
-        .message-author {
-          font-family: var(--font-family-500);
-          color: var(--loud-text-color);
-          font-size: 16px;
+  /* Target the scrollbar thumb (the draggable handle) */
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: transparent;
+  }
+
+  /* Меняем стиль при наведении на весь контейнер */
+  &.hovered::-webkit-scrollbar-thumb {
+    background: var(--system-back-color3);
+  }
+
+  .chat {
+    height: calc(100% - 68px);
+    row-gap: 20px;
+    justify-content: flex-start;
+    flex-direction: column-reverse;
+    padding-inline: 7px;
+
+  
+
+    .chat-item {
+      column-gap: 15px;
+
+      .message-item {
+        .messages-info {
+          align-items: flex-end;
+          column-gap: 10px;
+
+          .message-author {
+            font-family: var(--font-family-500);
+            color: var(--loud-text-color);
+            font-size: 16px;
+          }
+          .emoji {
+
+          }
+          .datetime {
+            font-family: var(--font-family-400);
+            color: var(--muted-text-color);
+            font-size: 12px;
+          }
         }
-        .emoji {
-
-        }
-        .datetime {
+        
+        .message {
           font-family: var(--font-family-400);
-          color: var(--muted-text-color);
-          font-size: 12px;
+          color: var(--main-text-color);
+          font-size: 15px;
+          flex-direction: column-reverse;
         }
-      }
-      
-      .message {
-        font-family: var(--font-family-400);
-        color: var(--main-text-color);
-        font-size: 15px;
-        flex-direction: column-reverse;
       }
     }
   }
 }
+
 </style>
