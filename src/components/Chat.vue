@@ -2,9 +2,10 @@
   <div class="chat-wrapper flex" 
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave" 
-    :class="{ hovered: isHovered }">
+    :class="{ hovered: isHovered }"
+    ref="scrollChat">
     <div class="chat flex">
-      <div class="chat-item flex row"  v-for="n of props.messages" :key="n.id">
+      <div v-for="(n, i) of props.messages" class="chat-item flex row" :class="{first: i == props.messages.length - 1}" :key="n.id">
         <Avatar 
           size="45" 
           :avatar="n.avatar || null"
@@ -19,23 +20,21 @@
             <p>{{ n.message.text }}</p>
           </div>
         </div>
-        
       </div>
-      
     </div>
   </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { formatDate } from '@/composables/generalFunctions';
 
 import { dialogComposable } from '@/composables/dialogComposable';
-const { dialogs, dialogNames, activeDialogID, setChat, setActiveDialogID, members_info } = dialogComposable();
+const { members_info } = dialogComposable();
 import Avatar from './Avatar.vue';
 const props = defineProps({
   messages: Object,
 })
-
+const emit = defineEmits(['scrolled']);
 const getAuthor = (id) => {
   return members_info?.value?.find(e => e.id == id)?.nickname;
 }
@@ -50,13 +49,40 @@ function onMouseLeave() {
   isHovered.value = false;
 }
 
+const scrollChat = ref(null)
+const handleScroll = async() => {
+  const container = scrollChat.value;
+  if (!container) return; // Если не промотали до конца
+  const threshold = 1; // погрешность в пикселях
+  if (Math.abs(container.scrollTop) >= container.scrollHeight - container.clientHeight - threshold) {
+    //console.log('Достигнут конец блока!');
+    const previousScrollTop = container.scrollTop; // Запоминаем текущую высоту
+    emit('scrolled'); // Подгружаем сообщения
+    await nextTick(); // Обновление DOM
+    container.scrollTop = previousScrollTop; // Присваиваем высоту
+    return;
+  }
+};
+
+onMounted(() => {
+  if (scrollChat.value) {
+    scrollChat.value.addEventListener('scroll', handleScroll);
+  }
+});
+
+onUnmounted(() => {
+  if (scrollChat.value) {
+    scrollChat.value.removeEventListener('scroll', handleScroll);
+  }
+});
+
 </script>
 <style lang="scss">
 .chat-wrapper {
   flex-direction: column-reverse;
   height: 100%;
   overflow-y: auto;
-  padding: 0 10px 10px;
+  /* padding: 0 10px 10px; */
   row-gap: 30px;
 
   &::-webkit-scrollbar {
@@ -81,16 +107,19 @@ function onMouseLeave() {
   }
 
   .chat {
-    height: calc(100% - 68px);
+    height: 100%;
     row-gap: 20px;
     justify-content: flex-start;
     flex-direction: column-reverse;
     padding-inline: 7px;
-
   
 
     .chat-item {
       column-gap: 15px;
+
+      &.first {
+        padding-top: 20px;
+      }
 
       .message-item {
         .messages-info {

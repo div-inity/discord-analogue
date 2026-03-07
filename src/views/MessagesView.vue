@@ -44,7 +44,10 @@
       </ContentHeader>
       <ContentFlex>
         <Content :RightAside="WIDTHASIDE">
-          <Chat :messages="chat" v-if="chat?.length"  ref="scrollChat"/>
+          <Chat 
+            v-if="chat?.length"
+            :messages="chat" 
+            @scrolled="loadmessages()"/>
           <TextField 
             height="62" 
             :placeholder="'Написать '+ ((chat?.custom_name != null) ? chat.custom_name : dNames)" 
@@ -163,30 +166,7 @@ onBeforeUnmount(() => {
   socket.emit('chat:leave', activeDialogID.value);
 })
 
-const scrollChat = ref(null)
-const handleScroll = () => {
-  const container = scrollChat.value;
-  if (!container) return;
 
-  // Проверяете, достигли ли вы низа
-  if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
-    console.log('Достигнут конец блока!');
-    // Тут можно вызвать свою логику
-    loadmessages()
-  }
-};
-
-onMounted(() => {
-  if (scrollChat.value) {
-    scrollChat.value.addEventListener('scroll', handleScroll);
-  }
-});
-
-onUnmounted(() => {
-  if (scrollChat.value) {
-    scrollChat.value.removeEventListener('scroll', handleScroll);
-  }
-});
 
 watch(
   () => route.params.id,

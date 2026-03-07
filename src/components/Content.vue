@@ -33,53 +33,13 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', updateWidth);
 });
-/* const isHovered = ref(false);
-
-function onMouseEnter() {
-  isHovered.value = true;
-}
-
-function onMouseLeave() {
-  isHovered.value = false;
-} */
 </script>
 <style lang="scss">
 .content {
-  /* min-height: 100%; */
   height: 100vh;
-  /* padding: 15px 25px; */
   height: calc(100vh - 50px);
-  row-gap: 15px;
-  /* overflow-y: auto; */
   min-width: 370px;
   position: relative;
-  padding-bottom: 10px;
-
-  /* & > * {
-    width: inherit;
-    max-width: 100%;
-  } */
-
-  /* базовые стили scrollbar */
-  /* &::-webkit-scrollbar {
-    width: 8px;
-  } */
-
-  /* Target the scrollbar track (the background) */
-  /* &::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 10px;
-  } */
-
-  /* Target the scrollbar thumb (the draggable handle) */
-  /* &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background: transparent;
-  } */
-
-  /* Меняем стиль при наведении на весь контейнер */
-  /* &.hovered::-webkit-scrollbar-thumb {
-    background: var(--system-back-color1);
-  } */
+  padding: 0 10px 10px;
 }
 </style>
