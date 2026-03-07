@@ -50,8 +50,9 @@
         <Content :RightAside="WIDTHASIDE">
         
           <div class="chat-wrapper flex">
+            <div><input v-model="newMessage" @keyup.enter="sendMessage"> <button @click="loadmessages()">load</button></div>
             <TextField 
-              height="58" 
+              height="58" v-model="newMessage" @keyup.enter="sendMessage"
               :placeholder="'Написать '+ ((chat?.custom_name != null) ? chat.custom_name : dNames)" 
               color="var(--system-back-color4)"
             >
@@ -88,10 +89,34 @@ import TextField from '@/components/TextField.vue';
 import Chat from '@/components/Chat.vue';
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router';
-import { ref, computed, onMounted, watchEffect, watch } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watchEffect, watch } from 'vue';
 
 import { userComposable } from '@/composables/userComposable';
 const {user, userToken} = userComposable()
+
+import { useSocket } from '@/composables/useSocket'
+const newMessage = ref('')
+function onMessage(msg) {
+  //messages.value.push(msg)
+  console.log('re from server', msg)
+  if (msg.unshift) chat.value = [msg.unshift, ...chat.value];
+  if (msg.push) chat.value = [...chat.value, ...msg.push];
+}
+// регистрируем обработчик события через composable
+const { socket } = useSocket({
+  'chat:message': onMessage,
+});
+
+function sendMessage() {
+  if (!newMessage.value.trim()) return
+  const msg = {
+    message: newMessage.value,
+    dialog: activeDialogID.value,
+  }
+  socket.emit('chat:message', msg)
+  newMessage.value = ''
+}
+
 
 import { dialogComposable } from '@/composables/dialogComposable';
 const { dialogs, dialogNames, activeDialogID, setChat, getMembers_info, setActiveDialogID, members_info } = dialogComposable();
@@ -108,16 +133,31 @@ const dNames = ref(null);
 const store = useStore();
 const chat = ref([]);
 async function loadChat() {
-  if (!activeDialogID.value && members_info.value != null) {
+  if (!activeDialogID.value || members_info.value != null) {
     setActiveDialogID(route.params?.id); // Устанавливаем активный диалог
   }
+  // Присоединяемся к комнате диалога
+  socket.emit('chat:join', activeDialogID.value);
 
-  const data = await setChat(route.params?.id);
+  //const data = await setChat(route.params?.id);
+  chat.value = [];
+  socket.emit('chat:load', {
+    dialog_id: route.params?.id,
+    offset: 0,
+  })
 
   // Если совершен переход в другой диалог или актуального диалога нет
   await getMembers_info(route.params?.id) // Загружаем в глобальную переменную members_info инфо о юзерах
   dNames.value = dialogNames(members_info.value);
-  chat.value = data;
+  //chat.value = data;
+}
+
+function loadmessages() {
+  const payload = {
+    dialog_id: activeDialogID.value,
+    offset: chat.value?.length,
+  }
+  socket.emit('chat:load', payload);
 }
 
 const isHovered = ref(false);
@@ -129,6 +169,10 @@ function onMouseEnter() {
 function onMouseLeave() {
   isHovered.value = false;
 }
+
+onBeforeUnmount(() => {
+  socket.emit('chat:leave', activeDialogID.value);
+})
 
 
 /* watchEffect(() => {
@@ -142,6 +186,7 @@ watch(
     //console.log(`${route.params.id} сменился, загрузка нового чата`);
     console.log('Определяем ID: ', id, oldid, id != oldid)
     if (id != oldid) {
+      socket.emit('chat:leave', oldid);
       loadChat();
     }
   },
