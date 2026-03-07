@@ -11,7 +11,13 @@
     <div class="prefix flex row">
       <slot name="prefix"></slot>
     </div>
-    <input type="text" :placeholder="props.placeholder || 'Поиск'" name="input" autocomplete="off">
+    <input 
+      type="text" 
+      :placeholder="props.placeholder || 'Поиск'" 
+      name="input" 
+      autocomplete="off"
+      v-model="message" 
+      @keyup.enter="toSend()">
     <slot name="actions"></slot>
     <button v-if="props.icon == 'search' && props.button == true">
       <slot name="button">Поиск</slot>
@@ -24,6 +30,8 @@
 </template>
 <script setup>
 import { mainIcons } from '@/assets/icons'
+import { ref } from 'vue';
+const emit = defineEmits(['send'])
 const props = defineProps({
   //prefix: Boolean,
   //postfix: Boolean,
@@ -36,6 +44,11 @@ const props = defineProps({
   color: String,
   border: String,
 });
+function toSend() {
+  emit('send', message.value);
+  message.value = null;
+}
+const message = ref(null); // Тело инпута, введеноое и отправленное
 </script>
 <style lang="scss">
 .input-wrapper {

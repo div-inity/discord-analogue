@@ -49,12 +49,12 @@
       <ContentFlex>
         <Content :RightAside="WIDTHASIDE">
         
-          <div class="chat-wrapper flex">
-            <div><input v-model="newMessage" @keyup.enter="sendMessage"> <button @click="loadmessages()">load</button></div>
+          <div class="chat-wrapper flex" >
             <TextField 
-              height="58" v-model="newMessage" @keyup.enter="sendMessage"
+              height="58" 
               :placeholder="'Написать '+ ((chat?.custom_name != null) ? chat.custom_name : dNames)" 
               color="var(--system-back-color4)"
+              @send="(message) => {newMessage = message; sendMessage()}"
             >
               <template v-slot:prefix>
                 <button><span v-html="textFieldIcons.add" class="icon"></span></button>
@@ -66,8 +66,7 @@
                 <button><span v-html="textFieldIcons.apps" class="icon"></span></button>
               </template>
             </TextField>
-            
-            <Chat :messages="chat" v-if="chat?.length"/><!--   -->
+            <Chat :messages="chat" v-if="chat?.length"  ref="scrollChat"/><!--   -->
           </div>
         </Content>
         <RightAside :RightAside="WIDTHASIDE">
@@ -89,7 +88,9 @@ import TextField from '@/components/TextField.vue';
 import Chat from '@/components/Chat.vue';
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router';
-import { ref, computed, onMounted, onBeforeUnmount, watchEffect, watch } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watchEffect, watch, onUnmounted } from 'vue';
+
+
 
 import { userComposable } from '@/composables/userComposable';
 const {user, userToken} = userComposable()
@@ -108,7 +109,10 @@ const { socket } = useSocket({
 });
 
 function sendMessage() {
-  if (!newMessage.value.trim()) return
+  //console.log(newMessage.value)
+  if (!newMessage.value.trim()) {
+    return
+  }
   const msg = {
     message: newMessage.value,
     dialog: activeDialogID.value,
@@ -174,11 +178,30 @@ onBeforeUnmount(() => {
   socket.emit('chat:leave', activeDialogID.value);
 })
 
+const scrollChat = ref(null)
+const handleScroll = () => {
+  const container = scrollChat.value;
+  if (!container) return;
 
-/* watchEffect(() => {
-  console.log(`${route.params.id} сменился, загрузка нового чата`);
-  loadChat();
-}); */
+  // Проверяете, достигли ли вы низа
+  if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+    console.log('Достигнут конец блока!');
+    // Тут можно вызвать свою логику
+    loadmessages()
+  }
+};
+
+onMounted(() => {
+  if (scrollChat.value) {
+    scrollChat.value.addEventListener('scroll', handleScroll);
+  }
+});
+
+onUnmounted(() => {
+  if (scrollChat.value) {
+    scrollChat.value.removeEventListener('scroll', handleScroll);
+  }
+});
 
 watch(
   () => route.params.id,
