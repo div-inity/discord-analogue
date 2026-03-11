@@ -53,6 +53,8 @@
             :placeholder="'Написать '+ ((chat?.custom_name != null) ? chat.custom_name : dNames)" 
             color="var(--system-back-color4)"
             @send="(message) => {newMessage = message; sendMessage()}"
+            multyline
+            padding="13px 12px"
           >
             <template v-slot:prefix>
               <button><span v-html="textFieldIcons.add" class="icon"></span></button>
@@ -106,7 +108,7 @@ const { socket } = useSocket({
 
 function sendMessage() {
   //console.log(newMessage.value)
-  if (!newMessage.value.trim()) {
+  if (!newMessage.value?.trim()) {
     return
   }
   const msg = {
@@ -187,8 +189,8 @@ watch(
 }) */
 </script>
 <style lang="scss">
-  .page-title:has(.dialog-name-multy.hovered) {
-    background-color: var(--system-back-color1);
+.page-title:has(.dialog-name-multy.hovered) {
+  background-color: var(--system-back-color1);
 }
 .aliases {align-items: center;
   .aka {

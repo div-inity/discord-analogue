@@ -5,7 +5,7 @@
     :class="{ hovered: isHovered }"
     ref="scrollChat">
     <div class="chat flex">
-      <div v-for="(n, i) of props.messages" class="chat-item flex row" :class="{first: i == props.messages.length - 1}" :key="n.id">
+      <div v-for="(n, i) of props.messages" class="chat-item flex row" :class="{first: i == props.messages.length - 1, last: i == 0}" :key="n.id">
         <Avatar 
           size="45" 
           :avatar="n.avatar || null"
@@ -84,6 +84,7 @@ onUnmounted(() => {
   overflow-y: auto;
   /* padding: 0 10px 10px; */
   row-gap: 30px;
+  overflow-x: hidden;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -121,6 +122,10 @@ onUnmounted(() => {
         padding-top: 20px;
       }
 
+      &.last {
+        padding-bottom: 20px;
+      }
+
       .message-item {
         .messages-info {
           align-items: flex-end;
@@ -146,6 +151,10 @@ onUnmounted(() => {
           color: var(--main-text-color);
           font-size: 15px;
           flex-direction: column-reverse;
+
+          p {
+            overflow-wrap: anywhere;
+          }
         }
       }
     }
