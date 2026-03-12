@@ -16,8 +16,7 @@
             <span class="emoji" v-if="n.emoji">{{ n.emoji }}</span>
             <span class="datetime">{{ formatDate(n.date_time) }}</span>
           </div>
-          <div class="message flex">
-            <p>{{ n.message.text }}</p>
+          <div class="message flex" v-html="markdown.toHTML(n.message.text)">
           </div>
         </div>
       </div>
@@ -29,6 +28,7 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { formatDate } from '@/composables/generalFunctions';
 
 import { dialogComposable } from '@/composables/dialogComposable';
+import { markdown } from 'markdown';
 const { members_info } = dialogComposable();
 import Avatar from './Avatar.vue';
 const props = defineProps({
@@ -150,10 +150,252 @@ onUnmounted(() => {
           font-family: var(--font-family-400);
           color: var(--main-text-color);
           font-size: 15px;
-          flex-direction: column-reverse;
+          flex-direction: column;
 
-          p {
+          & > p {
             overflow-wrap: anywhere;
+          }
+          // Заголовки
+          h1, h2, h3, h4, h5, h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+            line-height: 1.25;
+            
+            &:first-child {
+              margin-top: 0;
+            }
+          }
+
+          h1 { font-size: 2em; }
+          h2 { font-size: 1.5em; }
+          h3 { font-size: 1.25em; }
+          h4 { font-size: 1em; }
+          h5 { font-size: 0.875em; }
+          h6 { font-size: 0.85em; color: #6a737d; }
+
+          // Параграфы
+          p {
+            margin-top: 0;
+            margin-bottom: 1em;
+            
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
+          // Ссылки
+          a {
+            color: #0366d6;
+            text-decoration: none;
+            
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+
+          // Списки
+          ul, ol {
+            margin-top: 0;
+            margin-bottom: 1em;
+            padding-left: 2em;
+            
+            li {
+              margin-bottom: 0.25em;
+              
+              &:last-child {
+                margin-bottom: 0;
+              }
+              
+              // Вложенные списки
+              ul, ol {
+                margin-top: 0.25em;
+                margin-bottom: 0.25em;
+              }
+            }
+          }
+
+          // Код
+          code {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 0.9em;
+            padding: 0.2em 0.4em;
+            background-color: rgba(27, 31, 35, 0.05);
+            border-radius: 3px;
+          }
+
+          // Блоки кода
+          pre {
+            margin-top: 0;
+            margin-bottom: 1em;
+            padding: 1em;
+            background-color: #f6f8fa;
+            border-radius: 3px;
+            overflow: auto;
+            line-height: 1.45;
+            
+            code {
+              background-color: transparent;
+              padding: 0;
+              font-size: 0.85em;
+              color: #24292e;
+              white-space: pre-wrap;
+              word-break: break-word;
+            }
+          }
+
+          // Цитаты
+          blockquote {
+            margin: 0 0 1em 0;
+            padding: 0 1em;
+            color: #6a737d;
+            border-left: 0.25em solid #dfe2e5;
+            
+            p {
+              margin-bottom: 0.5em;
+              
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+
+          // Горизонтальная линия
+          hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 1.5em 0;
+            background-color: #e1e4e8;
+            border: 0;
+          }
+
+          // Таблицы
+          table {
+            display: block;
+            width: 100%;
+            overflow: auto;
+            margin-bottom: 1em;
+            border-collapse: collapse;
+            border-spacing: 0;
+            
+            th {
+              font-weight: 600;
+              background-color: #f6f8fa;
+            }
+            
+            th, td {
+              padding: 6px 13px;
+              border: 1px solid #dfe2e5;
+            }
+            
+            tr {
+              background-color: #fff;
+              border-top: 1px solid #c6cbd1;
+              
+              &:nth-child(2n) {
+                background-color: #f6f8fa;
+              }
+            }
+          }
+
+          // Изображения
+          img {
+            max-width: 100%;
+            box-sizing: content-box;
+            background-color: #fff;
+            border-radius: 3px;
+          }
+
+          // Жирный и курсив
+          strong {
+            font-weight: 600;
+          }
+          
+          em {
+            font-style: italic;
+          }
+
+          // Встроенные элементы
+          del {
+            text-decoration: line-through;
+          }
+
+          // Подсветка синтаксиса для блоков кода (опционально)
+          .hljs {
+            background: transparent;
+            padding: 0;
+          }
+
+          // Списки задач (task lists)
+          .task-list-item {
+            list-style-type: none;
+            
+            input[type="checkbox"] {
+              margin: 0 0.2em 0.25em -1.6em;
+              vertical-align: middle;
+            }
+          }
+        }
+
+        // Темная тема (опционально)
+        .message.dark {
+          color: #e1e4e8;
+          background-color: #1e1e1e;
+          
+          h1, h2 {
+            border-bottom-color: #3d444d;
+          }
+          
+          h6 {
+            color: #9da5b4;
+          }
+          
+          a {
+            color: #58a6ff;
+          }
+          
+          code {
+            background-color: rgba(240, 246, 252, 0.15);
+          }
+          
+          pre {
+            background-color: #2d2d2d;
+            
+            code {
+              color: #e1e4e8;
+            }
+          }
+          
+          blockquote {
+            color: #9da5b4;
+            border-left-color: #3d444d;
+          }
+          
+          hr {
+            background-color: #3d444d;
+          }
+          
+          table {
+            th {
+              background-color: #2d2d2d;
+            }
+            
+            th, td {
+              border-color: #3d444d;
+            }
+            
+            tr {
+              background-color: #1e1e1e;
+              border-top-color: #3d444d;
+              
+              &:nth-child(2n) {
+                background-color: #2d2d2d;
+              }
+            }
+          }
+          
+          img {
+            background-color: #1e1e1e;
           }
         }
       }

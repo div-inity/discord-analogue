@@ -34,15 +34,7 @@
   <template v-else>
     <div 
       class="input-wrapper flex row multiline" 
-      :style="{
-      /* height: props.height ? props.height + 'px' : null, */
-      width: props.width ? props.width + '%' : null,
-      'border-radius': props.radius ? props.radius + 'px' : '8px',
-      /* padding: props.padding ? props.padding + 'px' : '0 12px', */
-      'background-color': props.color ? props.color : 'var(--system-back-color5)',
-      'border-color': props.border ? props.border : 'var(--system-back-color1)',
-      height: updateHeightTextarea() + 24 + 'px'
-    }">
+      :style="wrapperStyles">
       <div class="prefix flex row">
         <slot name="prefix"></slot>
       </div>
@@ -53,23 +45,26 @@
         v-model="message" 
         @keydown.enter="handleEnterKey"
         @input="updateLineCount"
+        @cut="updateTextareaHeight" 
+        @paste="handlePaste"        
         ref="textareaRef"
-        :style="{height: updateHeightTextarea() + 'px'}"
-      ></textarea>{{ lineCount }}
+        :style="{height: textareaHeight + 'px'}"
+      ></textarea>
       <slot name="actions"></slot>
       <button v-if="props.icon == 'search' && props.button == true">
         <slot name="button">Поиск</slot>
       </button>
       <div class="postfix flex row">
-        <slot name="postfix">
-        </slot>
+        <slot name="postfix"></slot>
       </div>
     </div>
   </template>
 </template>
 <script setup>
 import { mainIcons } from '@/assets/icons'
-import { ref, watch, nextTick } from 'vue';
+import { ref, watch, nextTick, computed, onMounted   } from 'vue';
+import { generalFunctions } from '@/composables/generalFunctions';
+const {contentHeight} = generalFunctions();
 const emit = defineEmits(['send'])
 const props = defineProps({
   //prefix: Boolean,
@@ -84,6 +79,14 @@ const props = defineProps({
   border: String,
   multyline: Boolean,
   padding: String,
+  minHeight: {
+    type: Number,
+    default: 20
+  },
+  maxHeight: {
+    type: Number,
+    default: 30  // Максимальная высота, после которой появляется скролл
+  }
 });
 const message = ref(null); // Тело инпута
 function toSend() { // Отправить тело инпута
@@ -91,40 +94,87 @@ function toSend() { // Отправить тело инпута
   message.value = null;
 }
 
-const lineCount = ref(0);
-const textareaRef = ref(null);
-const lineHeight = 21; // фактическая высота строки в textarea
-
-function updateLineCount() {
-  nextTick(() => {
-    if (textareaRef.value) {
-      const el = textareaRef.value;
-      const scrollHeight = el.scrollHeight;
-      // Количество строк --- это высота текста, деленная на высоту одной строки
-      lineCount.value = Math.ceil(scrollHeight / lineHeight); // 1 - подсчитанная погрешность
+const handleEnterKey = (event) => {
+  if (event.shiftKey) {
+    // Shift + Enter: разрешаем перенос строки
+    nextTick(() => {
+      updateTextareaHeight()
+    })
+    return
+  } else {
+    // Обычный Enter: отправляем
+    event.preventDefault()
+    if (message.value && message.value.trim()) {
+      toSend()
     }
-  });
-}
-function updateHeightTextarea() {
-  /* let t = 58
-  if (lineCount.value < 2) return (lineCount.value) * lineHeight; */
-  return (lineCount.value) * (lineHeight) || lineHeight;
-}
-
-// Можно также автоматически обновлять при изменении текста
-watch(message, () => {
-  updateLineCount();
-});
-
-const handleEnterKey = (e) => {
-  console.log(e)
-  //return
-  if (e.shiftKey) { // Если Shift+Enter - возврат. Текстареа сама вставляет перенос
-    return;
   }
-  e.preventDefault() // Иначе предотвращаем переход на новую строку
-  toSend(); // простая отправка сообщения родителю
 }
+
+const textareaRef = ref(null)
+const textareaHeight = ref(props.minHeight)
+const wrapperStyles = computed(() => ({
+  width: props.width ? props.width + '%' : null,
+  'border-radius': props.radius ? props.radius + 'px' : '8px',
+  'background-color': props.color ? props.color : 'var(--system-back-color5)',
+  'border-color': props.border ? props.border : 'var(--system-back-color1)',
+  height: textareaHeight.value * 1.5 + 'px'
+}))
+
+function updateTextareaHeight(){
+  if (textareaRef.value) {
+    // Сбрасываем высоту до минимальной
+    textareaRef.value.style.height = props.minHeight + 'px'
+    
+    // Получаем реальную высоту контента
+    let newHeight = textareaRef.value.scrollHeight
+    
+    // Применяем ограничения
+    newHeight = Math.max(props.minHeight, newHeight)
+    const max = contentHeight.value / 100 * props.maxHeight;
+    if (props.maxHeight) {
+      //console.log(max)
+      newHeight = Math.min(max, newHeight)
+      //console.log(newHeight)
+    }
+    
+    // Устанавливаем новую высоту
+    textareaHeight.value = newHeight
+    textareaRef.value.style.height = newHeight + 'px'
+    
+    // Включаем/выключаем скролл в зависимости от высоты
+    if (max && newHeight >= max) {
+      textareaRef.value.style.overflowY = 'auto'
+    } else {
+      textareaRef.value.style.overflowY = 'hidden'
+    }
+  }
+}
+
+const handlePaste = (event) => {
+  // Даем время на вставку текста, потом обновляем высоту
+  nextTick(() => {
+    updateTextareaHeight()
+  })
+}
+
+const updateLineCount = () => {
+  // Обновляем высоту при вводе
+  nextTick(() => {
+    updateTextareaHeight()
+  })
+}
+
+// Следим за изменениями message
+watch(message, () => {
+  nextTick(() => {
+    updateTextareaHeight()
+  })
+})
+
+// Инициализация
+onMounted(() => {
+  updateTextareaHeight()
+})
 </script>
 <style lang="scss">
 .input-wrapper {
@@ -134,8 +184,8 @@ const handleEnterKey = (e) => {
   /* border-radius: 8px; */
   width: 100%;
   min-width: 250px;
-  height: 55px;
-  min-height: 55px;
+  /* height: auto; */
+  min-height: 58px;
   padding: 12px;
   column-gap: 12px;
   font-family: var(--font-family-400);
