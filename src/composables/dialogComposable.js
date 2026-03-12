@@ -123,11 +123,28 @@ export function dialogComposable () {
     }
 
     // Получаем данные из хранилища и присваиваем реактивной переменной
-    const membersData = store.getters['private_msg/getMembers_info'](uuid) || [];
+    const membersData = store.getters['private_msg/getDialogField'](uuid, "members_info") || [];
     members_info.value = membersData;
     return members_info;
   }
 
+  async function getFieldByID(uuid, field) { // Получить инфо о членах диалогов
+    while (dialogs.value.length == 0) {
+      await sleep(200);
+    }
+    // Проверяем наличие диалога с этим uuid
+    const dialog = dialogs.value.find(d => d.uuid === uuid);
+    if (!dialog) {
+      console.warn('Диалог не найден!');
+      return [];
+    }
+
+    // Получаем данные из хранилища и присваиваем реактивной переменной
+    const f = ref(null)
+    f.value = store.getters['private_msg/getDialogField'](uuid, field) || [];
+    if (field == 'members_info') members_info.value = f.value;
+    return f
+  }
   return {
     dialogNames,
     memberWord,
@@ -139,5 +156,6 @@ export function dialogComposable () {
     getMembers_info,
     setActiveDialogID,
     members_info,
+    getFieldByID,
   }
 }

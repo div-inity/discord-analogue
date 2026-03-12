@@ -77,6 +77,11 @@ export default {
     },
     getLoadedChat: (state) => {
       return state.loaded_chat;
+    },
+    getDialogField: (state) => (uuid, field) => {
+      const dialog = state.dialogs.find(d => d.uuid === uuid);
+      //console.log(dialog)
+      return dialog[field];
     }
   },
   mutations: {
