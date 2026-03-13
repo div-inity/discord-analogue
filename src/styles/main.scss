@@ -293,7 +293,7 @@ a {
   --icon-color: #80848e;
   --button-back-color: #4e5058;
 
-  input {
+  input, textarea {
     color: var(--main-text-color);
     cursor: pointer;
   }

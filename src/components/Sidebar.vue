@@ -53,17 +53,17 @@
                 <div 
                   class="names" 
                   v-if="d.members_info?.length > 2" 
-                  v-tippy="{ content: dialogNames(d.members_info), placement: 'top' }"
+                  v-tippy="(!d.custom_name) ? { content: dialogNames(d.members_info), placement: 'top' } : null"
                 >
-                  {{ dialogNames(d.members_info) }}
+                  {{ d.custom_name || dialogNames(d.members_info) }}
                 </div>
                 <div class="names" v-else>
                   {{ dialogNames(d.members_info) }}
                 </div>
                 
                 <!-- Количество участников -->
-                <div class="members" v-if="d.members?.length > 1">
-                  {{ d.members.length }} {{ memberWord(d.members.length) }}
+                <div class="members" v-if="d.members_info?.length > 2">
+                  {{ d.members_info.length }} {{ memberWord(d.members_info.length) }}
                 </div>
               </div>
               

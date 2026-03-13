@@ -9,7 +9,7 @@
 
       <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" />
       <div class="missed_messages" v-for="(d, i) in unreadDialogs">
-        <div class="message" v-tippy="{ content: dialogNames(d.members_info) }">
+        <div class="message" v-tippy="{ content: d.custom_name || dialogNames(i) }"><!--  -->
           <router-link :class="(d?.unread_count > 0) ? 'missed' : null" :to="'/messages/' + d.uuid"
             class="link-message">
             <Avatar v-if="d.avatars?.length == 1" size="48" :mentions="d.unread_count" :avatar="d.avatars[0]" />
@@ -85,7 +85,7 @@ import { userComposable } from '@/composables/userComposable'
 const {logout, user} = userComposable()
 
 import { dialogComposable } from '@/composables/dialogComposable'
-const {dialogNames, activeDialogID, unreadDialogs} = dialogComposable()
+const {dialogNames, activeDialogID, unreadDialogs } = dialogComposable()
 //console.log(activeDialogID.value)
 const store = useStore()
 const servers = store.state.servers.servers;

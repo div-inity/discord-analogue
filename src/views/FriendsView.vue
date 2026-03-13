@@ -95,7 +95,12 @@ onMounted(() => {
 })
 </script>
 <style lang="scss">
-.friends-container {}
+
+.friends-container {
+  .input-wrapper {
+    margin-top: 10px;
+  }
+}
 
 .right-aside {
   .friends-aside-title {
