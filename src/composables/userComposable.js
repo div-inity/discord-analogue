@@ -1,5 +1,6 @@
 import { useStore } from 'vuex';
 import { computed, ref, onMounted } from 'vue';
+import { useSocket } from './useSocket';
 
 // Константы для избежания магических строк
 const STORAGE_KEYS = {
@@ -74,6 +75,7 @@ function parseJwt(token) {
 
 export function userComposable() {
   const store = useStore();
+
   
   // Вычисляемые свойства
   const user = computed(() => store.getters['user/getUser']);
@@ -82,6 +84,24 @@ export function userComposable() {
     if (!user.value) return 'Пользователь';
     return user.value.name || user.value.nickname || 'Пользователь';
   });
+
+  
+  let socketInstance = null;
+
+  const getSocket = () => {
+    if (!socketInstance) {
+      try {
+        const { socket } = useSocket({
+          'logout': logout,
+        });
+        socketInstance = socket;
+      } catch (error) {
+        console.error('Ошибка инициализации сокета:', error);
+        return null;
+      }
+    }
+    return socketInstance;
+  };
   
   // Загрузка пользователя
   function loadUser(token = null) {
@@ -127,7 +147,11 @@ export function userComposable() {
       
     } catch (error) {
       console.error('Ошибка при загрузке пользователя:', error);
-      clearToken(); // Используем существующую функцию
+      const socket = getSocket();
+      if (socket) {
+        socket.emit('logout', userToken.value); // Передаем токен, а не ключ
+      }
+      logout();
     }
   }
   
