@@ -121,7 +121,7 @@ function sendMessage() {
 
 
 import { dialogComposable } from '@/composables/dialogComposable';
-const { getFieldByID, dialogNames, activeDialogID, setChat, getMembers_info, setActiveDialogID, members_info } = dialogComposable();
+const { getDialogFieldByID, dialogNames, activeDialogID, setActiveDialogID, members_info } = dialogComposable();
 
 
 
@@ -149,10 +149,13 @@ async function loadChat() {
   })
 
   // Если совершен переход в другой диалог или актуального диалога нет
-  await getMembers_info(route.params?.id) // Загружаем в глобальную переменную members_info инфо о юзерах
-  const custom_name = await getFieldByID(route.params?.id, "custom_name");
-  dNames.value = (custom_name.value != null || custom_name.value != []) ? custom_name.value : dialogNames(members_info.value);
+  await getDialogFieldByID(route.params?.id, 'members_info') // Загружаем в глобальную переменную members_info инфо о юзерах
+  const custom_name = await getDialogFieldByID(route.params?.id, "custom_name");
+  dNames.value = (custom_name.value.length) ? custom_name.value : dialogNames(members_info.value);
   //chat.value = data;
+  console.log(custom_name.value.length
+
+  )
 }
 
 function loadmessages() {

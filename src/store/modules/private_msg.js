@@ -70,11 +70,6 @@ export default {
   },
   getters: {
     getDialogs: (state) => state.dialogs,
-    getMembers_info: (state) => (uuid) => {
-      const dialog = state.dialogs.find(d => d.uuid === uuid);
-      const members_info = dialog?.members_info;
-      return members_info || [];
-    },
     getLoadedChat: (state) => {
       return state.loaded_chat;
     },
