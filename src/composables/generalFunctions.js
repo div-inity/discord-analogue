@@ -36,8 +36,8 @@ const state = {
   windowHeight: ref(window.innerHeight),
   mainHeaderHeight: ref(24),
   headerHeight: ref(50),
-  instanceCount: 0,
-  isResizeListenerActive: false,
+  instanceCount: 0, // количество активных экземпляров компонента
+  isResizeListenerActive: false,// флаг,указывающий активность события resize
 };
 
 // Вычисляемые значения (синглтон)

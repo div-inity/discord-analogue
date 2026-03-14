@@ -4,13 +4,7 @@
     <div class="content-wrapper flex column">
       <ContentHeader>
         <template v-slot:page-title>
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M4.77528 2H1C1 10.6232 4.77528 13.744 6.66292 14.0725V19H22C22 12.5942 17.2809 12.5942 13.9775 12.5942C6.66292 12.5942 4.77528 6.43478 4.77528 2Z"
-              fill="#8E9297" />
-            <path d="M13.9775 2.5C19.6405 2.5 19.6405 11.1232 13.9775 11.1232C8.0867 11.1232 8.31461 2.5 13.9775 2.5Z"
-              fill="#8E9297" />
-          </svg>
+          <Icon name="friend" size="25"/>
           Друзья
         </template>
         <template v-slot:other>
@@ -21,12 +15,14 @@
             </button>
             <a href="/friends/add" class="add-friend">Add Friend</a>
           </nav>
-
         </template>
       </ContentHeader>
       <ContentFlex>
         <Content :RightAside="350">
-          <TextField icon="search">
+          <TextField>
+            <template v-slot:prefix>
+              <Icon name="search" size="18"/>
+            </template>
           </TextField>
           <FriendList :list="friendsWithMode || []">
             <template v-slot:title>{{ title }} &#8211 {{ friendsWithMode?.length || 0 }}</template>
@@ -42,10 +38,15 @@
         </RightAside>
       </ContentFlex>
     </div>
-
   </div>
 </template>
 <script setup>
+import { ref, onMounted } from 'vue';
+import { useStore } from 'vuex';
+
+// Иконки
+import Icon from '@/components/Icon.vue';
+
 import Sidebar from '@/components/Sidebar.vue'
 import ContentHeader from '@/components/ContentHeader.vue';
 import Divider from '@/components/Divider.vue';
@@ -54,13 +55,13 @@ import Content from '@/components/Content.vue';
 import RightAside from '@/components/RightAside.vue';
 import FriendList from '@/components/FriendList.vue';
 import TextField from '@/components/TextField.vue';
-import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
+
 const store = useStore();
+
 const allFriends = ref(store.state.friends.friends.added);
 const friendsWithMode = ref(null);
 const title = ref(null);
-const mode = ref(null)
+const mode = ref(null);
 const setMode = (m) => { // Устанавливает мод, по которому выводятся друзья - онлайн, все и т.д.
   mode.value = m
   //console.log(mode.value)
@@ -86,13 +87,15 @@ const setMode = (m) => { // Устанавливает мод, по которо
       break;
     }
   }
-}
+};
 const navLinks = [
   'online', 'all', 'pending', 'blocked'
 ];
+
 onMounted(() => {
   setMode("online")
-})
+});
+
 </script>
 <style lang="scss">
 

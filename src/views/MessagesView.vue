@@ -2,11 +2,6 @@
   <div class="messages-wrapper flex row">
     <Sidebar></Sidebar>
     <div class="content-wrapper flex column">
-      <!-- <div class="flex row">
-        <pre>chat[0]: {{ chat[0] }}</pre>
-        <pre>members_info: {{ members_info }}</pre>
-      </div> -->
-      
       <ContentHeader>
         <template v-slot:page-title v-if="route.params?.id">
           <template v-if="members_info?.length > 2">
@@ -15,9 +10,7 @@
             outline="var(--system-back-color2)"></Avatar>
 
             <!-- Мульти-имя -->
-            <div 
-              class="dialog-name-multy dialog-name" 
-              >
+            <div class="dialog-name-multy dialog-name">
               <span v-tippy="{ content: 'Редактировать группу', placement: 'bottom'}">
                 {{ dNames }}
               </span>
@@ -50,7 +43,7 @@
             @scrolled="loadmessages()"/>
           <TextField 
             height="62" 
-            :placeholder="'Написать '+ ((chat?.custom_name != null) ? chat.custom_name : dNames)" 
+            :placeholder="'Написать '+ dNames" 
             color="var(--system-back-color4)"
             @send="(message) => {newMessage = message; sendMessage()}"
             multyline
@@ -75,73 +68,62 @@
 
 </template>
 <script setup>
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+import { ref, onBeforeUnmount, watch } from 'vue';
+
+import { dialogComposable } from '@/composables/dialogComposable';
+
 import Sidebar from '@/components/Sidebar.vue'
 import ContentHeader from '@/components/ContentHeader.vue';
-import Divider from '@/components/Divider.vue';
 import ContentFlex from '@/components/ContentFlex.vue';
 import Content from '@/components/Content.vue';
 import RightAside from '@/components/RightAside.vue';
 import Avatar from '@/components/Avatar.vue';
 import TextField from '@/components/TextField.vue';
 import Chat from '@/components/Chat.vue';
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router';
-import { ref, computed, onMounted, onBeforeUnmount, watchEffect, watch, onUnmounted } from 'vue';
 
+import { chatActionsIcons, textFieldIcons } from '@/assets/icons'
 
+import { useSocket } from '@/composables/useSocket';
 
-import { userComposable } from '@/composables/userComposable';
-const {user, userToken} = userComposable()
+const { getDialogFieldByID, dialogNames, activeDialogID, setActiveDialogID, members_info } = dialogComposable();
+const newMessage = ref('');
 
-import { useSocket } from '@/composables/useSocket'
-const newMessage = ref('')
-function onMessage(msg) {
-  //messages.value.push(msg)
-  console.log('re from server', msg)
-  if (msg.unshift) chat.value = [msg.unshift, ...chat.value];
-  if (msg.push) chat.value = [...chat.value, ...msg.push];
-}
-// регистрируем обработчик события через composable
 const { socket } = useSocket({
   'chat:message': onMessage,
 });
 
+const WIDTHASIDE = 350;
+
+const route = useRoute();
+const dNames = ref(null); // Название диалога
+const chat = ref([]); // Хранит сообщения
+
+function onMessage(msg) {// Выполняется при отправке сообщения
+  if (msg.unshift) chat.value = [msg.unshift, ...chat.value];
+  if (msg.push) chat.value = [...chat.value, ...msg.push];
+};
+
 function sendMessage() {
-  //console.log(newMessage.value)
   if (!newMessage.value?.trim()) {
-    return
+    return;
   }
   const msg = {
     message: newMessage.value,
     dialog: activeDialogID.value,
-  }
-  socket.emit('chat:message', msg)
-  newMessage.value = ''
-}
+  };
+  socket.emit('chat:message', msg);
+  newMessage.value = '';
+};
 
-
-import { dialogComposable } from '@/composables/dialogComposable';
-const { getDialogFieldByID, dialogNames, activeDialogID, setActiveDialogID, members_info } = dialogComposable();
-
-
-
-// icons
-import { chatActionsIcons, textFieldIcons } from '@/assets/icons'
-
-const WIDTHASIDE = 350;
-
-const route = useRoute();
-const dNames = ref(null);
-const store = useStore();
-const chat = ref([]);
-async function loadChat() {
+async function loadChat() { // Смена диалога
   if (!activeDialogID.value || members_info.value != null) {
     setActiveDialogID(route.params?.id); // Устанавливаем активный диалог
   }
   // Присоединяемся к комнате диалога
   socket.emit('chat:join', activeDialogID.value);
 
-  //const data = await setChat(route.params?.id);
   chat.value = [];
   socket.emit('chat:load', {
     dialog_id: route.params?.id,
@@ -152,45 +134,31 @@ async function loadChat() {
   await getDialogFieldByID(route.params?.id, 'members_info') // Загружаем в глобальную переменную members_info инфо о юзерах
   const custom_name = await getDialogFieldByID(route.params?.id, "custom_name");
   dNames.value = (custom_name.value.length) ? custom_name.value : dialogNames(members_info.value);
-  //chat.value = data;
-  console.log(custom_name.value.length
+};
 
-  )
-}
-
-function loadmessages() {
+function loadmessages() { // Подгрузка старых сообщений
   const payload = {
     dialog_id: activeDialogID.value,
     offset: chat.value?.length,
   }
   socket.emit('chat:load', payload);
-}
-
-
+};
 
 onBeforeUnmount(() => {
   socket.emit('chat:leave', activeDialogID.value);
-})
-
-
+});
 
 watch(
   () => route.params.id,
   (id, oldid) => {
-    //console.log(`${route.params.id} сменился, загрузка нового чата`);
-    console.log('Определяем ID: ', id, oldid, id != oldid)
     if (id != oldid) {
       socket.emit('chat:leave', oldid);
       loadChat();
     }
   },
   { immediate: true }
-)
+);
 
-/* onMounted(()=> {
-  if (!!user.value.id && userToken.value != null) // Если юзер загружен и токен актуален
-    loadChat();
-}) */
 </script>
 <style lang="scss">
 .page-title:has(.dialog-name-multy.hovered) {
@@ -214,12 +182,6 @@ watch(
 }
 .dialog-name {
   cursor: pointer;
-  &.dialog-name-multy {
-
-  }
-  &.dialog-name-single {
-  
-  }
 }
 
 .input-wrapper .postfix button .icon {

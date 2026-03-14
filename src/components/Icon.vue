@@ -8,12 +8,18 @@
 </template>
 
 <script setup>
-import { mainIcons, profileIcons, userActionsIcons } from '@/assets/icons';
+import { mainIcons, profileIcons, userActionsIcons, textFieldIcons, chatActionsIcons, sidebarIcons } from '@/assets/icons';
 
 const props = defineProps({
   name: { type: String, required: true },
-  size: { type: Number, default: 24 }
+  size: { default: 24 }
 });
 
-const iconSvg = userActionsIcons[props.name] || mainIcons[props.name] || profileIcons[props.name] || null;
+const iconSvg = textFieldIcons[props.name] || 
+  chatActionsIcons[props.name] || 
+  sidebarIcons[props.name] || 
+  userActionsIcons[props.name] || 
+  mainIcons[props.name] || 
+  profileIcons[props.name] || 
+  null;
 </script>

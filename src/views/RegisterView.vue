@@ -55,16 +55,25 @@
   </div>
 </template>
 <script setup>
-import { useI18n } from 'vue-i18n';
-const { t, locale } = useI18n();
-import Hint from '@/components/Hint.vue';
 import { computed, reactive, ref } from 'vue';
-import { useStore } from 'vuex';
-const store = useStore();
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import Hint from '@/components/Hint.vue';
 
+const { t, locale } = useI18n();
+
+const router = useRouter();
+
+const currentYear = new Date().getFullYear();
+const startYear = currentYear - 3;
+const totalYears = 100;
+const years = Array.from({ length: totalYears }, (_, index) => startYear - index);
+const selectedYear = ref(startYear);
+const selectedMonth = ref(months.value[0]);
+const selectedDay = ref(1);
+const dateHint = ref('');
+const dateError = ref(false);
 const fields = reactive({
   email: {
     label: 'E-mail',
@@ -131,17 +140,6 @@ const months = computed(() => {
     'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
   ]
 })
-const currentYear = new Date().getFullYear();
-const startYear = currentYear - 3;
-const totalYears = 100;
-
-const years = Array.from({ length: totalYears }, (_, index) => startYear - index);
-
-const selectedYear = ref(startYear);
-const selectedMonth = ref(months.value[0]);
-const selectedDay = ref(1);
-const dateHint = ref('');
-const dateError = ref(false)
 
 function isValidDate(y, m, d) {
   const month = months.value.indexOf(m)
@@ -156,7 +154,7 @@ function isValidDate(y, m, d) {
     date.getMonth() === month &&
     date.getDate() === d
   );
-}
+};
 
 function validateField (field) {
   var validated = false;
@@ -188,19 +186,16 @@ function validateField (field) {
   
   else if (field.id === 'password') {
     const error = t('reg.passError');
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-      field.error = (!passwordRegex.test(field.value)) && error;
-
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    field.error = (!passwordRegex.test(field.value)) && error;
     validated = false;
   }
 
   else if (field.id === 'repassword') {
-    field.error = (field.value != fields.password.value) && t('reg.repassError')
-
+    field.error = (field.value != fields.password.value) && t('reg.repassError');
     validated = false;
   }
   if (!field.error) {
-    //field.hint = '';
     return true;
   }
 
@@ -225,19 +220,13 @@ function validateForm () {
     }
   }
   return validated;
-} 
+};
+
 async function createAccount() {
   if (!validateForm()) return;
-  console.log("Идет регистрация")
+
   const date = `${selectedYear.value}-${(String)(months.value.indexOf(selectedMonth.value)+1).padStart(2, '0')}-${(String)(selectedDay.value).padStart(2, '0')}`;
-  
-  console.log(JSON.stringify({ 
-      name: fields.name.value,
-      password: fields.password.value,
-      email: fields.email.value,
-      nickname: fields.nickname.value,
-      brth: date,
-    }))
+
   fetch('/api/v1/register', {
     method: 'POST',
     headers: {
@@ -264,7 +253,8 @@ async function createAccount() {
   .catch(error => {
     console.error('Ошибка при POST-запросе:', error);
   });
-}
+};
+
 </script>
 <style lang="scss">
 body {
@@ -273,7 +263,6 @@ body {
   background-size: cover;
 
   #app {
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -292,7 +281,6 @@ body {
   flex-direction: row;
   column-gap: 5%;
   border-radius: 9px;
-
 
   .register-form {
     display: flex;
@@ -385,9 +373,7 @@ body {
 
       .register-form {
         width: 100%;
-        
       }
-
     }
   }
 }

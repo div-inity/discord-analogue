@@ -181,7 +181,7 @@ onMounted(() => {
   min-width: 250px;
   min-height: 58px;
   padding: 12px;
-  column-gap: 12px;
+  /* column-gap: 12px; */
   font-family: var(--font-family-400);
   border: 1px solid;
   
@@ -198,6 +198,7 @@ onMounted(() => {
       font-size: 15px;
       background-color: transparent;
       font-family: var(--font-family-400);
+      margin-inline: 12px;
 
       &::-webkit-scrollbar {
         width: 0;
@@ -231,6 +232,7 @@ onMounted(() => {
     background-color: transparent;
     font-family: var(--font-family-400);
     padding-block: 13px;
+    margin-inline: 12px;
 
     &::placeholder {
       color: var(--icon-color);
