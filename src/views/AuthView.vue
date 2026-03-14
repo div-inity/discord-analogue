@@ -4,11 +4,6 @@
       <h1 class="greetings">{{ t('auth.greetings') }}</h1>
       <p class="subgreetings">{{ t('auth.subgreetings') }}</p>
 
-      <!-- <label for="email">{{ t('auth.email') }}<span class="require"></span></label>
-      <input type="text" id="email">
-
-      <label for="pass">{{ t('auth.pass') }}<span class="require"></span></label>
-      <input type="password" id="pass"> -->
       <div v-for="field in Object.values(fields)" 
         :key="field.id" 
         class="flex column form-row">
@@ -35,7 +30,6 @@
       <a href="#" class="forgot-pass">{{ t('auth.forgotpass') }}</a>
       <button class="button-auth button-purple log-in" @click="auth()">{{ t('auth.button') }}</button>
 
-
       <p class="register-link">{{ t('auth.registerlink') }} &nbsp&nbsp
         <RouterLink to="/register" class="register">{{ t('auth.register') }}
         </RouterLink>
@@ -51,14 +45,13 @@
 </template>
 <script setup>
 import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
-import Hint from '@/components/Hint.vue';
-import { useStore } from 'vuex';
-const store = useStore();
-import { useRouter } from 'vue-router'
 import { reactive } from 'vue';
-const router = useRouter()
+
 import { userComposable } from '@/composables/userComposable';
+
+import Hint from '@/components/Hint.vue';
+
+const { t } = useI18n();
 const { loadUser } = userComposable()
 
 const fields = reactive({
@@ -66,14 +59,12 @@ const fields = reactive({
     label: t('auth.email'),
     value: 'veselaya.devka@ya.ru',
     error: '',
-    //required: true,
     id: 'email',
   },
   pass:{
     label: t('auth.pass'),
     value: 'WEe21212/',
     error: '',
-    //required: true,
     id: 'pass',
     type: 'password',
   }
@@ -84,8 +75,7 @@ function validateForm () {
       validated = validateField(f);
   });
   return validated; 
-}
-
+};//validateForm
 
 function validateField (field) {
   var validated = false;
@@ -101,15 +91,13 @@ function validateField (field) {
     field.error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)
       ? ''
       : t('auth.mailError');
-    //console.log(mail.error)
     if (field.error) validated = false;
   }
   return validated;
-}
+};//validateField
 
 function auth () {
   if (!validateForm()) return;
-  console.log("Идет авторизация")
   fetch('/api/v1/auth', {
     method: 'POST',
     headers: {
@@ -129,14 +117,15 @@ function auth () {
   .then(data => {
     console.log('Ответ сервера:', data);
     localStorage.setItem('token', data.token);
-    console.log(localStorage.getItem('token'))
-    loadUser(data.token)
+    console.log(localStorage.getItem('token'));
+    loadUser(data.token);
     window.location.reload();
   })
   .catch(error => {
     console.error('Ошибка при POST-запросе:', error);
   });
-}
+};//auth
+
 </script>
 <style lang="scss">
 * {

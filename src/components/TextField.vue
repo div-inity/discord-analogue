@@ -10,7 +10,6 @@
       'background-color': props.color ? props.color : 'var(--system-back-color5)',
       'border-color': props.border ? props.border : 'var(--system-back-color1)'
     }">
-      <!-- <span class="icon" v-html="mainIcons.search" v-if="props.icon == 'search'"></span> -->
       <div class="prefix flex row">
         <slot name="prefix"></slot>
       </div>
@@ -61,14 +60,11 @@
   </template>
 </template>
 <script setup>
-import { mainIcons } from '@/assets/icons'
 import { ref, watch, nextTick, computed, onMounted   } from 'vue';
-import { generalFunctions } from '@/composables/generalFunctions';
-const {contentHeight} = generalFunctions();
+import { contentHeight } from '@/composables/generalFunctions';
+
 const emit = defineEmits(['send'])
 const props = defineProps({
-  //prefix: Boolean,
-  //postfix: Boolean,
   icon: String,
   height: String,
   width: String,
@@ -86,15 +82,26 @@ const props = defineProps({
   maxHeight: {
     type: Number,
     default: 30  // Максимальная высота, после которой появляется скролл
-  }
+  },
 });
+
 const message = ref(null); // Тело инпута
+const textareaRef = ref(null);
+const textareaHeight = ref(props.minHeight);
+const wrapperStyles = computed(() => ({
+  width: props.width ? props.width + '%' : null,
+  'border-radius': props.radius ? props.radius + 'px' : '8px',
+  'background-color': props.color ? props.color : 'var(--system-back-color5)',
+  'border-color': props.border ? props.border : 'var(--system-back-color1)',
+  height: textareaHeight.value * 1.5 + 'px'
+}));
+
 function toSend() { // Отправить тело инпута
   emit('send', message.value);
   message.value = null;
-}
+};
 
-const handleEnterKey = (event) => {
+function handleEnterKey (event) {
   if (event.shiftKey) {
     // Shift + Enter: разрешаем перенос строки
     nextTick(() => {
@@ -108,83 +115,70 @@ const handleEnterKey = (event) => {
       toSend()
     }
   }
-}
-
-const textareaRef = ref(null)
-const textareaHeight = ref(props.minHeight)
-const wrapperStyles = computed(() => ({
-  width: props.width ? props.width + '%' : null,
-  'border-radius': props.radius ? props.radius + 'px' : '8px',
-  'background-color': props.color ? props.color : 'var(--system-back-color5)',
-  'border-color': props.border ? props.border : 'var(--system-back-color1)',
-  height: textareaHeight.value * 1.5 + 'px'
-}))
+};
 
 function updateTextareaHeight(){
   if (textareaRef.value) {
     // Сбрасываем высоту до минимальной
-    textareaRef.value.style.height = props.minHeight + 'px'
+    textareaRef.value.style.height = props.minHeight + 'px';
     
     // Получаем реальную высоту контента
-    let newHeight = textareaRef.value.scrollHeight
+    let newHeight = textareaRef.value.scrollHeight;
     
     // Применяем ограничения
-    newHeight = Math.max(props.minHeight, newHeight)
+    newHeight = Math.max(props.minHeight, newHeight);
     const max = contentHeight.value / 100 * props.maxHeight;
     if (props.maxHeight) {
-      //console.log(max)
-      newHeight = Math.min(max, newHeight)
-      //console.log(newHeight)
+      newHeight = Math.min(max, newHeight);
     }
     
     // Устанавливаем новую высоту
-    textareaHeight.value = newHeight
-    textareaRef.value.style.height = newHeight + 'px'
+    textareaHeight.value = newHeight;
+    textareaRef.value.style.height = newHeight + 'px';
     
     // Включаем/выключаем скролл в зависимости от высоты
     if (max && newHeight >= max) {
-      textareaRef.value.style.overflowY = 'auto'
+      textareaRef.value.style.overflowY = 'auto';
     } else {
-      textareaRef.value.style.overflowY = 'hidden'
+      textareaRef.value.style.overflowY = 'hidden';
     }
   }
-}
+};
 
-const handlePaste = (event) => {
+function handlePaste () {
   // Даем время на вставку текста, потом обновляем высоту
   nextTick(() => {
-    updateTextareaHeight()
+    updateTextareaHeight();
   })
 }
 
-const updateLineCount = () => {
+function updateLineCount () {
   // Обновляем высоту при вводе
   nextTick(() => {
-    updateTextareaHeight()
+    updateTextareaHeight();
   })
-}
+};
 
 // Следим за изменениями message
 watch(message, () => {
   nextTick(() => {
-    updateTextareaHeight()
+    updateTextareaHeight();
   })
-})
+});
 
 // Инициализация
 onMounted(() => {
-  updateTextareaHeight()
-})
+  updateTextareaHeight();
+});
+
 </script>
 <style lang="scss">
 .input-wrapper {
   position: relative;
   display: inline-flex;
   align-items: center;
-  /* border-radius: 8px; */
   width: 100%;
   min-width: 250px;
-  /* height: auto; */
   min-height: 58px;
   padding: 12px;
   column-gap: 12px;
@@ -200,8 +194,6 @@ onMounted(() => {
       outline: none;
       line-height: 20px;
       overflow-y: auto;
-
-  
       flex-grow: 2;
       font-size: 15px;
       background-color: transparent;
@@ -217,10 +209,6 @@ onMounted(() => {
     }
   }
 
-  /* &:focus-within {
-    outline: 1px solid var(--link-color);
-  } */
-
   .icon {
     display: flex;
     align-items: center;
@@ -228,8 +216,6 @@ onMounted(() => {
     pointer-events: none;
     width: 20px;
     height: 20px;
-
-    svg {}
   }
 
   .prefix, .postfix {
@@ -257,10 +243,8 @@ onMounted(() => {
     height: 30px;
     width: 30px;
     padding-inline: 10px;
-    /* background-color: var(--system-purple-color); */
     background-color: transparent;
     color: var(--loud-text-color);
-    /* filter: brightness(.9); */
     font-size: 14px;
     transition: .3s background-color;
     display: flex;
@@ -271,6 +255,7 @@ onMounted(() => {
     &:hover {
       filter: none;
       background-color: var(--system-back-color1);
+
       svg * {
         fill: white;
       }
@@ -283,7 +268,7 @@ onMounted(() => {
       width: inherit;
       height: inherit;
 
-      svg *{
+      svg * {
         transition: .3s fill;
       }
     }

@@ -47,7 +47,6 @@ export default {
         },
       ],
       pending: [
-
         {
           id: 201,
           name: "Батон",
@@ -55,10 +54,8 @@ export default {
           avatar: require('@/assets/img/UserIcon3.jpg'),
           status: 'online',
         },
-
       ],
       blocked: [
-
         {
           id: 401,
           name: "Johny",
@@ -66,7 +63,6 @@ export default {
           avatar: require('@/assets/img/UserIcon4.jpg'),
           status: 'online',
         },
-
       ],
     }
   },

@@ -28,7 +28,7 @@ const props = defineProps({
   close: {
     type: Boolean,
     required: false // По умолчанию нотифи можно закрыть, если значение close=false, то кнопки закрытия не будет
-  }
+  },
 });
 </script>
 <style lang="scss">

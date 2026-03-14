@@ -2,7 +2,9 @@
   <div class="sidebar-wrapper" :style="{ width: sidebarWidth + 'px' }">
     <template v-if="route.meta.private_msg == true">
       <div class="sidebar-header">
-        <button class="sidebar-search-dialog text">{{ t('sidebar.sidebarsearchdialog') }}</button>
+        <button class="sidebar-search-dialog text">
+          {{ t('sidebar.sidebarsearchdialog') }}
+        </button>
       </div>
       <menu class="sidebar-actions">
         <ul v-for="a in actions" :to="a.link">
@@ -17,8 +19,12 @@
       <menu class="private-msg">
         <div class="title">
           Личные сообщения
-          <button v-html="sidebarIcons.add" class="dialog-add" v-tippy="{ content: 'Создать ЛС', placement: 'top' }"
-            @click="createDialog"></button>
+          <button 
+            v-html="sidebarIcons.add"
+            class="dialog-add"
+            v-tippy="{ content: 'Создать ЛС', placement: 'top' }"
+            @click="createDialog">
+          </button>
         </div>
         
         <template v-if="dialogs && dialogs.length">
@@ -79,7 +85,6 @@
       </menu>
     </template>
 
-    sidebar {{ sidebarWidth }}
     <!-- Блок изменения ширины сайдбара -->
     <div class="resize-handle" @mousedown="startResize"></div>
 
@@ -88,25 +93,26 @@
 </template>
 <script setup>
 import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
-import { reactive, ref, onBeforeUnmount, computed} from 'vue';
+import { ref, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
+
 import Avatar from './Avatar.vue';
-/* import Mentions from './Mentions.vue'; */
 
+// Композаблы
 import { generalFunctions } from '@/composables/generalFunctions';
-const {  sidebarWidth, updateSidebarWidth} = generalFunctions();
-import { dialogComposable } from '@/composables/dialogComposable'
-const {dialogNames, memberWord, dialogs, setActiveDialogID} = dialogComposable()
+import { dialogComposable } from '@/composables/dialogComposable';
 
+// Иконки
+import { sidebarIcons } from '@/assets/icons';
 
-import { sidebarIcons } from '@/assets/icons'
-
+const { t } = useI18n();
 const route = useRoute();
 
+const { dialogNames, memberWord, dialogs, setActiveDialogID } = dialogComposable();
+const { sidebarWidth, updateSidebarWidth } = generalFunctions();
 
-const actions = reactive( // Функционал сайдбара
+const actions = ref( // Функционал сайдбара
   [
     {
       id: 1,
@@ -145,27 +151,17 @@ const actions = reactive( // Функционал сайдбара
       },
       avatar: sidebarIcons.tasks,
     },
-  ]);
-const removeDialog = () => {
-  alert("Closed")
-};
-const createDialog = () => {
-  alert("Created")
-};
-const goToChat = (uuid) => {
-  if (uuid != route.params?.id) setActiveDialogID(uuid);
-  router.push(`/messages/${uuid}`);
-}
+  ]
+);
 
-
-/** Блок кода для изменения ширины сайдбара */
+/* Блок кода для изменения ширины сайдбара */
 const minWidth = 190; // минимальная ширина
 const maxWidth = 360; // максимальная ширина
 const isResizing = ref(false);
 const startX = ref(0);
 const startWidth = ref(0);
 
-const startResize = (event) => {
+function startResize (event) {
   isResizing.value = true;
   startX.value = event.clientX;
   startWidth.value = sidebarWidth.value;
@@ -174,7 +170,7 @@ const startResize = (event) => {
   document.addEventListener('mouseup', stopResize);
 };
 
-const resize = (event) => {
+function resize (event) {
   if (!isResizing.value) return;
   const deltaX = event.clientX - startX.value;
   let newWidth = startWidth.value + deltaX;
@@ -184,17 +180,30 @@ const resize = (event) => {
   updateSidebarWidth(newWidth);
 };
 
-const stopResize = () => {
+function stopResize () {
   isResizing.value = false;
   document.removeEventListener('mousemove', resize);
   document.removeEventListener('mouseup', stopResize);
+};
+
+// Действия в сайдбаре
+function removeDialog () {
+  alert("Closed");
+};
+
+function createDialog () {
+  alert("Created");
+};
+
+function goToChat (uuid) {
+  if (uuid != route.params?.id) setActiveDialogID(uuid);
+  router.push(`/messages/${uuid}`);
 };
 
 onBeforeUnmount(() => {
   document.removeEventListener('mousemove', resize);
   document.removeEventListener('mouseup', stopResize);
 });
-/** Конец Блока кода для изменения ширины сайдбара */
 
 </script>
 <style lang="scss">
@@ -323,9 +332,6 @@ onBeforeUnmount(() => {
         column-gap: 12px;
         position: relative;
         transition: 0.3s all;
-        /* * {
-          transition: 0.3s all;
-        } */
         &.active {
         background-color: var(--system-back-color2);
         color: var(--main-text-color);
@@ -334,10 +340,6 @@ onBeforeUnmount(() => {
         &:hover {
           background-color: var(--system-back-color2);
           color: var(--main-text-color);
-
-          /* .mentions {
-            transform: translateX(-10%);
-          } */
 
           .dialog-info {
             max-width: calc(70% - 10px);
@@ -388,7 +390,7 @@ onBeforeUnmount(() => {
   }
 
   .resize-handle {
-    width: 1px;
+    width: 5px;
     position: absolute;
     top: 0;
     right: 0;
@@ -400,7 +402,6 @@ onBeforeUnmount(() => {
     transition: .5s width ease;
 
     &:hover {
-      width: 3px;
       background-color: var(--system-back-color4);
     }
   }

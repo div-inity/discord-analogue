@@ -4,9 +4,8 @@
       <slot name="title">Название списка друзей</slot>
     </p>
     <TransitionGroup name="list" tag="div" class="list-friends flex column">
-      <div class="list-friends-items flex column" v-for="(item, i) in props.list" :key="item">
-
-        <Divider h color="var(--system-back-color3)" :width="98" />
+      <div class="list-friends-items flex column" v-for="(item, i) in props.list" :key="i">
+        <Divider h color="var(--system-back-color3)" width="98" />
         <div class="list-friends-item flex row">
           <Avatar :avatar="item.avatar" size="40" :status="item.status"></Avatar>
           <div class="item-info flex column">
@@ -14,9 +13,17 @@
             <span>{{ textStatus(item.status) }}</span>
           </div>
           <div class="item-options flex row">
-            <button v-html="mainIcons.chat" class="radial" v-tippy="{ content: 'Сообщение', placement: 'top' }"></button>
-            <button v-html="mainIcons.options" class="radial" v-tippy="{ content: 'Ещё', placement: 'top' }"
-              @click="showPopup(i)"></button>
+            <button 
+              v-html="mainIcons.chat"
+              class="radial"
+              v-tippy="{ content: 'Сообщение', placement: 'top' }
+            "></button>
+            <button
+              v-html="mainIcons.options"
+              class="radial"
+              v-tippy="{ content: 'Ещё', placement: 'top' }"
+              @click="showPopup(i)"
+            ></button>
             <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
               <template v-slot:items>
                 <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
@@ -30,12 +37,17 @@
 </template>
 <script setup>
 import { ref } from 'vue';
+
+import { userComposable } from '@/composables/userComposable';
+
 import Avatar from './Avatar.vue';
 import Divider from './Divider.vue';
-import { userComposable } from '@/composables/userComposable';
 import PopUp from '@/components/PopUp.vue';
+
 import { mainIcons } from '@/assets/icons';
+
 const { textStatus } = userComposable();
+
 const props = defineProps({
   list: {
     type: Object,
@@ -44,6 +56,7 @@ const props = defineProps({
 });
 
 
+const visiblePopup = ref(null);
 const popupItems = ref([
   {
     name: 'Начать видеозвонок',
@@ -64,16 +77,15 @@ const popupItems = ref([
       alert('Кнопка 3 нажата!');
     }
   },
-])
-const visiblePopup = ref(null);
-const showPopup = (popup) => {
+]);
+
+function showPopup (popup) {
   visiblePopup.value = popup;
-  //console.log(visiblePopup.value)
-}
-const hidePopup = () => {
+};
+
+function hidePopup () {
   visiblePopup.value = null;
-  //console.log(visiblePopup.value)
-}
+};
 </script>
 <style lang="scss">
 // стили для TransitionGroup:

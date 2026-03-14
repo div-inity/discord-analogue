@@ -1,32 +1,25 @@
 import { useStore } from 'vuex';
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref } from 'vue';
 import { userComposable } from './userComposable';
 import { sleep } from './generalFunctions';
 
 const activeDialogID = ref(null); // Открытый диалог (id диалога) - если есть открытый
 const members_info = ref(null); // Инфо открытого диалога
-const unreadCount = ref(0); // Общее количество непрочитанных сообщений
 const unreadDialogs = ref(null); // Непрочитанные диалоги
-
-
 
 export function dialogComposable () {
   //рендерится для каждого компонента
-
   
   const store = useStore();
-  const {user, userToken} = userComposable()
 
+  const {user, userToken} = userComposable();
 
   const dialogs = computed(() => store.getters['private_msg/getDialogs'] || []);
-  //console.log(dialogs.value)
 
-
-  const dialogNames = (m_info, field = 'nickname') => { //Для перечисления имен в чате через запятую - передавать members_info
+  function dialogNames (m_info, field = 'nickname') { //Для перечисления имен в чате через запятую - передавать members_info
     if (!m_info) {
       return '';
     }
-    //console.log(m_info)
     const filtered_info = m_info.filter(item => item.id !== Number(user.value.id)); // Удаление из списка имени хозяина аккаунта
     const members_names = filtered_info
     ?.map(item => item[field])   // использовать переданное поле
@@ -57,7 +50,6 @@ export function dialogComposable () {
 
   async function setDialogs() { // Поиск всей информации обо всех диалогах
     const token = userToken.value; 
-    
     try {
       const response = await fetch('/api/v1/dialogs', {
         method: 'GET',
@@ -67,20 +59,18 @@ export function dialogComposable () {
         }
       });
       const data = await response.json();
-      //console.log(data)
       store.commit('private_msg/SET_DIALOGS', data);
       setUnreadDialogs()
       return data;
     } catch (error) {
       console.error('Ошибка при GET-запросе setDialogs:', error);
     }
-  }
+  };//setDialogs
 
   
 
   async function setChat(uuid) { // Получение инфо об одном диалоге по id диалога
     const token = userToken.value; 
-
     try {
       const response = await fetch(`/api/v1/dialogs/${uuid}`, {
         method: 'GET',
@@ -95,17 +85,16 @@ export function dialogComposable () {
     } catch (error) {
       console.error('Ошибка при GET-запросе setChat:', error);
     }
-  }
+  };//setChat
   
   function setUnreadDialogs () { // Вывод инфо обо всех непрочитанных диалогах
     const r = computed(() => dialogs.value.filter(n => parseInt(n?.unread_count) > 0))
     unreadDialogs.value = r.value;
-    //console.log(unreadDialogs.value)
-  }
+  };//setUnreadDialogs
 
-  const setActiveDialogID = (uuid) => { // Установить айди открытого диалога
+  function setActiveDialogID (uuid) { // Установить айди открытого диалога
     activeDialogID.value = uuid;
-  }
+  };
 
 
   async function getDialogFieldByID(uuid, field) { // Получить значение поля любого диалога
@@ -120,22 +109,22 @@ export function dialogComposable () {
     }
 
     // Получаем данные из хранилища и присваиваем реактивной переменной
-    const f = ref(null)
+    const f = ref(null);
     f.value = store.getters['private_msg/getDialogField'](uuid, field) || [];
     if (field == 'members_info') members_info.value = f.value;
-    return f
-  }
+    return f;
+  };//getDialogFieldByID
 
   return {
     dialogNames,
     memberWord,
     activeDialogID,
     dialogs,
-    setDialogs,
+    members_info,
     unreadDialogs,
+    setDialogs,
     setChat,
     setActiveDialogID,
-    members_info,
     getDialogFieldByID,
   }
 }

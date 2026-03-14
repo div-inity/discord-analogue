@@ -20,7 +20,7 @@ const USER_STATUS = {
 const userToken = ref(null);
 
 // Функции для работы с токеном (тоже синглтон)
-const setToken = () => {
+function setToken () {
   try {
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
     userToken.value = token || null;
@@ -28,24 +28,24 @@ const setToken = () => {
     console.error('Ошибка при чтении токена из localStorage:', error);
     userToken.value = null;
   }
-};
+};//setToken
 
 // Инициализация
 setToken();
 
 // Подписка на изменения localStorage (если токен меняется в другой вкладке)
-const handleStorageChange = (event) => {
+function handleStorageChange (event) {
   if (event.key === STORAGE_KEYS.TOKEN) {
     setToken();
   }
-};
+};//handleStorageChange
 
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', handleStorageChange);
 }
 
 // Для очистки при необходимости (можно вызвать в корневом компоненте)
-export const cleanupTokenListener = () => {
+export function cleanupTokenListener () {
   if (typeof window !== 'undefined') {
     window.removeEventListener('storage', handleStorageChange);
   }
@@ -54,7 +54,6 @@ export const cleanupTokenListener = () => {
 // Вспомогательные функции (чистые функции, не требуют реактивности)
 function parseJwt(token) {
   if (!token) return null;
-  
   try {
     const base64Url = token.split('.')[1];
     if (!base64Url) return null;
@@ -71,12 +70,11 @@ function parseJwt(token) {
     console.error('Ошибка при парсинге JWT:', error);
     return null;
   }
-}
+};//parseJwt
 
 export function userComposable() {
   const store = useStore();
 
-  
   // Вычисляемые свойства
   const user = computed(() => store.getters['user/getUser']);
   const isAuthenticated = computed(() => !!userToken.value && !!user.value);
@@ -85,10 +83,8 @@ export function userComposable() {
     return user.value.name || user.value.nickname || 'Пользователь';
   });
 
-  
   let socketInstance = null;
-
-  const getSocket = () => {
+  function getSocket () {
     if (!socketInstance) {
       try {
         const { socket } = useSocket({
@@ -101,7 +97,7 @@ export function userComposable() {
       }
     }
     return socketInstance;
-  };
+  };//getSocket
   
   // Загрузка пользователя
   function loadUser(token = null) {
@@ -153,7 +149,7 @@ export function userComposable() {
       }
       logout();
     }
-  }
+  };//loadUser
   
   // Очистка токена
   function clearToken() {
@@ -164,15 +160,13 @@ export function userComposable() {
       console.error('Ошибка при удалении токена:', error);
     }
     store.commit('user/SET_USER', null);
-    // Не делаем reload, это должно решаться на уровне роутинга
-    // window.location.reload();
-  }
+  };//clearToken
   
   // Выход из системы
   function logout() {
     clearToken();
     window.location.reload();
-  }
+  };//logout
   
   // Текстовое представление статуса
   function textStatus(status) {

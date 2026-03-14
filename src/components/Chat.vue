@@ -12,7 +12,7 @@
         />
         <div class="message-item flex column">
           <div class="messages-info flex row">
-            <p class="message-author">{{ getAuthor(n.sender_id) }}</p>
+            <p class="message-author">{{ n.sender_info.nickname }}</p>
             <span class="emoji" v-if="n.emoji">{{ n.emoji }}</span>
             <span class="datetime">{{ formatDate(n.date_time) }}</span>
           </div>
@@ -26,36 +26,33 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { formatDate } from '@/composables/generalFunctions';
-
-import { dialogComposable } from '@/composables/dialogComposable';
 import { markdown } from 'markdown';
-const { members_info } = dialogComposable();
 import Avatar from './Avatar.vue';
+
 const props = defineProps({
   messages: Object,
-})
+});
 const emit = defineEmits(['scrolled']);
-const getAuthor = (id) => {
-  return members_info?.value?.find(e => e.id == id)?.nickname;
-}
 
 const isHovered = ref(false);
+const scrollChat = ref(null);
 
+// Функция для кастомизации скролла
 function onMouseEnter() {
   isHovered.value = true;
-}
+};
 
+// Функция для кастомизации скролла
 function onMouseLeave() {
   isHovered.value = false;
-}
+};
 
-const scrollChat = ref(null)
-const handleScroll = async() => {
+// Подгрузка старых сообщений
+async function handleScroll () {
   const container = scrollChat.value;
   if (!container) return; // Если не промотали до конца
   const threshold = 1; // погрешность в пикселях
-  if (Math.abs(container.scrollTop) >= container.scrollHeight - container.clientHeight - threshold) {
-    //console.log('Достигнут конец блока!');
+  if (Math.abs(container.scrollTop) >= container.scrollHeight - container.clientHeight - threshold) { //Достигнут конец блока
     const previousScrollTop = container.scrollTop; // Запоминаем текущую высоту
     emit('scrolled'); // Подгружаем сообщения
     await nextTick(); // Обновление DOM
@@ -82,7 +79,6 @@ onUnmounted(() => {
   flex-direction: column-reverse;
   height: 100%;
   overflow-y: auto;
-  /* padding: 0 10px 10px; */
   row-gap: 30px;
   overflow-x: hidden;
 
@@ -136,9 +132,11 @@ onUnmounted(() => {
             color: var(--loud-text-color);
             font-size: 16px;
           }
+
           .emoji {
 
           }
+          
           .datetime {
             font-family: var(--font-family-400);
             color: var(--muted-text-color);

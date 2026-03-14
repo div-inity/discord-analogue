@@ -4,9 +4,7 @@
   </div>
 </template>
 <script setup>
-import { generalFunctions } from '@/composables/generalFunctions';
-const { contentHeight } = generalFunctions();
+import { contentHeight } from '@/composables/generalFunctions';
 </script>
 <style lang="scss">
-.content-flex {}
 </style>

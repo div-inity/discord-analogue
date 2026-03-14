@@ -1,21 +1,23 @@
 <template>
-  <div class="divider" :class="{
-    'h-divider': props.h,
-    'v-divider': props.v,
-  }" :style="{
-    height: props.height ? props.height + '%' : null,
-    width: props.width ? props.width + '%' : null,
-    'background-color': props.color ? props.color : null
-  }"></div>
+  <div
+    class="divider"
+    :class="{
+      'h-divider': props.h,
+      'v-divider': props.v,
+    }" 
+    :style="{
+      height: props.height ? props.height + '%' : null,
+      width: props.width ? props.width + '%' : null,
+      'background-color': props.color ? props.color : null
+    }">
+  </div>
 </template>
 <script setup>
 const props = defineProps({
   height: { // высота в процентах
-    type: Number,
     require: false,
   },
   width: { // ширина в процентах
-    type: Number,
     require: false,
   },
   color: { // цвет разделителя
@@ -30,7 +32,7 @@ const props = defineProps({
     type: Boolean,
     require: false,
   },
-})
+});
 </script>
 <style lang="scss" scoped>
 .divider {

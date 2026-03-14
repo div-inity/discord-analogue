@@ -1,8 +1,7 @@
-// src/services/socketService.js
-import { io } from 'socket.io-client'
-import { userComposable } from '@/composables/userComposable';
-const {userToken} = userComposable()
-let socket = null
+import { io } from 'socket.io-client';
+import { userComposable } from '@/composables/userComposable';;
+const {userToken} = userComposable();
+let socket = null;
 
 export function initSocket() {
   if (!socket) {
@@ -14,12 +13,12 @@ export function initSocket() {
       }
     })
   }
-  return socket
-}
+  return socket;
+};
 
 export function useRawSocket() {
   if (!socket) {
-    throw new Error('Socket not initialized. Call initSocket() first.')
+    throw new Error('Socket not initialized. Call initSocket() first.');
   }
-  return socket
+  return socket;
 }

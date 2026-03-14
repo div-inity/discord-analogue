@@ -2,8 +2,8 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import MainView from "../views/MainView.vue";
 import MessagesView from "../views/MessagesView.vue";
 import FriendsView from "../views/FriendsView.vue";
-import store from '@/store'
-import { computed } from 'vue'
+import store from '@/store';
+import { computed } from 'vue';
 
 const routes = [
   {
@@ -46,7 +46,6 @@ const routes = [
           private_msg: true,
         },
         component: FriendsView,
-
       },
       {
         path: "/nitro",
@@ -122,7 +121,6 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "register" */ "../views/RegisterView.vue"),
   },
-
 ];
 
 
@@ -133,9 +131,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // Проверяем авторизацию
-  //console.log("Мне нужно на ", to)
   const isAuthenticated = computed(() => store.getters['user/getUser']).value.id && true; // Булево значение
-  //console.log("isAuthenticated: ", isAuthenticated)
   
   // Список публичных страниц
   const publicPages = ['login', 'register']
@@ -156,6 +152,6 @@ router.beforeEach((to, from, next) => {
       next() // не авторизован - пропускаем на login/register
     }
   }
-})
+});
 
 export default router;

@@ -7,23 +7,17 @@
         </slot>
       </div>
       <slot name="other"><!-- Прочие элементы header-а --></slot>
-      
-      
     </div>
-    <!-- headerWidth: {{ headerWidth }} -->
     <div class="header-actions flex row">
       <slot name="actions">
-      
       </slot>
     </div>
   </div>
 </template>
 <script setup>
-import { generalFunctions } from '@/composables/generalFunctions';
-const { headerWidth } = generalFunctions();
+import { headerWidth } from '@/composables/generalFunctions';
 import { useRoute } from 'vue-router';
 const route = useRoute();
-//console.log(route.matched[1].path)
 const setHeaderClass = () => {
   if (route.matched[1].path == '/friends') return 'friends-header';
   else if (route.matched[1].path == '/messages') return 'messages-header';
@@ -113,10 +107,7 @@ const setHeaderClass = () => {
         cursor: pointer;
         text-transform: capitalize;
 
-        &:hover
-
-        /* :not(.add-friend) */
-          {
+        &:hover {
           color: var(--loud-text-color);
           background: var(--button-back-color);
         }
