@@ -46,6 +46,20 @@ const routes = [
           private_msg: true,
         },
         component: FriendsView,
+        children: [
+          {
+            path: "/",
+            name: "friend-list",
+            component: () =>
+              import(/* webpackChunkName: "friend-list" */ "../components/FriendList.vue"),
+          },
+          {
+            path: "/add",
+            name: "add-friend",
+            component: () =>
+              import(/* webpackChunkName: "add-friend" */ "../components/AddFriend.vue"),
+          }
+        ]
       },
       {
         path: "/nitro",

@@ -25,7 +25,7 @@
             </template>
           </TextField>
           <FriendList :list="friendsWithMode || []">
-            <template v-slot:title>{{ title }} &#8211 {{ friendsWithMode?.length || 0 }}</template>
+            <template v-slot:title>{{ title }} {{ friendsWithMode?.length || 0 }}</template>
           </FriendList>
         </Content>
         <RightAside :RightAside="350">

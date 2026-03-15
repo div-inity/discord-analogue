@@ -1,7 +1,7 @@
 <template>
-  <div class="sidebar-wrapper" :style="{ width: sidebarWidth + 'px' }">
+  <div class="sidebar-wrapper flex column" :style="{ width: sidebarWidth + 'px' }">
     <template v-if="route.meta.private_msg == true">
-      <div class="sidebar-header">
+      <div class="sidebar-header" :style="{height: headerHeight+ 'px'}">
         <button class="sidebar-search-dialog text">
           {{ t('sidebar.sidebarsearchdialog') }}
         </button>
@@ -84,6 +84,14 @@
         </template>
       </menu>
     </template>
+    <template v-else>
+      <div class="sidebar-header flex row" :style="{height: headerHeight+ 'px'}">
+        <slot name="header"></slot>
+      </div>
+      <div class="other">
+        <slot name="other"></slot>
+      </div>
+    </template>
 
     <!-- Блок изменения ширины сайдбара -->
     <div class="resize-handle" @mousedown="startResize"></div>
@@ -110,7 +118,7 @@ const { t } = useI18n();
 const route = useRoute();
 
 const { dialogNames, memberWord, dialogs, setActiveDialogID } = dialogComposable();
-const { sidebarWidth, updateSidebarWidth } = generalFunctions();
+const { sidebarWidth, updateSidebarWidth, headerHeight } = generalFunctions();
 
 const actions = ref( // Функционал сайдбара
   [
@@ -219,11 +227,12 @@ onBeforeUnmount(() => {
   * {
     user-select: none;
   }
+  &>* {
+    padding: 10px;
+  }
 
   .sidebar-header {
-    height: 50px;
     width: 100%;
-    padding: 10px;
     border-bottom: 1px solid var(--system-back-color5);
 
     .sidebar-search-dialog {
@@ -244,7 +253,6 @@ onBeforeUnmount(() => {
   }
 
   .sidebar-actions {
-    padding: 10px;
 
     .sidebar-actions-link {
       color: var(--muted-text-color);
@@ -390,6 +398,7 @@ onBeforeUnmount(() => {
   }
 
   .resize-handle {
+    padding: 0;
     width: 5px;
     position: absolute;
     top: 0;
