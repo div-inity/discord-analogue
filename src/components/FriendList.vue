@@ -9,7 +9,7 @@
         <div class="list-friends-item flex row">
           <Avatar :avatar="item.avatar" size="40" :status="item.status"></Avatar>
           <div class="item-info flex column">
-            <p>{{ item.name }}</p>
+            <p class="nickname">{{ item.nickname }}<span class="name">{{ item.name }}</span></p>
             <span>{{ textStatus(item.status) }}</span>
           </div>
           <div class="item-options flex row">
@@ -128,19 +128,28 @@ function hidePopup () {
 
         &:hover {
           background-color: var(--system-back-color3);
+
+          .item-info .name {
+            visibility: visible;
+          }
         }
 
         .item-info {
           flex-grow: 2;
           overflow: hidden;
 
-          p {
+          .nickname {
             font-family: var(--font-family-500);
             color: var(--main-text-color);
             font-size: 16px;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+          }
+
+          .name {
+            visibility: hidden;
+            padding-left: 8px;
           }
 
           span {

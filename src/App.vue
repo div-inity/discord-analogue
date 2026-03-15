@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { onMounted, watch, onUnmounted } from 'vue';
+import { onMounted, } from 'vue';
 
 import { useTheme } from '@/composables/useTheme';
 import { userComposable } from './composables/userComposable';
