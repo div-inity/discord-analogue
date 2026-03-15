@@ -1,6 +1,5 @@
 import { useStore } from 'vuex';
 import { computed, ref, onMounted } from 'vue';
-import { useSocket } from './useSocket';
 
 // Константы для избежания магических строк
 const STORAGE_KEYS = {
@@ -72,6 +71,8 @@ function parseJwt(token) {
   }
 };//parseJwt
 
+
+
 export function userComposable() {
   const store = useStore();
 
@@ -83,21 +84,7 @@ export function userComposable() {
     return user.value.name || user.value.nickname || 'Пользователь';
   });
 
-  let socketInstance = null;
-  function getSocket () {
-    if (!socketInstance) {
-      try {
-        const { socket } = useSocket({
-          'logout': logout,
-        });
-        socketInstance = socket;
-      } catch (error) {
-        console.error('Ошибка инициализации сокета:', error);
-        return null;
-      }
-    }
-    return socketInstance;
-  };//getSocket
+  
   
   // Загрузка пользователя
   function loadUser(token = null) {
@@ -138,15 +125,10 @@ export function userComposable() {
         roles: payload.roles || [],
         exp: payload.exp // Добавляем время истечения
       };
-      
       store.commit('user/SET_USER', userData);
-      
+      setTimeout(() => logout(), payload.exp * 1000 - Date.now()); // Выход из аккаунта по истечении времени жизни токена
     } catch (error) {
       console.error('Ошибка при загрузке пользователя:', error);
-      const socket = getSocket();
-      if (socket) {
-        socket.emit('logout', userToken.value); // Передаем токен, а не ключ
-      }
       logout();
     }
   };//loadUser
@@ -164,6 +146,7 @@ export function userComposable() {
   
   // Выход из системы
   function logout() {
+    console.log("logout")
     clearToken();
     window.location.reload();
   };//logout

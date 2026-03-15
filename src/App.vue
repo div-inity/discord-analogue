@@ -9,15 +9,16 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, watch, onUnmounted } from 'vue';
 
 import { useTheme } from '@/composables/useTheme';
 import { userComposable } from './composables/userComposable';
 import { dialogComposable } from './composables/dialogComposable';
 
 const { currentTheme, toggleTheme, isDark } = useTheme();
-const { loadUser, user, userToken } = userComposable();
+const { loadUser, user, userToken, } = userComposable();
 const { setDialogs } = dialogComposable();
+
 
 onMounted(() => {
   if (userToken.value && !user.value.id)
