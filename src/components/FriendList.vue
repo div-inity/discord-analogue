@@ -55,7 +55,8 @@ import { mainIcons } from '@/assets/icons';
 const { textStatus } = userComposable();
 
 const title = inject('title');
-const list = inject('list');
+let list = inject('list');
+// Переделать, когда будут другие статусы отношений
 
 const visiblePopup = ref(null);
 const popupItems = ref([

@@ -10,7 +10,7 @@
         <template v-slot:other>
           <Divider v :height="40" color="var(--system-back-color1)" />
           <nav class="friends-header-nav flex row">
-            <button @click="setMode(nl)" v-for="nl in navLinks" :class="{ active: mode == nl }">
+            <button @click="mode = nl; setMode(nl)" v-for="nl in navLinks" :class="{ active: mode == nl }">
               <RouterLink :to="{ name: 'friend-list' }">{{ nl }}</RouterLink>
             </button>
             <RouterLink :to="{ name: 'add-friend' }" @click="mode = null" class="add-friend">Add Friend</RouterLink>
@@ -34,11 +34,10 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, provide } from 'vue';
+import { ref, onMounted, provide, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useSocket } from '@/composables/useSocket';
-
-// Иконки
+import { useRoute, useRouter } from 'vue-router';
 
 import Sidebar from '@/components/Sidebar.vue'
 import ContentHeader from '@/components/ContentHeader.vue';
@@ -49,38 +48,46 @@ import RightAside from '@/components/RightAside.vue';
 import Icon from '@/components/Icon.vue';
 
 const store = useStore();
+const route = useRoute();
+const router = useRouter();
 
 const { socket } = useSocket({
-  //'users:getFriendshipRequests': onMessage,
+  'users:getFriends': getFriends,
 });
 
-const allFriends = ref(store.state.friends.friends.added);
+const friends = ref(null);
 const friendsWithMode = ref(null);
 const title = ref(null);
 const mode = ref(null);
-const setMode = (m) => { // Устанавливает мод, по которому выводятся друзья - онлайн, все и т.д.
-  mode.value = m;
-  switch (m) {
-    case 'online': {
+
+
+//ПЕРЕДЕЛАТЬ ЛОГИКУ КОМПОНЕНТА, когда будут другие статусы отношений
+const getFriendsByMode = (currentMode) => {
+  //const friends = store.state.friends?.friends || {};
+  
+  switch (currentMode) {
+    case 'online':
       title.value = "В сети";
-      friendsWithMode.value = allFriends.value.filter(friend => friend.status !== 'offline')
-      break;
-    }
-    case 'all': {
+      return (friends.added || []).filter(friend => friend.status !== 'offline');
+    case 'all':
       title.value = "Всего друзей";
-      friendsWithMode.value = allFriends.value;
-      break;
-    }
-    case 'pending': {
+      return friends || [];
+    case 'pending':
       title.value = "Заявки в друзья";
-      friendsWithMode.value = store.state.friends.friends.pending;
-      break;
-    }
-    case 'blocked': {
+      return friends.pending || [];
+    case 'blocked':
       title.value = "Игнорируются";
-      friendsWithMode.value = store.state.friends.friends.blocked;
-      break;
-    }
+      return friends.blocked || [];
+    default:
+      return [];
+  }
+};
+const setMode = (newMode) => {
+  mode.value = newMode;
+  friendsWithMode.value = getFriendsByMode(newMode);
+  
+  if (route.name !== 'friend-list') {
+    router.push({ name: 'friend-list' });
   }
 };
 const navLinks = [
@@ -89,11 +96,27 @@ const navLinks = [
 
 onMounted(() => {
   setMode("online")
+  socket.emit('users:getFriends');
 });
 
-provide('title', title);
-provide('list', friendsWithMode);
 
+function getFriends(data) {
+  console.log(data)
+  friends.value = data
+}
+
+watch(
+  () => store.state.friends?.friends,
+  () => {
+    if (mode.value) {
+      friendsWithMode.value = getFriendsByMode(mode.value);
+    }
+  },
+  { deep: true }
+);
+
+provide('title', title);
+provide('list', friends);
 </script>
 <style lang="scss">
 

@@ -15,8 +15,6 @@ import { ref } from 'vue';
 const name = ref(null);
 const req = ref(null);
 const { socket } = useSocket({
-  'users:getFriendshipRequests': onGetFSRequest,
-  
   'error': onError,
   'notify': onNotify,
 });
@@ -29,17 +27,13 @@ function sendRequest() {
 
 }
 
-function onGetFSRequest(data) {
-  console.log(data);
-  req.value = data;
-}
 
 function onError(data) {
   console.error(data);
 }
 
 function onNotify(data) {
-  console.error(data);
+  console.log(data);
 }
 
 </script>
