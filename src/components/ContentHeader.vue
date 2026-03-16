@@ -97,9 +97,6 @@ const setHeaderClass = () => {
       column-gap: 14px;
 
       button {
-        color: var(--muted-text-color);
-        font-family: var(--font-family-400);
-        font-size: 14px;
         transition: .3s all;
         border-radius: 9px;
         padding: 8px 12px;
@@ -107,14 +104,26 @@ const setHeaderClass = () => {
         cursor: pointer;
         text-transform: capitalize;
 
+        a {
+          color: var(--muted-text-color);
+          font-family: var(--font-family-400);
+          font-size: 14px;
+        }
+
         &:hover {
-          color: var(--loud-text-color);
           background: var(--button-back-color);
+
+          a {
+            color: var(--loud-text-color);
+          }
         }
 
         &.active {
-          color: var(--loud-text-color);
           background: var(--button-back-color);
+
+          a {
+            color: var(--loud-text-color);
+          }
         }
       }
 

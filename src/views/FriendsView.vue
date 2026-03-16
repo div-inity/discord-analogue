@@ -11,22 +11,15 @@
           <Divider v :height="40" color="var(--system-back-color1)" />
           <nav class="friends-header-nav flex row">
             <button @click="setMode(nl)" v-for="nl in navLinks" :class="{ active: mode == nl }">
-              {{ nl }}
+              <RouterLink :to="{ name: 'friend-list' }">{{ nl }}</RouterLink>
             </button>
-            <a href="/friends/add" class="add-friend">Add Friend</a>
+            <RouterLink :to="{ name: 'add-friend' }" @click="mode = null" class="add-friend">Add Friend</RouterLink>
           </nav>
         </template>
       </ContentHeader>
       <ContentFlex>
         <Content :RightAside="350">
-          <TextField>
-            <template v-slot:prefix>
-              <Icon name="search" size="18"/>
-            </template>
-          </TextField>
-          <FriendList :list="friendsWithMode || []">
-            <template v-slot:title>{{ title }} {{ friendsWithMode?.length || 0 }}</template>
-          </FriendList>
+          <RouterView></RouterView>
         </Content>
         <RightAside :RightAside="350">
           <p class="friends-aside-title">Active Now</p>
@@ -41,11 +34,11 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, provide } from 'vue';
 import { useStore } from 'vuex';
+import { useSocket } from '@/composables/useSocket';
 
 // Иконки
-import Icon from '@/components/Icon.vue';
 
 import Sidebar from '@/components/Sidebar.vue'
 import ContentHeader from '@/components/ContentHeader.vue';
@@ -53,18 +46,20 @@ import Divider from '@/components/Divider.vue';
 import ContentFlex from '@/components/ContentFlex.vue';
 import Content from '@/components/Content.vue';
 import RightAside from '@/components/RightAside.vue';
-import FriendList from '@/components/FriendList.vue';
-import TextField from '@/components/TextField.vue';
+import Icon from '@/components/Icon.vue';
 
 const store = useStore();
+
+const { socket } = useSocket({
+  //'users:getFriendshipRequests': onMessage,
+});
 
 const allFriends = ref(store.state.friends.friends.added);
 const friendsWithMode = ref(null);
 const title = ref(null);
 const mode = ref(null);
 const setMode = (m) => { // Устанавливает мод, по которому выводятся друзья - онлайн, все и т.д.
-  mode.value = m
-  //console.log(mode.value)
+  mode.value = m;
   switch (m) {
     case 'online': {
       title.value = "В сети";
@@ -95,6 +90,9 @@ const navLinks = [
 onMounted(() => {
   setMode("online")
 });
+
+provide('title', title);
+provide('list', friendsWithMode);
 
 </script>
 <style lang="scss">
