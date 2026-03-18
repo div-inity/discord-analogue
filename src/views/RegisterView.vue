@@ -65,6 +65,18 @@ const { t, locale } = useI18n();
 
 const router = useRouter();
 
+const months = computed(() => {
+  if (locale.value === 'en') {
+    return [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ]
+  }
+  return [
+    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+  ]
+});
 const currentYear = new Date().getFullYear();
 const startYear = currentYear - 3;
 const totalYears = 100;
@@ -127,19 +139,6 @@ function shouldShowHint (fieldId) {
   const field = fields[fieldId];
   return field.focused || field.error;
 };
-
-const months = computed(() => {
-  if (locale.value === 'en') {
-    return [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ]
-  }
-  return [
-    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
-  ]
-})
 
 function isValidDate(y, m, d) {
   const month = months.value.indexOf(m)

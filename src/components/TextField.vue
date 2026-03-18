@@ -21,7 +21,8 @@
         v-model="message" 
         @keyup.enter="toSend()">
       <slot name="actions"></slot>
-      <button v-if="props.icon == 'search' && props.button == true">
+      <button v-if="props.button == true" @click="toSend()"
+        :style="{height: props.height - 25 + 'px'}">
         <slot name="button">Поиск</slot>
       </button>
       <div class="postfix flex row">
@@ -66,7 +67,10 @@ import { contentHeight } from '@/composables/generalFunctions';
 const emit = defineEmits(['send'])
 const props = defineProps({
   icon: String,
-  height: String,
+  height: {
+    String,
+    default: 58
+  },
   width: String,
   radius: String,
   button: Boolean,
@@ -222,7 +226,13 @@ onMounted(() => {
   .prefix, .postfix {
     height: 100%;
     column-gap: 8px;
-    align-items: center
+    align-items: center;
+
+    button {
+      height: 30px;
+      width: 30px;
+      background-color: transparent;
+    }
   }
 
   input {
@@ -242,17 +252,17 @@ onMounted(() => {
 
   button {
     cursor: pointer;
-    height: 30px;
-    width: 30px;
+    width: auto;
     padding-inline: 10px;
-    background-color: transparent;
+    background-color: var(--system-purple-color);
     color: var(--loud-text-color);
-    font-size: 14px;
+    font-size: 12px;
     transition: .3s background-color;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 8px;
+    font-family: 'Inter-600';
 
     &:hover {
       filter: none;

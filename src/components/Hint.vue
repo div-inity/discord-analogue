@@ -25,7 +25,6 @@ const props = defineProps({
     type: String,
   },
   show: {
-    type: Boolean,
     required: true,
   },
 });
@@ -60,9 +59,10 @@ body {
 
     p {
       color: var(--muted-text-color);
-      font-size: 13px;
+      font-size: 14px;
       line-height: 163%;
       text-align: left;
+      font-family: var(--font-family-300);
 
       i {
         width: 17px;

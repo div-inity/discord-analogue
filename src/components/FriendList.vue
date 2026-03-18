@@ -6,7 +6,7 @@
       </template>
     </TextField>
     <p class="title-list-friends">
-      {{ title }}
+      {{ title }} {{ list?.length }}
     </p>
     <TransitionGroup name="list" tag="div" class="list-friends flex column">
       <div class="list-friends-items flex column" v-for="(item, i) in list" :key="i">

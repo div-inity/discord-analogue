@@ -82,6 +82,8 @@ const getFriendsByMode = (currentMode) => {
       return [];
   }
 };
+// ПЕРЕДЕЛАТЬ - МОД ЗАПИСАТЬ В СТОР, ТАК КАК ПЕРЕХОД ПО ДИАЛОГАМ, а потом возврат в друзья 
+// ДОЛЖЕН ВОЗВРАЩАТЬ В ЗАПИСАННЫЙ МОД
 const setMode = (newMode) => {
   mode.value = newMode;
   friendsWithMode.value = getFriendsByMode(newMode);
