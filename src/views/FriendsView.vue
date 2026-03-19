@@ -64,7 +64,8 @@ const mode = ref(null);
 //ПЕРЕДЕЛАТЬ ЛОГИКУ КОМПОНЕНТА, когда будут другие статусы отношений
 const getFriendsByMode = (currentMode) => {
   //const friends = store.state.friends?.friends || {};
-  
+  store.commit('user/SET_FRIEND_LIST_MODE', currentMode);
+  console.log(store.state.user.friendListMode)
   switch (currentMode) {
     case 'online':
       title.value = "В сети";
@@ -97,13 +98,14 @@ const navLinks = [
 ];
 
 onMounted(() => {
-  setMode("online")
   socket.emit('users:getFriends');
+  mode.value = store.state.user.friendListMode;
+  setMode(mode.value)
 });
 
 
 function getFriends(data) {
-  console.log(data)
+  //console.log(data)
   friends.value = data
 }
 
