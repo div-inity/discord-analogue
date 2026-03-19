@@ -22,7 +22,9 @@
         @keyup.enter="toSend()">
       <slot name="actions"></slot>
       <button v-if="props.button == true" @click="toSend()"
-        :style="{height: props.height - 25 + 'px'}">
+        :style="{height: props.height - 25 + 'px'}"
+        :disabled="!message"
+      >
         <slot name="button">Поиск</slot>
       </button>
       <div class="postfix flex row">
@@ -51,7 +53,9 @@
         :style="{height: textareaHeight + 'px'}"
       ></textarea>
       <slot name="actions"></slot>
-      <button v-if="props.icon == 'search' && props.button == true">
+      <button v-if="props.icon == 'search' && props.button == true"
+        :disabled="!message"
+      >
         <slot name="button">Поиск</slot>
       </button>
       <div class="postfix flex row">
@@ -264,9 +268,16 @@ onMounted(() => {
     border-radius: 8px;
     font-family: 'Inter-600';
 
+    &:disabled {
+      filter: brightness(.7);
+
+      &:hover {
+        background-color: var(--system-purple-color);
+      }
+    }
+
     &:hover {
-      filter: none;
-      background-color: var(--system-back-color1);
+      background-color: #4c54af;
 
       svg * {
         fill: white;

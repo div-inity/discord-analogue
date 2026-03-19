@@ -7,14 +7,14 @@
       placeholder="Имя пользователя или электронная почта"
       button
       
-      :border="error ? 'var(--muted-notification-color)' : (req ? 'var(--system-green-color)' : null)"
+      :border="error ? 'var(--muted-notification-color)' : (req ? 'var(--light-green-color)' : null)"
     >
       <template v-slot:button>Отправить запрос дружбы</template>
     </TextField>
     <Hint 
       show="req"
       :text="req || ''"
-      :color="error ? 'var(--muted-notification-color)' : '#3fc972'"
+      :color="error ? 'var(--muted-notification-color)' : 'var(--light-green-color)'"
     />
     
     <Divider h width="100" color="var(--system-back-color5)"/>
@@ -142,7 +142,7 @@ function Discovery() {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: #62a37a;
+        background: #429B63;
         border-radius: 8px;
       }
 
