@@ -236,6 +236,10 @@ onMounted(() => {
       height: 30px;
       width: 30px;
       background-color: transparent;
+
+      &:hover {
+        background-color: var(--system-back-color1);
+      }
     }
   }
 
