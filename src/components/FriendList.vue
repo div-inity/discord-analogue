@@ -1,10 +1,15 @@
 <template>
   <div class="list-friends-wrapper">
+    <TextField>
+      <template v-slot:prefix>
+        <Icon name="search" size="18"/>
+      </template>
+    </TextField>
     <p class="title-list-friends">
-      <slot name="title">Название списка друзей</slot>
+      {{ title }} {{ list?.length }}
     </p>
     <TransitionGroup name="list" tag="div" class="list-friends flex column">
-      <div class="list-friends-items flex column" v-for="(item, i) in props.list" :key="i">
+      <div class="list-friends-items flex column" v-for="(item, i) in list" :key="i">
         <Divider h color="var(--system-back-color3)" width="98" />
         <div class="list-friends-item flex row">
           <Avatar :avatar="item.avatar" size="40" :status="item.status"></Avatar>
@@ -36,23 +41,20 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue';
-
+import { ref, inject } from 'vue';
 import { textStatus } from '@/composables/userComposable';
 
 import Avatar from './Avatar.vue';
 import Divider from './Divider.vue';
 import PopUp from '@/components/PopUp.vue';
+import TextField from '@/components/TextField.vue';
+import Icon from '@/components/Icon.vue';
 
 import { mainIcons } from '@/assets/icons';
 
-const props = defineProps({
-  list: {
-    type: Object,
-    required: true,
-  }
-});
-
+const title = inject('title');
+let list = inject('list');
+// Переделать, когда будут другие статусы отношений
 
 const visiblePopup = ref(null);
 const popupItems = ref([
