@@ -51,7 +51,6 @@ function updateDimensions() {
 };
 
 export function sleep(ms) { // Функция ожидания
-  console.log('tick');
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 

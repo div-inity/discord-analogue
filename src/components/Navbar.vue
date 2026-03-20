@@ -9,7 +9,7 @@
 
       <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" />
       <div class="missed_messages" v-for="(d, i) in unreadDialogs">
-        <div class="message" v-tippy="{ content: d.custom_name || dialogNames(i) }"><!--  -->
+        <div class="message" v-tippy="{ content: d.custom_name || dialogNames(d.members_info) }"><!--  -->
           <router-link :class="(d?.unread_count > 0) ? 'missed' : null" :to="'/messages/' + d.uuid"
             class="link-message">
             <Avatar v-if="d.avatars?.length == 1" size="48" :mentions="d.unread_count" :avatar="d.avatars[0]" />
@@ -82,15 +82,13 @@ import { profileIcons } from '@/assets/icons';
 
 // Композаблы
 import { generalFunctions, profileWidth } from '@/composables/generalFunctions';
-import { userComposable } from '@/composables/userComposable';
-import { dialogComposable } from '@/composables/dialogComposable';
+import { logout, user } from '@/composables/userComposable';
+import { dialogNames, activeDialogID, unreadDialogs } from '@/composables/dialogComposable';
 
 const { t } = useI18n();
 const store = useStore();
 const route = useRoute();
 
-const { dialogNames, activeDialogID, unreadDialogs } = dialogComposable();
-const { logout, user} = userComposable();
 const { navbarWidth } = generalFunctions();
 
 const currentBlock = ref(1); // Для плавного проявления в TransitionGroup

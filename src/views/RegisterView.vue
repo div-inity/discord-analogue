@@ -2,8 +2,8 @@
   <div class="register-screen flex row">
     <form action="" class="register-form flex column">
       <h1>{{ t('reg.h1') }}</h1>
-      <div v-for="field in Object.values(fields)" 
-        :key="field.id" 
+      <div v-for="field in Object.values(fields)"
+        :key="field.id"
         class="flex column form-row">
         <label :for="field.id">
           {{ field.label }}
@@ -11,17 +11,17 @@
           </span>
         </label>
         <input 
-          :type="field.type || 'text'" 
-          :id="field.id" 
-          v-model="field.value" 
+          :type="field.type || 'text'"
+          :id="field.id"
+          v-model="field.value"
           @focus="field.focused = true"
-          @blur="() => { field.focused = false; validateField(field) }" 
+          @blur="() => { field.focused = false; validateField(field) }"
           @input="validateField(field)"
           autocomplete="off" />
         <Hint 
-          v-show="shouldShowHint(field.id)" 
+          v-show="shouldShowHint(field.id)"
           :text="field.error ? field.error : field.hint"
-          :show="field.focused || (field.error != null)" 
+          :show="field.focused || (field.error != null)"
           :color="field.error ? 'var(--muted-notification-color)' : null"
           :icon="field.error ? 'info' : null" />
       </div>
@@ -41,9 +41,9 @@
         </select>
       </div>
         <Hint 
-          :text="dateHint" 
-          :show="dateError" 
-          :color="'var(--muted-notification-color)'" 
+          :text="dateHint"
+          :show="dateError"
+          :color="'var(--muted-notification-color)'"
           icon="info"/>
 
       <button class="button-purple button-reg" @click="createAccount">{{ t('reg.createAccount') }}</button>
@@ -132,23 +132,22 @@ const months = computed(() => {
   if (locale.value === 'en') {
     return [
       'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ]
+      'July', 'August', 'September', 'October', 'November', 'December',
+    ];
   }
   return [
     'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
   ]
 })
 
 function isValidDate(y, m, d) {
   const month = months.value.indexOf(m)
   if (month === undefined) {
-    console.log('Некорректное название месяца');
     return false;
   }
   const date = new Date(y, month, d);
-  
+
   return (
     date.getFullYear() === y &&
     date.getMonth() === month &&
@@ -170,31 +169,28 @@ function validateField (field) {
       : t('reg.mailError');
 
     validated = false;
-  } 
-
+  }
   else if (field.id === 'nickname') {
     validated = true;
-  } 
-  
+  }
   else if (field.id === 'name') {
     field.error = 
       (field.value.length < 2 || field.value.length > 32) && t('reg.nameError1')
       ||
       (/[а-яёА-ЯЁ]/.test(field.value)) && t('reg.nameError2');
     validated = false;
-  } 
-  
+  }
   else if (field.id === 'password') {
     const error = t('reg.passError');
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
     field.error = (!passwordRegex.test(field.value)) && error;
     validated = false;
   }
-
   else if (field.id === 'repassword') {
     field.error = (field.value != fields.password.value) && t('reg.repassError');
     validated = false;
   }
+
   if (!field.error) {
     return true;
   }
@@ -208,17 +204,20 @@ function validateForm () {
   Object.values(fields).forEach(f => {
       validated = validateField(f);
   });
+
   if (validated) { // Дата валидируется после остальных полей
     if (!isValidDate(selectedYear.value, selectedMonth.value, selectedDay.value)) {
       validated = false;
       dateError.value = true;
       dateHint.value = 'Дата не корректна';
-    }else {
+    }
+    else {
       validated = true;
       dateError.value = false;
       dateHint.value = '';
     }
   }
+
   return validated;
 };
 
@@ -238,7 +237,7 @@ async function createAccount() {
       email: fields.email.value,
       nickname: fields.nickname.value,
       brth: date,
-    })
+    }),
   })
   .then(response => {
     if (!response.ok) {
@@ -247,7 +246,6 @@ async function createAccount() {
     return response.json();
   })
   .then(data => {
-    console.log('Ответ сервера:', data);
     router.push({name: 'login'})
   })
   .catch(error => {
