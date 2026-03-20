@@ -42,7 +42,7 @@
 </template>
 <script setup>
 import { ref, inject } from 'vue';
-import { userComposable } from '@/composables/userComposable';
+import { textStatus } from '@/composables/userComposable';
 
 import Avatar from './Avatar.vue';
 import Divider from './Divider.vue';
@@ -51,8 +51,6 @@ import TextField from '@/components/TextField.vue';
 import Icon from '@/components/Icon.vue';
 
 import { mainIcons } from '@/assets/icons';
-
-const { textStatus } = userComposable();
 
 const title = inject('title');
 let list = inject('list');

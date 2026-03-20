@@ -9,23 +9,19 @@
 </template>
 
 <script setup>
-import { onMounted, } from 'vue';
+import { onMounted } from 'vue';
 
 import { useTheme } from '@/composables/useTheme';
-import { userComposable } from './composables/userComposable';
-import { dialogComposable } from './composables/dialogComposable';
+import { loadUser, setToken, userCheck } from './composables/userComposable';
+
 
 const { currentTheme, toggleTheme, isDark } = useTheme();
-const { loadUser, user, userToken, } = userComposable();
-const { setDialogs } = dialogComposable();
 
+setToken();
 
-onMounted(() => {
-  if (userToken.value && !user.value.id)
+onMounted(async () => {
+  if (userCheck.value.token)
     loadUser();
-  if (!!user.value.id && userToken.value != null) { 
-    setDialogs();
-  }
 });
 
 </script>

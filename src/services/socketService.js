@@ -1,6 +1,5 @@
 import { io } from 'socket.io-client';
-import { userComposable } from '@/composables/userComposable';;
-const {userToken} = userComposable();
+
 let socket = null;
 
 export function initSocket() {
@@ -9,9 +8,9 @@ export function initSocket() {
       autoConnect: false,
       transports: ['websocket'],
       auth: {
-        token: userToken.value
-      }
-    })
+        token: localStorage.getItem('token') || null,
+      },
+    });
   }
   return socket;
 };
