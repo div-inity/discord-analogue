@@ -4,7 +4,6 @@
     <div class="content-wrapper">
       <router-view />
     </div>
-
   </div>
   <div v-else class="container flex column">
     <router-view />
@@ -13,9 +12,7 @@
 
 <script setup>
 import Navbar from '@/components/Navbar.vue'
-import { userComposable } from '@/composables/userComposable';
-const { user } = userComposable();
-//console.log(!!user.id, user.value.id)
+import { user } from '@/composables/userComposable';
 </script>
 <style lang="scss">
 body {

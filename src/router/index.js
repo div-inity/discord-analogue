@@ -2,8 +2,8 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import MainView from "../views/MainView.vue";
 import MessagesView from "../views/MessagesView.vue";
 import FriendsView from "../views/FriendsView.vue";
-import store from '@/store'
-import { computed } from 'vue'
+
+import { isAuthenticated } from '@/composables/userComposable'
 
 const routes = [
   {
@@ -46,7 +46,20 @@ const routes = [
           private_msg: true,
         },
         component: FriendsView,
-
+        children: [
+          {
+            path: "",
+            name: "friend-list",
+            component: () =>
+              import(/* webpackChunkName: "friend-list" */ "../components/FriendList.vue"),
+          },
+          {
+            path: "add",
+            name: "add-friend",
+            component: () =>
+              import(/* webpackChunkName: "add-friend" */ "../components/AddFriend.vue"),
+          }
+        ]
       },
       {
         path: "/nitro",
@@ -122,9 +135,7 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "register" */ "../views/RegisterView.vue"),
   },
-
 ];
-
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -133,29 +144,29 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // Проверяем авторизацию
-  //console.log("Мне нужно на ", to)
-  const isAuthenticated = computed(() => store.getters['user/getUser']).value.id && true; // Булево значение
-  //console.log("isAuthenticated: ", isAuthenticated)
-  
+
   // Список публичных страниц
-  const publicPages = ['login', 'register']
-  
+  const publicPages = ['login', 'register'];
+
   // Если страница требует авторизации (все кроме login/register)
   if (!publicPages.includes(to.name)) {
     // Если не авторизован - на логин
-    if (!isAuthenticated) {
-      next({ name: 'login' })
-    } else {
-      next() // авторизован - пропускаем
+    if (!isAuthenticated.value) {
+      next({ name: 'login' });
     }
-  } else {
-    // Если авторизован и пытается зайти на login/register - на главную
-    if (isAuthenticated) {
-      next({ name: 'main' })
-    } else {
-      next() // не авторизован - пропускаем на login/register
+    else {
+      next(); // авторизован - пропускаем
     }
   }
-})
+  else {
+    // Если авторизован и пытается зайти на login/register - на главную
+    if (isAuthenticated.value) {
+      next({ name: 'friends' });
+    }
+    else {
+      next(); // не авторизован - пропускаем на login/register
+    }
+  }
+});
 
 export default router;

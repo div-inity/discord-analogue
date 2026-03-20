@@ -3,75 +3,64 @@
     <Sidebar></Sidebar>
     <div class="content-wrapper flex column">
       <ContentHeader>
-        <template v-slot:page-title v-if="route.params?.id && chat[0]?.members">
-          <!-- Мульти-аватар -->
-          <Avatar  size="30" v-if="chat[0].members.length > 1" multy :avatars="chat[0].avatars"
+        <template v-slot:page-title v-if="route.params?.id">
+          <template v-if="members_info?.length > 2">
+            <!-- Мульти-аватар -->
+            <Avatar :status="null" size="30" multy :avatars="null"
             outline="var(--system-back-color2)"></Avatar>
 
-          <!-- Сингл-аватар -->
-          <Avatar :status="chat[0].members.status || null" size="30" v-else :avatar="chat[0].avatars"></Avatar>
-            
-          <!-- Мульти-имя -->
-          <div 
-            v-if="chat[0].members.length > 1"
-            class="dialog-name-multy dialog-name" 
-            
-            @mouseenter="onMouseEnter"
-            @mouseleave="onMouseLeave" 
-            :class="{ hovered: isHovered }"
-            >
-            <span v-tippy="{ content: 'Редактировать группу', placement: 'bottom'}">
-              {{ dialogNames(members_info) }}
-            </span>
-          </div>
-
-          <!-- Сингл-имя -->
-          <div 
-            v-else-if="chat[0].members.length == 1"
-            class="dialog-name-single dialog-name" 
-            v-tippy="{ content: members_info[0].name, placement: 'bottom'}"
-          >
-            {{ dialogNames(members_info) }}
-          </div>
-
-          
-        </template>
-
-        <!-- Алиасы для сингл-имени -->
-        <!-- <template v-slot:other v-if="dialog?.names.length == 1">
-          <Divider v :height="50" color="var(--system-back-color1)"/>
-          <div class="aliases flex row" v-if="aliases.length">
-            <span class="aka">AKA</span>
-            <div class="item" v-for="a in aliases" :key="a.id" v-tippy="{ content: a.server, placement: 'bottom'}">
-              {{ a.name }}<span v-if="a.id != aliases.length - 1">,&ensp;</span>
+            <!-- Мульти-имя -->
+            <div class="dialog-name-multy dialog-name">
+              <span v-tippy="{ content: 'Редактировать группу', placement: 'bottom'}">
+                {{ dNames }}
+              </span>
             </div>
-          </div>
+          </template>
+          
+          <template v-else-if="members_info?.length <= 2">
+            <!-- Сингл-аватар -->
+            <Avatar 
+              size="30"
+              :status="null"
+              :avatar="null"
+            ></Avatar>
+
+            <!-- Сингл-имя -->
+            <div 
+              class="dialog-name-single dialog-name" 
+              v-tippy="{ content: `@${dialogNames(members_info, 'name')}`, placement: 'bottom'}"
+            >
+              {{ dNames }}
+            </div>
+          </template>
         </template>
-        <template v-slot:actions>
-          <button v-for="i in chatActions.header" v-html="i"></button>
-          <TextField height="30" radius="4" :placeholder="'Искать «'+ dialog.custom_name || 'диалоге' +'»'" postfix style="margin-left: 13px;"/>
-        </template> -->
-
-
       </ContentHeader>
       <ContentFlex>
-        
-        
         <Content :RightAside="WIDTHASIDE">
-          
-          <div class="chat-wrapper flex">
-            <TextField 
-              height="68" 
-              :placeholder="'Написать '+ ((chat.custom_name != null) ? chat.custom_name : dialogNames(members_info))" 
-              postfix 
-              color="var(--system-back-color4)"
-            />
-            
-            <Chat :messages="chat"/>
-          </div>
+          <Chat 
+            v-if="chat?.length"
+            :messages="chat"
+            @scrolled="loadmessages()"/>
+          <TextField
+            height="62"
+            :placeholder="'Написать '+ dNames"
+            color="var(--system-back-color4)"
+            @send="(message) => {newMessage = message; sendMessage()}"
+            multyline
+            padding="13px 12px"
+          >
+            <template v-slot:prefix>
+              <button><span v-html="textFieldIcons.add" class="icon"></span></button>
+            </template>
+            <template v-slot:postfix>
+              <button><span v-html="textFieldIcons.gif" class="icon"></span></button>
+              <button><span v-html="textFieldIcons.sticker" class="icon"></span></button>
+              <button><span v-html="textFieldIcons.emoji" class="icon"></span></button>
+              <button><span v-html="textFieldIcons.apps" class="icon"></span></button>
+            </template>
+          </TextField>
         </Content>
         <RightAside :RightAside="WIDTHASIDE">
-          <!-- chat: <pre>{{ chat }}</pre> -->
         </RightAside>
       </ContentFlex>
     </div>
@@ -79,82 +68,103 @@
 
 </template>
 <script setup>
+import { useRoute } from 'vue-router';
+import { ref, onBeforeUnmount, watch } from 'vue';
+
+import { dialogComposable } from '@/composables/dialogComposable';
+
 import Sidebar from '@/components/Sidebar.vue'
 import ContentHeader from '@/components/ContentHeader.vue';
-import Divider from '@/components/Divider.vue';
 import ContentFlex from '@/components/ContentFlex.vue';
 import Content from '@/components/Content.vue';
 import RightAside from '@/components/RightAside.vue';
 import Avatar from '@/components/Avatar.vue';
 import TextField from '@/components/TextField.vue';
 import Chat from '@/components/Chat.vue';
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router';
-import { ref, computed, onMounted } from 'vue';
 
-import { userComposable } from '@/composables/userComposable';
-const {user, userToken} = userComposable()
+import { chatActionsIcons, textFieldIcons } from '@/assets/icons'
 
-import { dialogComposable } from '@/composables/dialogComposable';
-const { dialogs, dialogNames, activeDialogID, setChat, getMembers_info, setActiveDialogID, members_info } = dialogComposable();
+import { useSocket } from '@/composables/useSocket';
 
+const { getDialogFieldByID, dialogNames, activeDialogID, setActiveDialogID, members_info } = dialogComposable();
+const newMessage = ref('');
 
-
-// icons
-import { chatActions } from '@/assets/icons'
+const { socket } = useSocket({
+  'chat:message': onMessage,
+});
 
 const WIDTHASIDE = 350;
 
 const route = useRoute();
-const store = useStore();
-const chat = computed(() => store.getters['private_msg/getLoadedChat']) || [];
+const dNames = ref(null); // Название диалога
+const chat = ref([]); // Хранит сообщения
 
+function onMessage(msg) {// Выполняется при отправке сообщения
+  if (msg.unshift) chat.value = [msg.unshift, ...chat.value];
+  if (msg.push) chat.value = [...chat.value, ...msg.push];
+};
 
+function sendMessage() {
+  if (!newMessage.value?.trim()) {
+    return;
+  }
 
+  const msg = {
+    message: newMessage.value,
+    dialog: activeDialogID.value,
+  };
 
-const aliases = ref([
-  {
-    id: 0,
-    name: 'Васька',
-    server: 'Мишкина каморка',
-  },
-])
+  socket.emit('chat:message', msg);
+  newMessage.value = '';
+};
 
-const isHovered = ref(false);
+async function loadChat() { // Смена диалога
+  if (!activeDialogID.value || members_info.value != null) {
+    setActiveDialogID(route.params?.id); // Устанавливаем активный диалог
+  }
+  // Присоединяемся к комнате диалога
+  socket.emit('chat:join', activeDialogID.value);
 
-function onMouseEnter() {
-  isHovered.value = true;
-}
+  chat.value = [];
 
-function onMouseLeave() {
-  isHovered.value = false;
-}
+  socket.emit('chat:load', {
+    dialog_id: route.params?.id,
+    offset: 0,
+  });
 
-async function loadChat() {
-  console.log("loadChat")
-  //console.log(activeDialogID.value != route.params?.id,  members_info.value == null)
-  if (activeDialogID.value == route.params?.id && members_info.value != null) return;
   // Если совершен переход в другой диалог или актуального диалога нет
-  //console.log("loadChat started")
-  setActiveDialogID(route.params?.id); // Устанавливаем активный диалог
-  setChat(route.params?.id) // Получаем инфо по нему - чат
-  await getMembers_info(route.params?.id) // Загружаем в глобальную переменную members_info инфо о юзерах
-  //console.log(members_info.value)
-  console.log("loadChat end - выводится, потому что подгружал новый чат")
-  
-}
+  await getDialogFieldByID(route.params?.id, 'members_info');
+  const custom_name = await getDialogFieldByID(route.params?.id, "custom_name");
+  dNames.value = (custom_name.value.length) ? custom_name.value : dialogNames(members_info.value);
+};
 
-onMounted(()=> {
-  if (!!user.value.id && userToken.value != null) // Если юзер загружен и токен актуален
-    loadChat();
-})
+function loadmessages() { // Подгрузка старых сообщений
+  const payload = {
+    dialog_id: activeDialogID.value,
+    offset: chat.value?.length,
+  };
+  socket.emit('chat:load', payload);
+};
 
-    console.log("members_info", members_info.value)
-console.log("chat",chat.value)
+onBeforeUnmount(() => {
+  socket.emit('chat:leave', activeDialogID.value);
+});
+
+watch(
+  () => route.params.id,
+  (id, oldid) => {
+    if (id != oldid) {
+      socket.emit('chat:leave', oldid);
+      loadChat();
+    }
+  },
+  { immediate: true }
+);
+
 </script>
 <style lang="scss">
-  .page-title:has(.dialog-name-multy.hovered) {
-    background-color: var(--system-back-color1);
+.page-title:has(.dialog-name-multy.hovered) {
+  background-color: var(--system-back-color1);
 }
 .aliases {align-items: center;
   .aka {
@@ -174,18 +184,10 @@ console.log("chat",chat.value)
 }
 .dialog-name {
   cursor: pointer;
-  &.dialog-name-multy {
-
-  }
-  &.dialog-name-single {
-  
-  }
 }
-.chat-wrapper {
-  flex-direction: column-reverse;
-  height: 100%;
-  overflow-y: auto;
-  padding: 0 10px 10px;
-  row-gap: 30px;
+
+.input-wrapper .postfix button .icon {
+  height: 20px;
+  width: 20px;
 }
 </style>

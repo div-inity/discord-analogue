@@ -1,6 +1,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue';
-
 // рендерится один раз
+
+export const PROJECT_NAME = 'Discord Analogue';
 
 export function formatDate(dateString) {
   const date = new Date(dateString);
@@ -12,7 +13,7 @@ export function formatDate(dateString) {
   return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
 
-const getInitialSidebarWidth = () => { // Установка ширины сайдбара
+function getInitialSidebarWidth () { // Установка ширины сайдбара
   try {
     const savedWidth = localStorage.getItem('sidebarWidth');
     if (savedWidth) {
@@ -35,26 +36,31 @@ const state = {
   windowHeight: ref(window.innerHeight),
   mainHeaderHeight: ref(24),
   headerHeight: ref(50),
-  instanceCount: 0,
-  isResizeListenerActive: false,
+  instanceCount: 0, // количество активных экземпляров компонента
+  isResizeListenerActive: false,// флаг,указывающий активность события resize
 };
 
 // Вычисляемые значения (синглтон)
-const profileWidth = computed(() => state.navbarWidth.value + state.sidebarWidth.value - 20);
-const headerWidth = computed(() => state.windowWidth.value - state.navbarWidth.value - state.sidebarWidth.value);
-const contentHeight = computed(() => state.windowHeight.value - state.headerHeight.value - state.mainHeaderHeight.value);
+export const profileWidth = computed(() => state.navbarWidth.value + state.sidebarWidth.value - 20);
+export const headerWidth = computed(() => state.windowWidth.value - state.navbarWidth.value - state.sidebarWidth.value);
+export const contentHeight = computed(() => state.windowHeight.value - state.headerHeight.value - state.mainHeaderHeight.value);
 
 function updateDimensions() {
   state.windowWidth.value = window.innerWidth;
   state.windowHeight.value = window.innerHeight;
-}
+};
 
 export function sleep(ms) { // Функция ожидания
-  console.log('tick');
   return new Promise(resolve => setTimeout(resolve, ms));
-}
+};
 
 export function generalFunctions() {
+
+  function updateSidebarWidth (newVal) {
+    state.sidebarWidth.value = newVal;
+    localStorage.setItem('sidebarWidth', newVal.toString());
+  };//updateSidebarWidth
+
   // Увеличиваем счетчик при монтировании
   onMounted(() => {
     state.instanceCount++;
@@ -73,18 +79,12 @@ export function generalFunctions() {
     }
   });
   
-  const updateSidebarWidth = (newVal) => {
-    state.sidebarWidth.value = newVal;
-    localStorage.setItem('sidebarWidth', newVal.toString());
-  };
-  
   return {
-    sidebarWidth: state.sidebarWidth,
     updateSidebarWidth,
-    contentHeight,
+    sidebarWidth: state.sidebarWidth,
     navbarWidth: state.navbarWidth,
-    profileWidth,
-    headerWidth,
-
+    windowWidth: state.windowWidth,
+    windowHeight: state.windowHeight,
+    headerHeight: state.headerHeight,
   };
 }

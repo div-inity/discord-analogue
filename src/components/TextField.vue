@@ -1,61 +1,222 @@
 <template>
-  <div class="input-wrapper flex row" :style="{
-    height: props.height ? props.height + 'px' : null,
-    width: props.width ? props.width + '%' : null,
-    'border-radius': props.radius ? props.radius + 'px' : '8px',
-    padding: props.padding ? props.padding + 'px' : '0 12px',
-    'background-color': props.color ? props.color : 'var(--system-back-color5)',
-    'border-color': props.border ? props.border : 'var(--system-back-color1)'
-  }">
-    <!-- <span class="icon" v-html="mainIcons.search" v-if="props.icon == 'search'"></span> -->
-    <div class="prefix flex row" v-if="props.prefix">
-      <slot name="prefix"></slot>
+  <template v-if="!props.multyline">
+    <div 
+      class="input-wrapper flex row" 
+      :style="{
+      height: props.height ? props.height + 'px' : null,
+      width: props.width ? props.width + '%' : null,
+      'border-radius': props.radius ? props.radius + 'px' : '8px',
+      padding: props.padding ? props.padding + 'px' : '0 12px',
+      'background-color': props.color ? props.color : 'var(--system-back-color5)',
+      'border-color': props.border ? props.border : 'var(--system-back-color1)'
+    }">
+      <div class="prefix flex row">
+        <slot name="prefix"></slot>
+      </div>
+      <input 
+        type="text" 
+        :placeholder="props.placeholder || 'Поиск'" 
+        name="input" 
+        autocomplete="off"
+        v-model="message" 
+        @keyup.enter="toSend()">
+      <slot name="actions"></slot>
+      <button v-if="props.button == true" @click="toSend()"
+        :style="{height: props.height - 25 + 'px'}"
+        :disabled="!message"
+      >
+        <slot name="button">Поиск</slot>
+      </button>
+      <div class="postfix flex row">
+        <slot name="postfix">
+        </slot>
+      </div>
     </div>
-    <input type="text" :placeholder="props.placeholder || 'Поиск'" name="input" autocomplete="off">
-    <slot name="actions"></slot>
-    <button v-if="props.icon == 'search' && props.button == true">
-      <slot name="button">Поиск</slot>
-    </button>
-    <div class="postfix flex row" v-if="props.postfix">
-      <slot name="postfix">
-        <span class="icon" v-html="mainIcons.search"></span>
-      </slot>
+  </template>
+  <template v-else>
+    <div 
+      class="input-wrapper flex row multiline" 
+      :style="wrapperStyles">
+      <div class="prefix flex row">
+        <slot name="prefix"></slot>
+      </div>
+      <textarea
+        :placeholder="props.placeholder || 'Поиск'" 
+        name="input" 
+        autocomplete="off"
+        v-model="message" 
+        @keydown.enter="handleEnterKey"
+        @input="updateLineCount"
+        @cut="updateTextareaHeight" 
+        @paste="handlePaste"        
+        ref="textareaRef"
+        :style="{height: textareaHeight + 'px'}"
+      ></textarea>
+      <slot name="actions"></slot>
+      <button v-if="props.icon == 'search' && props.button == true"
+        :disabled="!message"
+      >
+        <slot name="button">Поиск</slot>
+      </button>
+      <div class="postfix flex row">
+        <slot name="postfix"></slot>
+      </div>
     </div>
-  </div>
+  </template>
 </template>
 <script setup>
-import { mainIcons } from '@/assets/icons'
+import { ref, watch, nextTick, computed, onMounted   } from 'vue';
+import { contentHeight } from '@/composables/generalFunctions';
+
+const emit = defineEmits(['send'])
 const props = defineProps({
-  prefix: Boolean,
-  postfix: Boolean,
   icon: String,
-  height: String,
+  height: {
+    String,
+    default: 58
+  },
   width: String,
   radius: String,
   button: Boolean,
   placeholder: String,
   color: String,
   border: String,
+  multyline: Boolean,
+  padding: String,
+  minHeight: {
+    type: Number,
+    default: 20
+  },
+  maxHeight: {
+    type: Number,
+    default: 30  // Максимальная высота, после которой появляется скролл
+  },
 });
+
+const message = ref(null); // Тело инпута
+const textareaRef = ref(null);
+const textareaHeight = ref(props.minHeight);
+const wrapperStyles = computed(() => ({
+  width: props.width ? props.width + '%' : null,
+  'border-radius': props.radius ? props.radius + 'px' : '8px',
+  'background-color': props.color ? props.color : 'var(--system-back-color5)',
+  'border-color': props.border ? props.border : 'var(--system-back-color1)',
+  height: textareaHeight.value * 1.5 + 'px'
+}));
+
+function toSend() { // Отправить тело инпута
+  emit('send', message.value);
+  message.value = null;
+};
+
+function handleEnterKey (event) {
+  if (event.shiftKey) {
+    // Shift + Enter: разрешаем перенос строки
+    nextTick(() => {
+      updateTextareaHeight()
+    })
+    return
+  } else {
+    // Обычный Enter: отправляем
+    event.preventDefault()
+    if (message.value && message.value.trim()) {
+      toSend()
+    }
+  }
+};
+
+function updateTextareaHeight(){
+  if (textareaRef.value) {
+    // Сбрасываем высоту до минимальной
+    textareaRef.value.style.height = props.minHeight + 'px';
+    
+    // Получаем реальную высоту контента
+    let newHeight = textareaRef.value.scrollHeight;
+    
+    // Применяем ограничения
+    newHeight = Math.max(props.minHeight, newHeight);
+    const max = contentHeight.value / 100 * props.maxHeight;
+    if (props.maxHeight) {
+      newHeight = Math.min(max, newHeight);
+    }
+    
+    // Устанавливаем новую высоту
+    textareaHeight.value = newHeight;
+    textareaRef.value.style.height = newHeight + 'px';
+    
+    // Включаем/выключаем скролл в зависимости от высоты
+    if (max && newHeight >= max) {
+      textareaRef.value.style.overflowY = 'auto';
+    } else {
+      textareaRef.value.style.overflowY = 'hidden';
+    }
+  }
+};
+
+function handlePaste () {
+  // Даем время на вставку текста, потом обновляем высоту
+  nextTick(() => {
+    updateTextareaHeight();
+  })
+}
+
+function updateLineCount () {
+  // Обновляем высоту при вводе
+  nextTick(() => {
+    updateTextareaHeight();
+  })
+};
+
+// Следим за изменениями message
+watch(message, () => {
+  nextTick(() => {
+    updateTextareaHeight();
+  })
+});
+
+// Инициализация
+onMounted(() => {
+  updateTextareaHeight();
+});
+
 </script>
 <style lang="scss">
 .input-wrapper {
   position: relative;
   display: inline-flex;
   align-items: center;
-  /* border-radius: 8px; */
   width: 100%;
   min-width: 250px;
-  height: 55px;
-  min-height: 55px;
-  /* padding: 12px; */
-  column-gap: 12px;
+  min-height: 58px;
+  padding: 12px;
+  /* column-gap: 12px; */
   font-family: var(--font-family-400);
   border: 1px solid;
+  
 
-  /* &:focus-within {
-    outline: 1px solid var(--link-color);
-  } */
+  &.multiline {
+
+    textarea {
+      border: none;
+      resize: none;
+      outline: none;
+      line-height: 20px;
+      overflow-y: auto;
+      flex-grow: 2;
+      font-size: 15px;
+      background-color: transparent;
+      font-family: var(--font-family-400);
+      margin-inline: 12px;
+
+      &::-webkit-scrollbar {
+        width: 0;
+      }
+    }
+
+    .prefix, .postfix {
+      align-items: flex-start;
+    }
+  }
 
   .icon {
     display: flex;
@@ -64,13 +225,22 @@ const props = defineProps({
     pointer-events: none;
     width: 20px;
     height: 20px;
-
-    svg {}
   }
 
-  .prefix {
+  .prefix, .postfix {
     height: 100%;
     column-gap: 8px;
+    align-items: center;
+
+    button {
+      height: 30px;
+      width: 30px;
+      background-color: transparent;
+
+      &:hover {
+        background-color: var(--system-back-color1);
+      }
+    }
   }
 
   input {
@@ -79,23 +249,55 @@ const props = defineProps({
     height: 100%;
     background-color: transparent;
     font-family: var(--font-family-400);
+    padding-block: 13px;
+    margin-inline: 12px;
 
     &::placeholder {
       color: var(--icon-color);
     }
   }
+  
 
   button {
     cursor: pointer;
-    height: 100%;
+    width: auto;
     padding-inline: 10px;
     background-color: var(--system-purple-color);
     color: var(--loud-text-color);
-    filter: brightness(.9);
-    font-size: 14px;
+    font-size: 12px;
+    transition: .3s background-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-family: 'Inter-600';
+
+    &:disabled {
+      filter: brightness(.7);
+
+      &:hover {
+        background-color: var(--system-purple-color);
+      }
+    }
 
     &:hover {
-      filter: none;
+      background-color: #4c54af;
+
+      svg * {
+        fill: white;
+      }
+    }
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      width: inherit;
+      height: inherit;
+
+      svg * {
+        transition: .3s fill;
+      }
     }
   }
 }

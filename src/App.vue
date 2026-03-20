@@ -9,27 +9,21 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue'
-import { useTheme } from '@/composables/useTheme'
+import { onMounted } from 'vue';
+
+import { useTheme } from '@/composables/useTheme';
+import { loadUser, setToken, userCheck } from './composables/userComposable';
+
+
 const { currentTheme, toggleTheme, isDark } = useTheme();
 
-import { userComposable } from './composables/userComposable';
-const { loadUser, user, userToken } = userComposable();
+setToken();
 
-import { dialogComposable } from './composables/dialogComposable';
-const {setDialogs} = dialogComposable()
-
-import { useStore } from 'vuex';
-const store = useStore();
-onMounted(() => {
-  if (userToken.value && !user.value.id)
+onMounted(async () => {
+  if (userCheck.value.token)
     loadUser();
-  //console.log(!!user.value.id, user.value)
-  if (!!user.value.id && userToken.value != null) { 
-    setDialogs()
-    //setInterval(setDialogs, 2000) // Включить потом
-  }
-})
+});
+
 </script>
 
 <style lang="scss">
@@ -38,16 +32,12 @@ onMounted(() => {
 
 html {
   background-image: none;
-  /* min-width: 796px;
-  min-height: 380px; */
   overflow: hidden;
 }
 
 #app {
   height: 100vh;
   width: 100vw;
-  /* min-width: 800px;
-  min-height: 380px; */
 }
 
 .theme-switcher {

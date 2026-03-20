@@ -2,8 +2,8 @@
   <div class="register-screen flex row">
     <form action="" class="register-form flex column">
       <h1>{{ t('reg.h1') }}</h1>
-      <div v-for="field in Object.values(fields)" 
-        :key="field.id" 
+      <div v-for="field in Object.values(fields)"
+        :key="field.id"
         class="flex column form-row">
         <label :for="field.id">
           {{ field.label }}
@@ -11,17 +11,17 @@
           </span>
         </label>
         <input 
-          :type="field.type || 'text'" 
-          :id="field.id" 
-          v-model="field.value" 
+          :type="field.type || 'text'"
+          :id="field.id"
+          v-model="field.value"
           @focus="field.focused = true"
-          @blur="() => { field.focused = false; validateField(field) }" 
+          @blur="() => { field.focused = false; validateField(field) }"
           @input="validateField(field)"
           autocomplete="off" />
         <Hint 
-          v-show="shouldShowHint(field.id)" 
+          v-show="shouldShowHint(field.id)"
           :text="field.error ? field.error : field.hint"
-          :show="field.focused || (field.error != null)" 
+          :show="field.focused || (field.error != null)"
           :color="field.error ? 'var(--muted-notification-color)' : null"
           :icon="field.error ? 'info' : null" />
       </div>
@@ -41,9 +41,9 @@
         </select>
       </div>
         <Hint 
-          :text="dateHint" 
-          :show="dateError" 
-          :color="'var(--muted-notification-color)'" 
+          :text="dateHint"
+          :show="dateError"
+          :color="'var(--muted-notification-color)'"
           icon="info"/>
 
       <button class="button-purple button-reg" @click="createAccount">{{ t('reg.createAccount') }}</button>
@@ -55,16 +55,37 @@
   </div>
 </template>
 <script setup>
-import { useI18n } from 'vue-i18n';
-const { t, locale } = useI18n();
-import Hint from '@/components/Hint.vue';
 import { computed, reactive, ref } from 'vue';
-import { useStore } from 'vuex';
-const store = useStore();
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import Hint from '@/components/Hint.vue';
 
+const { t, locale } = useI18n();
+
+const router = useRouter();
+
+const months = computed(() => {
+  if (locale.value === 'en') {
+    return [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ]
+  }
+  return [
+    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+  ]
+});
+const currentYear = new Date().getFullYear();
+const startYear = currentYear - 3;
+const totalYears = 100;
+const years = Array.from({ length: totalYears }, (_, index) => startYear - index);
+const selectedYear = ref(startYear);
+const selectedMonth = ref(months.value[0]);
+const selectedDay = ref(1);
+const dateHint = ref('');
+const dateError = ref(false);
 const fields = reactive({
   email: {
     label: 'E-mail',
@@ -123,40 +144,28 @@ const months = computed(() => {
   if (locale.value === 'en') {
     return [
       'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ]
+      'July', 'August', 'September', 'October', 'November', 'December',
+    ];
   }
   return [
     'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
   ]
 })
-const currentYear = new Date().getFullYear();
-const startYear = currentYear - 3;
-const totalYears = 100;
-
-const years = Array.from({ length: totalYears }, (_, index) => startYear - index);
-
-const selectedYear = ref(startYear);
-const selectedMonth = ref(months.value[0]);
-const selectedDay = ref(1);
-const dateHint = ref('');
-const dateError = ref(false)
 
 function isValidDate(y, m, d) {
   const month = months.value.indexOf(m)
   if (month === undefined) {
-    console.log('Некорректное название месяца');
     return false;
   }
   const date = new Date(y, month, d);
-  
+
   return (
     date.getFullYear() === y &&
     date.getMonth() === month &&
     date.getDate() === d
   );
-}
+};
 
 function validateField (field) {
   var validated = false;
@@ -172,35 +181,29 @@ function validateField (field) {
       : t('reg.mailError');
 
     validated = false;
-  } 
-
+  }
   else if (field.id === 'nickname') {
     validated = true;
-  } 
-  
+  }
   else if (field.id === 'name') {
     field.error = 
       (field.value.length < 2 || field.value.length > 32) && t('reg.nameError1')
       ||
       (/[а-яёА-ЯЁ]/.test(field.value)) && t('reg.nameError2');
     validated = false;
-  } 
-  
+  }
   else if (field.id === 'password') {
     const error = t('reg.passError');
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-      field.error = (!passwordRegex.test(field.value)) && error;
-
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    field.error = (!passwordRegex.test(field.value)) && error;
     validated = false;
   }
-
   else if (field.id === 'repassword') {
-    field.error = (field.value != fields.password.value) && t('reg.repassError')
-
+    field.error = (field.value != fields.password.value) && t('reg.repassError');
     validated = false;
   }
+
   if (!field.error) {
-    //field.hint = '';
     return true;
   }
 
@@ -213,31 +216,28 @@ function validateForm () {
   Object.values(fields).forEach(f => {
       validated = validateField(f);
   });
+
   if (validated) { // Дата валидируется после остальных полей
     if (!isValidDate(selectedYear.value, selectedMonth.value, selectedDay.value)) {
       validated = false;
       dateError.value = true;
       dateHint.value = 'Дата не корректна';
-    }else {
+    }
+    else {
       validated = true;
       dateError.value = false;
       dateHint.value = '';
     }
   }
+
   return validated;
-} 
+};
+
 async function createAccount() {
   if (!validateForm()) return;
-  console.log("Идет регистрация")
+
   const date = `${selectedYear.value}-${(String)(months.value.indexOf(selectedMonth.value)+1).padStart(2, '0')}-${(String)(selectedDay.value).padStart(2, '0')}`;
-  
-  console.log(JSON.stringify({ 
-      name: fields.name.value,
-      password: fields.password.value,
-      email: fields.email.value,
-      nickname: fields.nickname.value,
-      brth: date,
-    }))
+
   fetch('/api/v1/register', {
     method: 'POST',
     headers: {
@@ -249,7 +249,7 @@ async function createAccount() {
       email: fields.email.value,
       nickname: fields.nickname.value,
       brth: date,
-    })
+    }),
   })
   .then(response => {
     if (!response.ok) {
@@ -258,13 +258,13 @@ async function createAccount() {
     return response.json();
   })
   .then(data => {
-    console.log('Ответ сервера:', data);
     router.push({name: 'login'})
   })
   .catch(error => {
     console.error('Ошибка при POST-запросе:', error);
   });
-}
+};
+
 </script>
 <style lang="scss">
 body {
@@ -273,7 +273,6 @@ body {
   background-size: cover;
 
   #app {
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -292,7 +291,6 @@ body {
   flex-direction: row;
   column-gap: 5%;
   border-radius: 9px;
-
 
   .register-form {
     display: flex;
@@ -385,9 +383,7 @@ body {
 
       .register-form {
         width: 100%;
-        
       }
-
     }
   }
 }

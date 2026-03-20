@@ -18,11 +18,13 @@ export default {
       status: 'online', // default
       info: 'Playing Counter-Strike 2', // default
     },
+    friendListMode: "online",
   },
   getters: {
     getUser: (state) => state.user,
     getUserName: (state) => state.user.name,
-    isAuthenticated: (state) => !!state.user.id
+    isAuthenticated: (state) => !!state.user.id,
+    getFriendListMode: (state) => state.friendListMode,
   },
   mutations: {
     SET_USER(state, userData) {
@@ -45,6 +47,9 @@ export default {
       email: '',
       birthdate: '',
       }
+    },
+    SET_FRIEND_LIST_MODE(state, mode) {
+      state.friendListMode = mode;
     }
   },
   actions: {

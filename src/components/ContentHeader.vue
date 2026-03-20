@@ -7,23 +7,17 @@
         </slot>
       </div>
       <slot name="other"><!-- Прочие элементы header-а --></slot>
-      
-      
     </div>
-    <!-- headerWidth: {{ headerWidth }} -->
     <div class="header-actions flex row">
       <slot name="actions">
-      
       </slot>
     </div>
   </div>
 </template>
 <script setup>
-import { generalFunctions } from '@/composables/generalFunctions';
-const { headerWidth } = generalFunctions();
+import { headerWidth } from '@/composables/generalFunctions';
 import { useRoute } from 'vue-router';
 const route = useRoute();
-//console.log(route.matched[1].path)
 const setHeaderClass = () => {
   if (route.matched[1].path == '/friends') return 'friends-header';
   else if (route.matched[1].path == '/messages') return 'messages-header';
@@ -103,9 +97,6 @@ const setHeaderClass = () => {
       column-gap: 14px;
 
       button {
-        color: var(--muted-text-color);
-        font-family: var(--font-family-400);
-        font-size: 14px;
         transition: .3s all;
         border-radius: 9px;
         padding: 8px 12px;
@@ -113,17 +104,26 @@ const setHeaderClass = () => {
         cursor: pointer;
         text-transform: capitalize;
 
-        &:hover
+        a {
+          color: var(--muted-text-color);
+          font-family: var(--font-family-400);
+          font-size: 14px;
+        }
 
-        /* :not(.add-friend) */
-          {
-          color: var(--loud-text-color);
+        &:hover {
           background: var(--button-back-color);
+
+          a {
+            color: var(--loud-text-color);
+          }
         }
 
         &.active {
-          color: var(--loud-text-color);
           background: var(--button-back-color);
+
+          a {
+            color: var(--loud-text-color);
+          }
         }
       }
 

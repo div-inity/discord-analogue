@@ -65,6 +65,7 @@
   --notification-color: #f23f42;
   --muted-notification-color: salmon;
   --system-green-color: #248046;
+  --light-green-color: #429B63;
   --system-purple-color: #5865f2;
   --link-color: #00aff4;
 }
@@ -293,7 +294,7 @@ a {
   --icon-color: #80848e;
   --button-back-color: #4e5058;
 
-  input {
+  input, textarea {
     color: var(--main-text-color);
     cursor: pointer;
   }

@@ -1,22 +1,34 @@
 <template>
   <div class="list-friends-wrapper">
+    <TextField>
+      <template v-slot:prefix>
+        <Icon name="search" size="18"/>
+      </template>
+    </TextField>
     <p class="title-list-friends">
-      <slot name="title">Название списка друзей</slot>
+      {{ title }} {{ list?.length }}
     </p>
     <TransitionGroup name="list" tag="div" class="list-friends flex column">
-      <div class="list-friends-items flex column" v-for="(item, i) in props.list" :key="item">
-
-        <Divider h color="var(--system-back-color3)" :width="98" />
+      <div class="list-friends-items flex column" v-for="(item, i) in list" :key="i">
+        <Divider h color="var(--system-back-color3)" width="98" />
         <div class="list-friends-item flex row">
           <Avatar :avatar="item.avatar" size="40" :status="item.status"></Avatar>
           <div class="item-info flex column">
-            <p>{{ item.name }}</p>
+            <p class="nickname">{{ item.nickname }}<span class="name">{{ item.name }}</span></p>
             <span>{{ textStatus(item.status) }}</span>
           </div>
           <div class="item-options flex row">
-            <button v-html="mainIcons.chat" class="radial" v-tippy="{ content: 'Сообщение', placement: 'top' }"></button>
-            <button v-html="mainIcons.options" class="radial" v-tippy="{ content: 'Ещё', placement: 'top' }"
-              @click="showPopup(i)"></button>
+            <button 
+              v-html="mainIcons.chat"
+              class="radial"
+              v-tippy="{ content: 'Сообщение', placement: 'top' }
+            "></button>
+            <button
+              v-html="mainIcons.options"
+              class="radial"
+              v-tippy="{ content: 'Ещё', placement: 'top' }"
+              @click="showPopup(i)"
+            ></button>
             <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
               <template v-slot:items>
                 <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
@@ -29,21 +41,22 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
+import { textStatus } from '@/composables/userComposable';
+
 import Avatar from './Avatar.vue';
 import Divider from './Divider.vue';
-import { userComposable } from '@/composables/userComposable';
 import PopUp from '@/components/PopUp.vue';
+import TextField from '@/components/TextField.vue';
+import Icon from '@/components/Icon.vue';
+
 import { mainIcons } from '@/assets/icons';
-const { textStatus } = userComposable();
-const props = defineProps({
-  list: {
-    type: Object,
-    required: true,
-  }
-});
 
+const title = inject('title');
+let list = inject('list');
+// Переделать, когда будут другие статусы отношений
 
+const visiblePopup = ref(null);
 const popupItems = ref([
   {
     name: 'Начать видеозвонок',
@@ -64,16 +77,15 @@ const popupItems = ref([
       alert('Кнопка 3 нажата!');
     }
   },
-])
-const visiblePopup = ref(null);
-const showPopup = (popup) => {
+]);
+
+function showPopup (popup) {
   visiblePopup.value = popup;
-  //console.log(visiblePopup.value)
-}
-const hidePopup = () => {
+};
+
+function hidePopup () {
   visiblePopup.value = null;
-  //console.log(visiblePopup.value)
-}
+};
 </script>
 <style lang="scss">
 // стили для TransitionGroup:
@@ -116,19 +128,28 @@ const hidePopup = () => {
 
         &:hover {
           background-color: var(--system-back-color3);
+
+          .item-info .name {
+            visibility: visible;
+          }
         }
 
         .item-info {
           flex-grow: 2;
           overflow: hidden;
 
-          p {
+          .nickname {
             font-family: var(--font-family-500);
             color: var(--main-text-color);
             font-size: 16px;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+          }
+
+          .name {
+            visibility: hidden;
+            padding-left: 8px;
           }
 
           span {

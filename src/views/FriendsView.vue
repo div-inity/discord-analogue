@@ -4,33 +4,22 @@
     <div class="content-wrapper flex column">
       <ContentHeader>
         <template v-slot:page-title>
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M4.77528 2H1C1 10.6232 4.77528 13.744 6.66292 14.0725V19H22C22 12.5942 17.2809 12.5942 13.9775 12.5942C6.66292 12.5942 4.77528 6.43478 4.77528 2Z"
-              fill="#8E9297" />
-            <path d="M13.9775 2.5C19.6405 2.5 19.6405 11.1232 13.9775 11.1232C8.0867 11.1232 8.31461 2.5 13.9775 2.5Z"
-              fill="#8E9297" />
-          </svg>
+          <Icon name="friend" size="25"/>
           Друзья
         </template>
         <template v-slot:other>
           <Divider v :height="40" color="var(--system-back-color1)" />
           <nav class="friends-header-nav flex row">
-            <button @click="setMode(nl)" v-for="nl in navLinks" :class="{ active: mode == nl }">
-              {{ nl }}
+            <button @click="mode = nl; setMode(nl)" v-for="nl in navLinks" :class="{ active: mode == nl }">
+              <RouterLink :to="{ name: 'friend-list' }">{{ nl }}</RouterLink>
             </button>
-            <a href="/friends/add" class="add-friend">Add Friend</a>
+            <RouterLink :to="{ name: 'add-friend' }" @click="mode = null" class="add-friend">Add Friend</RouterLink>
           </nav>
-
         </template>
       </ContentHeader>
       <ContentFlex>
         <Content :RightAside="350">
-          <TextField icon="search">
-          </TextField>
-          <FriendList :list="friendsWithMode || []">
-            <template v-slot:title>{{ title }} &#8211 {{ friendsWithMode?.length || 0 }}</template>
-          </FriendList>
+          <RouterView></RouterView>
         </Content>
         <RightAside :RightAside="350">
           <p class="friends-aside-title">Active Now</p>
@@ -42,60 +31,104 @@
         </RightAside>
       </ContentFlex>
     </div>
-
   </div>
 </template>
 <script setup>
+import { ref, onMounted, provide, watch } from 'vue';
+import { useStore } from 'vuex';
+import { useSocket } from '@/composables/useSocket';
+import { useRoute, useRouter } from 'vue-router';
+
 import Sidebar from '@/components/Sidebar.vue'
 import ContentHeader from '@/components/ContentHeader.vue';
 import Divider from '@/components/Divider.vue';
 import ContentFlex from '@/components/ContentFlex.vue';
 import Content from '@/components/Content.vue';
 import RightAside from '@/components/RightAside.vue';
-import FriendList from '@/components/FriendList.vue';
-import TextField from '@/components/TextField.vue';
-import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import Icon from '@/components/Icon.vue';
+
 const store = useStore();
-const allFriends = ref(store.state.friends.friends.added);
+const route = useRoute();
+const router = useRouter();
+
+const { socket } = useSocket({
+  'users:getFriends': getFriends,
+});
+
+const friends = ref(null);
 const friendsWithMode = ref(null);
 const title = ref(null);
-const mode = ref(null)
-const setMode = (m) => { // Устанавливает мод, по которому выводятся друзья - онлайн, все и т.д.
-  mode.value = m
-  //console.log(mode.value)
-  switch (m) {
-    case 'online': {
+const mode = ref(null);
+
+
+//ПЕРЕДЕЛАТЬ ЛОГИКУ КОМПОНЕНТА, когда будут другие статусы отношений
+const getFriendsByMode = (currentMode) => {
+  //const friends = store.state.friends?.friends || {};
+  store.commit('user/SET_FRIEND_LIST_MODE', currentMode);
+  console.log(store.state.user.friendListMode)
+  switch (currentMode) {
+    case 'online':
       title.value = "В сети";
-      friendsWithMode.value = allFriends.value.filter(friend => friend.status !== 'offline')
-      break;
-    }
-    case 'all': {
+      return (friends.added || []).filter(friend => friend.status !== 'offline');
+    case 'all':
       title.value = "Всего друзей";
-      friendsWithMode.value = allFriends.value;
-      break;
-    }
-    case 'pending': {
+      return friends || [];
+    case 'pending':
       title.value = "Заявки в друзья";
-      friendsWithMode.value = store.state.friends.friends.pending;
-      break;
-    }
-    case 'blocked': {
+      return friends.pending || [];
+    case 'blocked':
       title.value = "Игнорируются";
-      friendsWithMode.value = store.state.friends.friends.blocked;
-      break;
-    }
+      return friends.blocked || [];
+    default:
+      return [];
   }
-}
+};
+// ПЕРЕДЕЛАТЬ - МОД ЗАПИСАТЬ В СТОР, ТАК КАК ПЕРЕХОД ПО ДИАЛОГАМ, а потом возврат в друзья 
+// ДОЛЖЕН ВОЗВРАЩАТЬ В ЗАПИСАННЫЙ МОД
+const setMode = (newMode) => {
+  mode.value = newMode;
+  friendsWithMode.value = getFriendsByMode(newMode);
+  
+  if (route.name !== 'friend-list') {
+    router.push({ name: 'friend-list' });
+  }
+};
 const navLinks = [
   'online', 'all', 'pending', 'blocked'
 ];
+
 onMounted(() => {
-  setMode("online")
-})
+  socket.emit('users:getFriends');
+  mode.value = store.state.user.friendListMode;
+  setMode(mode.value)
+});
+
+
+function getFriends(data) {
+  //console.log(data)
+  friends.value = data
+}
+
+watch(
+  () => store.state.friends?.friends,
+  () => {
+    if (mode.value) {
+      friendsWithMode.value = getFriendsByMode(mode.value);
+    }
+  },
+  { deep: true }
+);
+
+provide('title', title);
+provide('list', friends);
 </script>
 <style lang="scss">
-.friends-container {}
+
+.friends-container {
+  .input-wrapper {
+    margin-top: 10px;
+  }
+}
 
 .right-aside {
   .friends-aside-title {

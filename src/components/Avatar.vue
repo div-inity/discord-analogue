@@ -1,52 +1,68 @@
 <template>
-  <div class="avatar single-user-avatar radial" v-if="!props.multy && props.avatar" :style="{
-    width: props.size ? props.size + 'px' : null,
-    'min-width': props.size ? props.size + 'px' : null,
-    height: props.size ? props.size + 'px' : null
-  }" :class="{ 'square': props.square }">
-    <img class="single-avatar radial" :src="props.avatar" alt="User Avatar" />
-    <div v-if="props.status" class="status radial" :class="props.status"></div>
-    <div v-if="props.mentions && props.mentions > 0" class="mentions radial">
-      {{
-        props.mentions < 1000 ? props.mentions : (props.mentions / 1000).toFixed(1) + 'k+' }} </div>
-        <div v-if="props.activity" class="activity radial"
-          :class="[defineActivity(), { 'my_activity': props.active === true }]"></div>
-    </div>
-
-    <!-- Альтернатива, если props.avatar отсутствует -->
-    <div v-else-if="!props.multy && !props.avatar" class="avatar single-user-avatar radial user-logo" :style="{
+  <div 
+    v-if="!props.multy && props.avatar"
+    class="avatar single-user-avatar radial"
+    :class="{ 'square': props.square }"
+    :style="{
       width: props.size ? props.size + 'px' : null,
       'min-width': props.size ? props.size + 'px' : null,
       height: props.size ? props.size + 'px' : null
-    }" :class="{ 'square': props.square }">
-      <img class="single-avatar radial" src="@/assets/img/svg/logo.svg" alt="Default Logo" />
-      <!-- Статус -->
-      <div v-if="props.status" class="status radial" :class="props.status"></div>
-      <div v-if="props.mentions && props.mentions > 0" class="mentions radial">
-        {{ props.mentions < 1000 ? props.mentions : (props.mentions / 1000).toFixed(1) + 'k+' }} </div>
+    }">
+    <img class="single-avatar radial" :src="props.avatar" alt="User Avatar" />
+    <div v-if="props.status" class="status radial" :class="props.status"></div>
+    <div v-if="props.mentions && props.mentions > 0" class="mentions radial">
+      {{ props.mentions < 1000 ? props.mentions : (props.mentions / 1000).toFixed(1) + 'k+' }}
+    </div>
+      <div
+        v-if="props.activity"
+        class="activity radial"
+        :class="[defineActivity(), { 'my_activity': props.active === true }]"
+      ></div>
+  </div>
 
-          <div v-if="props.activity" class="activity radial"
-            :class="[defineActivity(), { 'my_activity': props.active === true }]">
-          </div>
-      </div>
+  <!-- Альтернатива, если props.avatar отсутствует -->
+  <div 
+    v-else-if="!props.multy && !props.avatar"
+    class="avatar single-user-avatar radial user-logo"
+    :style="{
+      width: props.size ? props.size + 'px' : null,
+      'min-width': props.size ? props.size + 'px' : null,
+      height: props.size ? props.size + 'px' : null
+    }"
+    :class="{ 'square': props.square }">
+    <img class="single-avatar radial" src="@/assets/img/svg/logo.svg" alt="Default Logo" />
+    <!-- Статус -->
+    <div v-if="props.status" class="status radial" :class="props.status"></div>
+    <div v-if="props.mentions && props.mentions > 0" class="mentions radial">
+      {{ props.mentions < 1000 ? props.mentions : (props.mentions / 1000).toFixed(1) + 'k+' }} </div>
 
-      <div class="avatar multi-user-avatar" v-else-if="props.multy || props.avatars" :style="{
-        width: props.size ? props.size + 'px' : null,
-        'min-width': props.size ? props.size + 'px' : null,
-        height: props.size ? props.size + 'px' : null
-      }">
-        <img class="multi-avatar radial" :src="props.avatars?.[0] || require('@/assets/img/svg/logo.svg')"
-          :class="{ 'user-logo': !props.avatars?.[0] }" alt="User Avatar 1" />
-        <img class="multi-avatar radial" :src="props.avatars?.[1] || require('@/assets/img/svg/logo.svg')"
-          :class="{ 'user-logo': !props.avatars?.[1] }" alt="User Avatar 2" :style="{
-            'outline-color': props.outline ? props.outline : null
-          }" />
-        <div v-if="props.status" class="status radial" :class="props.status"></div>
-        <div class="activity radial" v-if="props.activity"
-          :class="[defineActivity(), { 'my_activity': props.active === true }]"></div>
-        <div v-if="props.mentions && props.mentions > 0" class="mentions radial">
-          {{ props.mentions < 1000 ? props.mentions : (props.mentions / 1000).toFixed(1) + 'k+' }} </div>
+        <div v-if="props.activity" class="activity radial"
+          :class="[defineActivity(), { 'my_activity': props.active === true }]">
         </div>
+  </div>
+
+  <div
+    v-else-if="props.multy || props.avatars"
+    class="avatar multi-user-avatar"
+    :style="{
+    width: props.size ? props.size + 'px' : null,
+    'min-width': props.size ? props.size + 'px' : null,
+    height: props.size ? props.size + 'px' : null
+  }">
+    <img class="multi-avatar radial" :src="props.avatars?.[0] || require('@/assets/img/svg/logo.svg')"
+      :class="{ 'user-logo': !props.avatars?.[0] }" alt="User Avatar 1" />
+    <img class="multi-avatar radial" :src="props.avatars?.[1] || require('@/assets/img/svg/logo.svg')"
+      :class="{ 'user-logo': !props.avatars?.[1] }" alt="User Avatar 2" :style="{
+        'outline-color': props.outline ? props.outline : null
+      }" 
+    />
+    <div v-if="props.status" class="status radial" :class="props.status"></div>
+    <div class="activity radial" v-if="props.activity"
+      :class="[defineActivity(), { 'my_activity': props.active === true }]"></div>
+    <div v-if="props.mentions && props.mentions > 0" class="mentions radial">
+      {{ props.mentions < 1000 ? props.mentions : (props.mentions / 1000).toFixed(1) + 'k+' }}
+    </div>
+  </div>
 </template>
 <script setup>
 const props = defineProps({
@@ -63,7 +79,6 @@ const props = defineProps({
     required: false
   },
   mentions: { // Упоминания
-    type: Number,
     required: false
   },
   square: { // Квадратный аватар
@@ -90,14 +105,15 @@ const props = defineProps({
     type: String,
     required: false
   }
-})
-//console.log(props.avatars[0])
-const defineActivity = () => {
+});
+
+function defineActivity () {
   if (props.activity == 'call') return 'call';
   else if (props.activity == 'display') return 'display';
   else if (props.activity == 'camera') return 'camera';
   else return null;
 };
+
 </script>
 <style lang="scss" scoped>
 .avatar {
@@ -153,7 +169,6 @@ const defineActivity = () => {
           width: 3px;
           style: solid;
           color: transparent;
-          /* color: var(--system-back-color5); */
         }
       }
     }

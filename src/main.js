@@ -8,6 +8,7 @@ import i18n from '@/plugins/i18n';
 
 import 'tippy.js/dist/tippy.css'
 import VueTippy from 'vue-tippy';
+import socketPlugin from './plugins/socketPlugin'
 
 //Глобальные компоненты - важно сразу загрузить
 import Header from './components/Header.vue'
@@ -17,6 +18,7 @@ const app = createApp(App)
 app.use(i18n)
 app.use(store)
 app.use(router)
+app.use(socketPlugin)
 app.use(VueTippy, {
   directive: 'tippy', // => v-tippy
   component: 'tippy', // => <tippy/>

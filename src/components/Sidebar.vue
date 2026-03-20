@@ -1,8 +1,10 @@
 <template>
-  <div class="sidebar-wrapper" :style="{ width: sidebarWidth + 'px' }">
+  <div class="sidebar-wrapper flex column" :style="{ width: sidebarWidth + 'px' }">
     <template v-if="route.meta.private_msg == true">
-      <div class="sidebar-header">
-        <button class="sidebar-search-dialog text">{{ t('sidebar.sidebarsearchdialog') }}</button>
+      <div class="sidebar-header" :style="{height: headerHeight+ 'px'}">
+        <button class="sidebar-search-dialog text">
+          {{ t('sidebar.sidebarsearchdialog') }}
+        </button>
       </div>
       <menu class="sidebar-actions">
         <ul v-for="a in actions" :to="a.link">
@@ -17,77 +19,118 @@
       <menu class="private-msg">
         <div class="title">
           Личные сообщения
-          <button v-html="sidebarIcons.add" class="dialog-add" v-tippy="{ content: 'Создать ЛС', placement: 'top' }"
-            @click="createDialog"></button>
+          <button 
+            v-html="sidebarIcons.add"
+            class="dialog-add"
+            v-tippy="{ content: 'Создать ЛС', placement: 'top' }"
+            @click="createDialog">
+          </button>
         </div>
         
         <template v-if="dialogs && dialogs.length">
           <div class="dialogs flex column">
             <div 
+              v-for="d in dialogs" 
+              :key="d.uuid" 
               @click="goToChat(d.uuid)" 
-              :class="{'active': d.uuid == route.params?.id}" 
-              class="dialog flex row" 
-              v-for="(d, i) in dialogs" 
-              :key="i">
+              :class="{ 'active': d.uuid === route.params?.id }"
+              class="dialog flex row"
+            >
+              <!-- Аватар -->
+              <Avatar 
+                v-if="d.members_info?.length === 2"
+                size="32"
+                :status="d.status"
+                :avatar="d.avatars || null"
+              />
               
-            <Avatar v-if="d.avatars?.length == 1" size="32" :status="d.status" :avatar="d.avatars[0]" />
-            <Avatar v-else size="32" :status="d.status" :avatars="d.avatars" multy
-              outline="var(--system-back-color3)" />
-              
+              <Avatar 
+                v-else
+                size="32"
+                :status="d.status"
+                :avatars="d.avatars || null"
+                multy
+                outline="var(--system-back-color3)"
+              />
+
+              <!-- Информация о диалоге -->
               <div class="flex column dialog-info">
+                <!-- Название диалога или участников -->
                 <div 
                   class="names" 
-                  v-if="d.members.length > 1" 
-                  v-tippy="{ content: dialogNames(d.members_info), placement: 'top' }"
+                  v-if="d.members_info?.length > 2"
+                  v-tippy="(!d.custom_name) ? { content: dialogNames(d.members_info), placement: 'top' } : null"
                 >
-                  {{ (d.custom_name) ? d.custom_name : dialogNames(d.members_info) }} <!-- Несколько имен или название чата -->
+                  {{ d.custom_name || dialogNames(d.members_info) }}
                 </div>
-                <div class="names" v-else>{{ dialogNames(d.members_info) }}</div><!--  Одно имя  -->
+                <div class="names" v-else>
+                  {{ dialogNames(d.members_info) }}
+                </div>
                 
-                <div class="members" v-if="d.members.length > 1">
-                  {{d.members.length}} {{ memberWord(d.members.length) }} <!--  Кол-во участников -->
+                <!-- Количество участников -->
+                <div class="members" v-if="d.members_info?.length > 2">
+                  {{ d.members_info.length }} {{ memberWord(d.members_info.length) }}
                 </div>
               </div>
-              <!-- <Mentions>{{ d.unread_count }}</Mentions> -->
+              
+              <!-- Иконка удаления диалога -->
               <button 
                 class="remove-dialog" 
-                v-html="sidebarIcons.remove" 
-                @click="removeDialog(d?.uuid)"
+                v-html="sidebarIcons.remove"
+                @click.stop="removeDialog(d?.uuid)"
               ></button>
             </div>
           </div>
         </template>
       </menu>
     </template>
+    <template v-else>
+      <div class="sidebar-header flex row" :style="{height: headerHeight+ 'px'}">
+        <slot name="header"></slot>
+      </div>
+      <div class="other">
+        <slot name="other"></slot>
+      </div>
+    </template>
 
-    sidebar {{ sidebarWidth }}
     <!-- Блок изменения ширины сайдбара -->
     <div class="resize-handle" @mousedown="startResize"></div>
-
 
   </div>
 </template>
 <script setup>
 import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
-import { reactive, ref, onBeforeUnmount, computed} from 'vue';
+import { ref, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
+
 import Avatar from './Avatar.vue';
-/* import Mentions from './Mentions.vue'; */
 
+// Композаблы
 import { generalFunctions } from '@/composables/generalFunctions';
-const {  sidebarWidth, updateSidebarWidth} = generalFunctions();
-import { dialogComposable } from '@/composables/dialogComposable'
-const {dialogNames, memberWord, dialogs, setActiveDialogID} = dialogComposable()
+import { dialogNames, memberWord, dialogs, setActiveDialogID, setUnreadDialogs } from '@/composables/dialogComposable';
+import { useSocket } from '@/composables/useSocket';
 
+// Иконки
+import { sidebarIcons } from '@/assets/icons';
 
-import { sidebarIcons } from '@/assets/icons'
+const { socket } = useSocket({
+  'dialog:getList': onDialogGetList
+});
 
+function onDialogGetList(data) {
+  dialogs.value = data;
+  setUnreadDialogs();
+}
+
+socket.emit('dialog:getList');
+
+const { t } = useI18n();
 const route = useRoute();
 
+const { sidebarWidth, updateSidebarWidth, headerHeight } = generalFunctions();
 
-const actions = reactive( // Функционал сайдбара
+const actions = ref( // Функционал сайдбара
   [
     {
       id: 1,
@@ -126,27 +169,17 @@ const actions = reactive( // Функционал сайдбара
       },
       avatar: sidebarIcons.tasks,
     },
-  ]);
-const removeDialog = () => {
-  alert("Closed")
-};
-const createDialog = () => {
-  alert("Created")
-};
-const goToChat = (uuid) => {
-  //if (uuid != route.params?.id) setActiveDialogID(uuid);
-  router.push(`/messages/${uuid}`);
-}
+  ]
+);
 
-
-/** Блок кода для изменения ширины сайдбара */
+/* Блок кода для изменения ширины сайдбара */
 const minWidth = 190; // минимальная ширина
 const maxWidth = 360; // максимальная ширина
 const isResizing = ref(false);
 const startX = ref(0);
 const startWidth = ref(0);
 
-const startResize = (event) => {
+function startResize (event) {
   isResizing.value = true;
   startX.value = event.clientX;
   startWidth.value = sidebarWidth.value;
@@ -155,7 +188,7 @@ const startResize = (event) => {
   document.addEventListener('mouseup', stopResize);
 };
 
-const resize = (event) => {
+function resize (event) {
   if (!isResizing.value) return;
   const deltaX = event.clientX - startX.value;
   let newWidth = startWidth.value + deltaX;
@@ -165,17 +198,30 @@ const resize = (event) => {
   updateSidebarWidth(newWidth);
 };
 
-const stopResize = () => {
+function stopResize () {
   isResizing.value = false;
   document.removeEventListener('mousemove', resize);
   document.removeEventListener('mouseup', stopResize);
+};
+
+// Действия в сайдбаре
+function removeDialog () {
+  alert("Closed");
+};
+
+function createDialog () {
+  alert("Created");
+};
+
+function goToChat (uuid) {
+  if (uuid != route.params?.id) setActiveDialogID(uuid);
+  router.push(`/messages/${uuid}`);
 };
 
 onBeforeUnmount(() => {
   document.removeEventListener('mousemove', resize);
   document.removeEventListener('mouseup', stopResize);
 });
-/** Конец Блока кода для изменения ширины сайдбара */
 
 </script>
 <style lang="scss">
@@ -191,11 +237,12 @@ onBeforeUnmount(() => {
   * {
     user-select: none;
   }
+  &>* {
+    padding: 10px;
+  }
 
   .sidebar-header {
-    height: 50px;
     width: 100%;
-    padding: 10px;
     border-bottom: 1px solid var(--system-back-color5);
 
     .sidebar-search-dialog {
@@ -216,7 +263,6 @@ onBeforeUnmount(() => {
   }
 
   .sidebar-actions {
-    padding: 10px;
 
     .sidebar-actions-link {
       color: var(--muted-text-color);
@@ -304,17 +350,14 @@ onBeforeUnmount(() => {
         column-gap: 12px;
         position: relative;
         transition: 0.3s all;
-        /* * {
-          transition: 0.3s all;
-        } */
+        &.active {
+        background-color: var(--system-back-color2);
+        color: var(--main-text-color);
+        }
 
-        &:hover, &.active {
+        &:hover {
           background-color: var(--system-back-color2);
           color: var(--main-text-color);
-
-          /* .mentions {
-            transform: translateX(-10%);
-          } */
 
           .dialog-info {
             max-width: calc(70% - 10px);
@@ -365,7 +408,8 @@ onBeforeUnmount(() => {
   }
 
   .resize-handle {
-    width: 1px;
+    padding: 0;
+    width: 5px;
     position: absolute;
     top: 0;
     right: 0;
@@ -377,7 +421,6 @@ onBeforeUnmount(() => {
     transition: .5s width ease;
 
     &:hover {
-      width: 3px;
       background-color: var(--system-back-color4);
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <header>
-    <div class="logo">Discord Analogue</div>
+    <div class="logo">{{ PROJECT_NAME }}</div>
     <div class="header-actions">
       <button class="header-action minus">
         <svg width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -25,6 +25,7 @@
   </header>
 </template>
 <script setup>
+import { PROJECT_NAME } from '@/composables/generalFunctions';
 </script>
 <style lang="scss">
 header {
@@ -57,12 +58,6 @@ header {
           fill: #4d4d4d;
         }
       }
-
-      /* .cross:hover { не работает
-        rect {
-          fill: red !important;
-        }
-      } */
     }
   }
 }

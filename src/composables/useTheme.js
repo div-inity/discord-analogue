@@ -1,29 +1,29 @@
-import { computed } from 'vue'
-import { useStore } from 'vuex'
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 
 export function useTheme() {
-  const store = useStore()
+  const store = useStore();
 
-  const currentTheme = computed(() => store.getters['theme/currentTheme'])
-  const isDark = computed(() => currentTheme.value === 'dark')
-  const isLight = computed(() => currentTheme.value === 'light')
+  const currentTheme = computed(() => store.getters['theme/currentTheme']);
+  const isDark = computed(() => currentTheme.value === 'dark');
+  const isLight = computed(() => currentTheme.value === 'light');
 
-  const setTheme = (theme) => {
-    store.dispatch('theme/setTheme', theme)
-  }
+  function setTheme (theme) {
+    store.dispatch('theme/setTheme', theme);
+  };
 
-  const toggleTheme = () => {
+  function toggleTheme () {
     store.dispatch('theme/toggleTheme')
-  }
+  };
 
   // Получение CSS переменной
-  const getCssVariable = (variableName) => {
+  function getCssVariable (variableName) {
     return computed(() => {
       return getComputedStyle(document.documentElement)
         .getPropertyValue(variableName)
         .trim()
     })
-  }
+  };
 
   // Reactively get theme colors
   const themeColors = computed(() => ({
@@ -37,7 +37,7 @@ export function useTheme() {
     muted: getCssVariable('--muted-text-color').value,
     icon: getCssVariable('--icon-color').value,
     button: getCssVariable('--button-back-color').value,
-  }))
+  }));
 
   return {
     currentTheme,

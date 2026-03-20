@@ -9,7 +9,7 @@
 
       <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" />
       <div class="missed_messages" v-for="(d, i) in unreadDialogs">
-        <div class="message" v-tippy="{ content: dialogNames(d.members_info) }">
+        <div class="message" v-tippy="{ content: d.custom_name || dialogNames(d.members_info) }"><!--  -->
           <router-link :class="(d?.unread_count > 0) ? 'missed' : null" :to="'/messages/' + d.uuid"
             class="link-message">
             <Avatar v-if="d.avatars?.length == 1" size="48" :mentions="d.unread_count" :avatar="d.avatars[0]" />
@@ -42,7 +42,7 @@
     <!-- Блок юзер-функций (профиль, заглушить, откл.звук, настройки, статус) -->
     <div :key="currentBlock" class="userprofile flex row" :style="{ width: profileWidth + 'px' }">
       <div class="profile flex row">
-        <Avatar size="40" :avatar="user.avatar" :status="user.status" />
+        <Avatar size="35" :avatar="user.avatar" :status="user.status" />
         <div class="userinfo flex column">
           <div class="name">{{ user.name }}</div>
           <div class="userprofile-info">{{ (user.info) ? user.info : user.status }}</div>
@@ -66,33 +66,36 @@
   </TransitionGroup>
 </template>
 <script setup>
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
-import router from '@/router'
-import { useStore } from 'vuex'
-import { ref, reactive, watchEffect, h } from 'vue'
-import { useRoute } from 'vue-router'
-import Avatar from './Avatar.vue'
-import Divider from './Divider.vue'
+import { useI18n } from 'vue-i18n';
+import router from '@/router';
+import { useStore } from 'vuex';
+import { ref, watchEffect, h } from 'vue';
+import { useRoute } from 'vue-router';
 
-import Icon from '@/components/Icon.vue'
-import { profileIcons } from '@/assets/icons'
+// Компоненты
+import Avatar from './Avatar.vue';
+import Divider from './Divider.vue';
 
-import { generalFunctions } from '@/composables/generalFunctions'
-const { navbarWidth, profileWidth } = generalFunctions()
+// Иконки
+import Icon from '@/components/Icon.vue';
+import { profileIcons } from '@/assets/icons';
 
-import { userComposable } from '@/composables/userComposable'
-const {logout, user} = userComposable()
+// Композаблы
+import { generalFunctions, profileWidth } from '@/composables/generalFunctions';
+import { logout, user } from '@/composables/userComposable';
+import { dialogNames, activeDialogID, unreadDialogs } from '@/composables/dialogComposable';
 
-import { dialogComposable } from '@/composables/dialogComposable'
-const {dialogNames, activeDialogID, unreadDialogs} = dialogComposable()
-//console.log(activeDialogID.value)
-const store = useStore()
+const { t } = useI18n();
+const store = useStore();
+const route = useRoute();
+
+const { navbarWidth } = generalFunctions();
+
+const currentBlock = ref(1); // Для плавного проявления в TransitionGroup
 const servers = store.state.servers.servers;
 const missed_messages = store.state.private_msg.missed_messages;
-const activeServer = ref(0) // Начальное значение - сервер не выбран
-const currentBlock = ref(1) // Для плавной анимации исчезновения диалога
-const actions = reactive([
+const activeServer = ref(0); // Начальное значение - сервер не выбран
+const actions = ref([
   {
     id: 1,
     name: t('navbar.addserver'),
@@ -111,10 +114,9 @@ const actions = reactive([
     },
     avatar: require('@/assets/img/Discovery.svg'),
   },
-])
-const route = useRoute()
+]);
 
-const computeServerData = (i) => {
+function computeServerData (i) {
   let imgs = [];
 
   if (servers[i].active_users && servers[i].active_users.length) {
@@ -174,23 +176,33 @@ const computeServerData = (i) => {
           ]
         ) : null
       ) : null
-
     ]
   );
-}
+};
 
-const goToMessage = (id) => { // Для перехода в ЛС
+function goToMessage (id) { // Для перехода в ЛС
   let index = missed_messages.findIndex(e => e.id == id);
   activeServer.value = 0 // Очищение значения - сервер не выбран, домашняя страница
   if (index > -1) missed_messages.splice(index, 1) // Удаление из Навбара
+};
 
-}
-const goToServer = (id) => {
+function goToServer (id) {
   activeServer.value = id // Сервер выбран
+};
 
-}
+function microphoneToggle () {
+
+};
+
+function headphonesToggle () {
+
+};
+
+function settingsOpen () {
+
+};
+
 watchEffect(() => {
-  //console.log('Полный route объект:', route)
   if (route.name == 'message') goToMessage(route.params.id) // Выбран диалог
   else if (route.name == 'server') goToServer(route.params.id) // Выбран сервер
   else if (route.name == 'messages') {
@@ -198,17 +210,6 @@ watchEffect(() => {
   }
 });
 
-
-
-const microphoneToggle = () => {
-
-};
-const headphonesToggle = () => {
-
-};
-const settingsOpen = () => {
-
-};
 </script>
 <style lang="scss">
 .navbar-server-tooltip {
@@ -247,7 +248,6 @@ const settingsOpen = () => {
 .navbar {
   padding-bottom: 80px;
   background-color: var(--system-back-color5);
-  /* width: 68px; */
   height: 100%;
   padding-inline: 10px;
   overflow: auto;
@@ -360,8 +360,7 @@ const settingsOpen = () => {
   }
 
   .userprofile {
-    /* height: 56px; */
-    padding: 8px;
+    padding: 5px;
     border: 1px solid var(--system-back-color2);
     background: var(--system-back-color4);
     position: absolute;
@@ -391,8 +390,6 @@ const settingsOpen = () => {
 
       &:hover {
         background-color: var(--system-back-color2);
-
-
       }
 
       .avatar {
