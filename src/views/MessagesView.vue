@@ -125,10 +125,11 @@ async function loadChat() { // Смена диалога
   socket.emit('chat:join', activeDialogID.value);
 
   chat.value = [];
+
   socket.emit('chat:load', {
     dialog_id: route.params?.id,
     offset: 0,
-  })
+  });
 
   // Если совершен переход в другой диалог или актуального диалога нет
   await getDialogFieldByID(route.params?.id, 'members_info') // Загружаем в глобальную переменную members_info инфо о юзерах
@@ -137,6 +138,7 @@ async function loadChat() { // Смена диалога
 };
 
 function loadmessages() { // Подгрузка старых сообщений
+  console.log("chat", chat.value)
   const payload = {
     dialog_id: activeDialogID.value,
     offset: chat.value?.length,

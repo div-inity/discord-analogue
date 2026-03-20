@@ -38,15 +38,13 @@
 <script setup>
 import { ref } from 'vue';
 
-import { userComposable } from '@/composables/userComposable';
+import { textStatus } from '@/composables/userComposable';
 
 import Avatar from './Avatar.vue';
 import Divider from './Divider.vue';
 import PopUp from '@/components/PopUp.vue';
 
 import { mainIcons } from '@/assets/icons';
-
-const { textStatus } = userComposable();
 
 const props = defineProps({
   list: {

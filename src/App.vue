@@ -9,23 +9,23 @@
 </template>
 
 <script setup>
-import { onMounted, } from 'vue';
+import { onMounted, watch, } from 'vue';
 
 import { useTheme } from '@/composables/useTheme';
-import { userComposable } from './composables/userComposable';
-import { dialogComposable } from './composables/dialogComposable';
+import { loadUser, setToken, userCheck } from './composables/userComposable';
+import { setDialogs } from './composables/dialogComposable';
+import { initSocket } from './services/socketService';
+
 
 const { currentTheme, toggleTheme, isDark } = useTheme();
-const { loadUser, user, userToken, } = userComposable();
-const { setDialogs } = dialogComposable();
+setToken();
 
-
-onMounted(() => {
-  if (userToken.value && !user.value.id)
+onMounted(async () => {
+  if (userCheck.value.token)
     loadUser();
-  if (!!user.value.id && userToken.value != null) { 
-    setDialogs();
-  }
+  /* if (userCheck.value.user) { 
+    await setDialogs();
+  } */
 });
 
 </script>

@@ -47,12 +47,11 @@
 import { useI18n } from 'vue-i18n';
 import { reactive } from 'vue';
 
-import { userComposable } from '@/composables/userComposable';
+import { loadUser } from '@/composables/userComposable';
 
 import Hint from '@/components/Hint.vue';
 
 const { t } = useI18n();
-const { loadUser } = userComposable()
 
 const fields = reactive({
   email: {
@@ -115,9 +114,7 @@ function auth () {
     return response.json();
   })
   .then(data => {
-    console.log('Ответ сервера:', data);
     localStorage.setItem('token', data.token);
-    console.log(localStorage.getItem('token'));
     loadUser(data.token);
     window.location.reload();
   })

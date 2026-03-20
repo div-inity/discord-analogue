@@ -144,7 +144,6 @@ const months = computed(() => {
 function isValidDate(y, m, d) {
   const month = months.value.indexOf(m)
   if (month === undefined) {
-    console.log('Некорректное название месяца');
     return false;
   }
   const date = new Date(y, month, d);
@@ -247,7 +246,6 @@ async function createAccount() {
     return response.json();
   })
   .then(data => {
-    console.log('Ответ сервера:', data);
     router.push({name: 'login'})
   })
   .catch(error => {

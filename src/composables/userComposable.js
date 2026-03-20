@@ -1,9 +1,7 @@
-import { useStore } from 'vuex';
-import { computed, ref, onMounted } from 'vue';
+import { computed, onMounted, ref, reactive } from 'vue';
 
-// Константы для избежания магических строк
 const STORAGE_KEYS = {
-  TOKEN: 'token'
+  TOKEN: 'token',
 };
 
 const USER_STATUS = {
@@ -12,45 +10,33 @@ const USER_STATUS = {
   DND: 'red', // Do Not Disturb
   INACTIVE: 'moon',
   ONLINE: 'online',
-  STREAMING: 'streaming'
+  STREAMING: 'streaming',
 };
 
-// Состояние (синглтон) - объявлено вне функции
-const userToken = ref(null);
+export const userToken = ref(null);
 
-// Функции для работы с токеном (тоже синглтон)
-function setToken () {
+export function setToken() {
   try {
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
     userToken.value = token || null;
-  } catch (error) {
-    console.error('Ошибка при чтении токена из localStorage:', error);
+    userCheck.value.token = !!userToken.value;
+  }
+  catch (error) {
+    console.error('Error read token from localStorage: ', error);
     userToken.value = null;
   }
-};//setToken
+}
 
-// Инициализация
-setToken();
-
-// Подписка на изменения localStorage (если токен меняется в другой вкладке)
 function handleStorageChange (event) {
   if (event.key === STORAGE_KEYS.TOKEN) {
     setToken();
   }
-};//handleStorageChange
+};
 
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', handleStorageChange);
 }
 
-// Для очистки при необходимости (можно вызвать в корневом компоненте)
-export function cleanupTokenListener () {
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('storage', handleStorageChange);
-  }
-};
-
-// Вспомогательные функции (чистые функции, не требуют реактивности)
 function parseJwt(token) {
   if (!token) return null;
   try {
@@ -69,126 +55,101 @@ function parseJwt(token) {
     console.error('Ошибка при парсинге JWT:', error);
     return null;
   }
-};//parseJwt
+};
 
+export const user = ref(null);
+export const isAuthenticated = ref(false);
+export const userName = () => {
+  if (!user.value) return 'Пользователь';
+  return user.value.name || user.value.nickname || 'Пользователь';
+};
 
+export const userCheck = ref({ user: false, token: false });
 
-export function userComposable() {
-  const store = useStore();
-
-  // Вычисляемые свойства
-  const user = computed(() => store.getters['user/getUser']);
-  const isAuthenticated = computed(() => !!userToken.value && !!user.value);
-  const userName = computed(() => {
-    if (!user.value) return 'Пользователь';
-    return user.value.name || user.value.nickname || 'Пользователь';
-  });
-
-  
-  
-  // Загрузка пользователя
-  function loadUser(token = null) {
-    // Если передан новый токен, обновляем его
-    if (token) {
-      try {
-        localStorage.setItem(STORAGE_KEYS.TOKEN, token);
-        setToken();
-      } catch (error) {
-        console.error('Ошибка при сохранении токена:', error);
-        return;
-      }
-    }
-    
-    // Проверяем наличие токена
-    if (!userToken.value) {
-      // Очищаем стор, если токена нет
-      store.commit('user/SET_USER', null);
+export function loadUser(token = null) {
+  if (token) {
+    try {
+      localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+      setToken();
+    } catch (error) {
+      console.error('Error with saving token into localStorage:', error);
       return;
     }
-    
-    try {
-      const payload = parseJwt(userToken.value);
-      //console.log("payload", payload)
-      const currentTime = Math.floor(Date.now() / 1000);
-      
-      // Проверяем валидность токена
-      if (!payload || !payload.id || (payload.exp && currentTime >= payload.exp)) {
-        throw new Error('Токен невалиден или истек');
-      }
-      
-      const userData = {
-        id: payload.id,
-        name: payload.name || '',
-        nickname: payload.nickname || '',
-        email: payload.email || '',
-        birthdate: payload.birthdate || '',
-        roles: payload.roles || [],
-        exp: payload.exp // Добавляем время истечения
-      };
-      store.commit('user/SET_USER', userData);
-      setTimeout(() => logout(), payload.exp * 1000 - Date.now()); // Выход из аккаунта по истечении времени жизни токена
-    } catch (error) {
-      console.error('Ошибка при загрузке пользователя:', error);
-      logout();
-    }
-  };//loadUser
-  
-  // Очистка токена
-  function clearToken() {
-    userToken.value = null;
-    try {
-      localStorage.removeItem(STORAGE_KEYS.TOKEN);
-    } catch (error) {
-      console.error('Ошибка при удалении токена:', error);
-    }
-    store.commit('user/SET_USER', null);
-  };//clearToken
-  
-  // Выход из системы
-  function logout() {
-    console.log("logout")
-    clearToken();
-    window.location.reload();
-  };//logout
-  
-  // Текстовое представление статуса
-  function textStatus(status) {
-    const statusMap = {
-      [USER_STATUS.PHONE]: 'В сети',
-      [USER_STATUS.OFFLINE]: 'Не в сети',
-      [USER_STATUS.DND]: 'Не беспокоить',
-      [USER_STATUS.INACTIVE]: 'Неактивен',
-      [USER_STATUS.ONLINE]: 'В сети',
-      [USER_STATUS.STREAMING]: 'В сети'
-    };
-    
-    return statusMap[status] || 'Неизвестный статус';
   }
-  
-  // Автоматическая загрузка пользователя при монтировании
-  onMounted(() => {
-    if (userToken.value && !user.value) {
-      loadUser();
-    }
-  });
 
-  
-  return {
-    // Состояние
-    user,
-    userToken,
-    isAuthenticated,
-    userName,
-    
-    // Методы
-    loadUser,
-    clearToken,
-    logout,
-    textStatus,
-  };
+  if (!userToken.value) {
+    user.value = null;
+    userCheck.value.token = false;
+    userCheck.value.user = false;
+    return;
+  }
+
+  try {
+    let payload = parseJwt(userToken.value);
+    let currentTime = Math.floor(Date.now() / 1000);
+
+    if (!payload || !payload.id || (payload.exp && currentTime >= payload.exp)) {
+      throw new Error('Token is invalid or expired');
+    }
+
+    let userData = {
+      id: payload.id,
+      name: payload.name || '',
+      nickname: payload.nickname || '',
+      email: payload.email || '',
+      birthdate: payload.birthdate || '',
+      roles: payload.roles || [],
+      exp: payload.exp,
+    };
+
+    user.value = userData;
+    isAuthenticated.value = true;
+
+    userCheck.value.token = !!userToken.value;
+    userCheck.value.user = !!user.value;
+
+    setTimeout(() => logout(), payload.exp * 1000 - Date.now());
+  } catch (error) {
+    console.error('Error user loading: ', error);
+    logout();
+  }
+  //console.log(userCheck)
 }
 
-// Дополнительные утилиты (чистые функции)
+export function clearToken() {
+  userToken.value = null;
+  try {
+    localStorage.removeItem(STORAGE_KEYS.TOKEN);
+  } catch (error) {
+    console.error('Ошибка при удалении токена:', error);
+  }
+  user.value = null;
+};
+
+export function logout() {
+  clearToken();
+  window.location.reload();
+}
+
+export function textStatus(status) {
+  const statusMap = {
+    [USER_STATUS.PHONE]: 'В сети',
+    [USER_STATUS.OFFLINE]: 'Не в сети',
+    [USER_STATUS.DND]: 'Не беспокоить',
+    [USER_STATUS.INACTIVE]: 'Неактивен',
+    [USER_STATUS.ONLINE]: 'В сети',
+    [USER_STATUS.STREAMING]: 'В сети'
+  };
+  
+  return statusMap[status] || 'Неизвестный статус';
+}
+
+onMounted(() => {
+  if (userToken.value && !user.value) {
+    loadUser();
+  }
+});
+
 export const isTokenValid = (token) => {
   if (!token) return false;
   try {

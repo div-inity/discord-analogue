@@ -12,8 +12,7 @@
 
 <script setup>
 import Navbar from '@/components/Navbar.vue'
-import { userComposable } from '@/composables/userComposable';
-const { user } = userComposable();
+import { user } from '@/composables/userComposable';
 </script>
 <style lang="scss">
 body {

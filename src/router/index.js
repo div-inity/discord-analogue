@@ -5,6 +5,8 @@ import FriendsView from "../views/FriendsView.vue";
 import store from '@/store';
 import { computed } from 'vue';
 
+import { isAuthenticated } from '@/composables/userComposable'
+
 const routes = [
   {
     path: "/",
@@ -145,7 +147,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // Проверяем авторизацию
-  const isAuthenticated = computed(() => store.getters['user/getUser']).value.id && true; // Булево значение
   
   // Список публичных страниц
   const publicPages = ['login', 'register']
@@ -153,14 +154,14 @@ router.beforeEach((to, from, next) => {
   // Если страница требует авторизации (все кроме login/register)
   if (!publicPages.includes(to.name)) {
     // Если не авторизован - на логин
-    if (!isAuthenticated) {
+    if (!isAuthenticated.value) {
       next({ name: 'login' })
     } else {
       next() // авторизован - пропускаем
     }
   } else {
     // Если авторизован и пытается зайти на login/register - на главную
-    if (isAuthenticated) {
+    if (isAuthenticated.value) {
       next({ name: 'friends' })
     } else {
       next() // не авторизован - пропускаем на login/register

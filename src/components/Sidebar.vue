@@ -109,15 +109,26 @@ import Avatar from './Avatar.vue';
 
 // Композаблы
 import { generalFunctions } from '@/composables/generalFunctions';
-import { dialogComposable } from '@/composables/dialogComposable';
+import { dialogNames, memberWord, dialogs, setActiveDialogID, setUnreadDialogs } from '@/composables/dialogComposable';
+import { useSocket } from '@/composables/useSocket';
 
 // Иконки
 import { sidebarIcons } from '@/assets/icons';
 
+const { socket } = useSocket({
+  'dialog:getList': onDialogGetList
+});
+
+function onDialogGetList(data) {
+  dialogs.value = data;
+  setUnreadDialogs();
+}
+
+socket.emit('dialog:getList');
+
 const { t } = useI18n();
 const route = useRoute();
 
-const { dialogNames, memberWord, dialogs, setActiveDialogID } = dialogComposable();
 const { sidebarWidth, updateSidebarWidth, headerHeight } = generalFunctions();
 
 const actions = ref( // Функционал сайдбара
