@@ -4,8 +4,8 @@
       <h1 class="greetings">{{ t('auth.greetings') }}</h1>
       <p class="subgreetings">{{ t('auth.subgreetings') }}</p>
 
-      <div v-for="field in Object.values(fields)" 
-        :key="field.id" 
+      <div v-for="field in Object.values(fields)"
+        :key="field.id"
         class="flex column form-row">
         <label :for="field.id">
           {{ field.label }}
@@ -13,16 +13,16 @@
           </span>
         </label>
 
-        <input 
-          :type="field.type || 'text'" 
-          :id="field.id" 
+        <input
+          :type="field.type || 'text'"
+          :id="field.id"
           @input="validateField(field)"
           v-model="field.value" />
 
-        <Hint 
-          v-show="field.error" 
+        <Hint
+          v-show="field.error"
           :text="field.error"
-          :show="!!field.error" 
+          :show="!!field.error"
           :color="'var(--muted-notification-color)'"
           icon="info" />
       </div>
@@ -66,15 +66,16 @@ const fields = reactive({
     error: '',
     id: 'pass',
     type: 'password',
-  }
-})
+  },
+});
+
 function validateForm () {
   var validated = false;
   Object.values(fields).forEach(f => {
       validated = validateField(f);
   });
   return validated; 
-};//validateForm
+};
 
 function validateField (field) {
   var validated = false;
@@ -92,11 +93,13 @@ function validateField (field) {
       : t('auth.mailError');
     if (field.error) validated = false;
   }
+
   return validated;
 };//validateField
 
 function auth () {
   if (!validateForm()) return;
+
   fetch('/api/v1/auth', {
     method: 'POST',
     headers: {
@@ -105,7 +108,7 @@ function auth () {
     body: JSON.stringify({ 
       email: fields.email.value,
       password: fields.pass.value,
-    })
+    }),
   })
   .then(response => {
     if (!response.ok) {
@@ -121,7 +124,7 @@ function auth () {
   .catch(error => {
     console.error('Ошибка при POST-запросе:', error);
   });
-};//auth
+};
 
 </script>
 <style lang="scss">

@@ -33,7 +33,7 @@
               v-for="d in dialogs" 
               :key="d.uuid" 
               @click="goToChat(d.uuid)" 
-              :class="{ 'active': d.uuid === route.params?.id }" 
+              :class="{ 'active': d.uuid === route.params?.id }"
               class="dialog flex row"
             >
               <!-- Аватар -->
@@ -58,7 +58,7 @@
                 <!-- Название диалога или участников -->
                 <div 
                   class="names" 
-                  v-if="d.members_info?.length > 2" 
+                  v-if="d.members_info?.length > 2"
                   v-tippy="(!d.custom_name) ? { content: dialogNames(d.members_info), placement: 'top' } : null"
                 >
                   {{ d.custom_name || dialogNames(d.members_info) }}
@@ -76,7 +76,7 @@
               <!-- Иконка удаления диалога -->
               <button 
                 class="remove-dialog" 
-                v-html="sidebarIcons.remove" 
+                v-html="sidebarIcons.remove"
                 @click.stop="removeDialog(d?.uuid)"
               ></button>
             </div>
@@ -95,7 +95,6 @@
 
     <!-- Блок изменения ширины сайдбара -->
     <div class="resize-handle" @mousedown="startResize"></div>
-
 
   </div>
 </template>

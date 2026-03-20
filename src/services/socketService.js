@@ -8,8 +8,8 @@ export function initSocket() {
       autoConnect: false,
       transports: ['websocket'],
       auth: {
-        token: localStorage.getItem('token') || null
-      }
+        token: localStorage.getItem('token') || null,
+      },
     });
   }
   return socket;

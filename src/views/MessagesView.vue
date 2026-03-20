@@ -6,7 +6,7 @@
         <template v-slot:page-title v-if="route.params?.id">
           <template v-if="members_info?.length > 2">
             <!-- Мульти-аватар -->
-            <Avatar :status="null" size="30"  multy :avatars="null"
+            <Avatar :status="null" size="30" multy :avatars="null"
             outline="var(--system-back-color2)"></Avatar>
 
             <!-- Мульти-имя -->
@@ -39,11 +39,11 @@
         <Content :RightAside="WIDTHASIDE">
           <Chat 
             v-if="chat?.length"
-            :messages="chat" 
+            :messages="chat"
             @scrolled="loadmessages()"/>
-          <TextField 
-            height="62" 
-            :placeholder="'Написать '+ dNames" 
+          <TextField
+            height="62"
+            :placeholder="'Написать '+ dNames"
             color="var(--system-back-color4)"
             @send="(message) => {newMessage = message; sendMessage()}"
             multyline
@@ -68,7 +68,6 @@
 
 </template>
 <script setup>
-import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import { ref, onBeforeUnmount, watch } from 'vue';
 
@@ -109,10 +108,12 @@ function sendMessage() {
   if (!newMessage.value?.trim()) {
     return;
   }
+
   const msg = {
     message: newMessage.value,
     dialog: activeDialogID.value,
   };
+
   socket.emit('chat:message', msg);
   newMessage.value = '';
 };
@@ -132,17 +133,16 @@ async function loadChat() { // Смена диалога
   });
 
   // Если совершен переход в другой диалог или актуального диалога нет
-  await getDialogFieldByID(route.params?.id, 'members_info') // Загружаем в глобальную переменную members_info инфо о юзерах
+  await getDialogFieldByID(route.params?.id, 'members_info');
   const custom_name = await getDialogFieldByID(route.params?.id, "custom_name");
   dNames.value = (custom_name.value.length) ? custom_name.value : dialogNames(members_info.value);
 };
 
 function loadmessages() { // Подгрузка старых сообщений
-  console.log("chat", chat.value)
   const payload = {
     dialog_id: activeDialogID.value,
     offset: chat.value?.length,
-  }
+  };
   socket.emit('chat:load', payload);
 };
 

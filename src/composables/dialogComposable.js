@@ -1,8 +1,6 @@
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { user, userToken } from './userComposable';
 import { sleep } from './generalFunctions';
-import { useSocket } from './useSocket';
-import { initSocket } from '@/services/socketService';
 
 export const dialogs = ref([]);
 
@@ -14,16 +12,17 @@ export function dialogNames(m_info, field = 'nickname') { //Для перечи�
   if (!m_info) {
     return '';
   }
+
   const filtered_info = m_info.filter(item => item.id !== Number(user.value.id)); // Удаление из списка имени хозяина аккаунта
   const members_names = filtered_info
-  ?.map(item => item[field])   // использовать переданное поле
-  .filter(name => name !== undefined && name !== null); // исключить undefined/null
-  
+    ?.map(item => item[field])   // использовать переданное поле
+    .filter(name => name !== undefined && name !== null); // исключить undefined/null
+
   if (!members_names || !Array.isArray(members_names)) {
     return '';
   }
   return members_names.join(', ');
-};// dialogNames
+};
 
 export function memberWord(count) { // Для указания кол-ва участников
   const by10 = count % 10;
@@ -31,12 +30,14 @@ export function memberWord(count) { // Для указания кол-ва уч�
 
   if (by10 === 1 && by100 !== 11) {
     return ` участник`;
-  } else if (
+  }
+  else if (
     (by10 >= 2 && by10 <= 4) &&
     !(by100 >= 12 && by100 <= 14)
   ) {
     return ` участника`;
-  } else {
+  }
+  else {
     return ` участников`;
   }
 };
@@ -51,8 +52,8 @@ export async function setDialogs() { // Поиск всей информации
         'Authorization': `Bearer ${token}`
       }
     });
+
     const data = await response.json();
-    //store.commit('private_msg/SET_DIALOGS', data);
     dialogs.value = data;
     setUnreadDialogs();
     return data;
@@ -62,25 +63,27 @@ export async function setDialogs() { // Поиск всей информации
 };
 
 export async function setChat(uuid) { // Получение инфо об одном диалоге по id диалога
-  const token = userToken.value; 
+  const token = userToken.value;
+
   try {
     const response = await fetch(`/api/v1/dialogs/${uuid}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
+        'Authorization': `Bearer ${token}`,
+      },
     });
+
     const data = await response.json();
-    
+
     return data;
   } catch (error) {
     console.error('Ошибка при GET-запросе setChat:', error);
   }
-};//setChat
+};
 
 export function setUnreadDialogs() { // Вывод инфо обо всех непрочитанных диалогах
-  const r = computed(() => dialogs.value.filter(n => parseInt(n?.unread_count) > 0))
+  const r = computed(() => dialogs.value.filter(n => parseInt(n?.unread_count) > 0));
   unreadDialogs.value = r.value;
 };
 
@@ -88,13 +91,13 @@ export function setActiveDialogID(uuid) { // Установить айди от�
   activeDialogID.value = uuid;
 };
 
-
 export async function getDialogFieldByID(uuid, field) { // Получить значение поля любого диалога
   while (dialogs.value.length == 0) {
     await sleep(200);
   }
   // Проверяем наличие диалога с этим uuid
   const dialog = dialogs.value.find(d => d.uuid === uuid);
+
   if (!dialog) {
     console.warn('Диалог не найден!');
     return [];
@@ -102,7 +105,6 @@ export async function getDialogFieldByID(uuid, field) { // Получить зн
 
   // Получаем данные из хранилища и присваиваем реактивной переменной
   const f = ref(null);
-  //f.value = store.getters['private_msg/getDialogField'](uuid, field) || [];
   f.value = dialogs.value.find(d => d.uuid === uuid)[field] || [];
   if (field == 'members_info') members_info.value = f.value;
   return f;
@@ -120,5 +122,5 @@ export function dialogComposable () {
     setChat,
     setActiveDialogID,
     getDialogFieldByID,
-  }
+  };
 }

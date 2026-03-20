@@ -1,4 +1,4 @@
-import { computed, onMounted, ref, reactive } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const STORAGE_KEYS = {
   TOKEN: 'token',
@@ -41,6 +41,7 @@ function parseJwt(token) {
   if (!token) return null;
   try {
     const base64Url = token.split('.')[1];
+
     if (!base64Url) return null;
     
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -59,6 +60,7 @@ function parseJwt(token) {
 
 export const user = ref(null);
 export const isAuthenticated = ref(false);
+
 export const userName = () => {
   if (!user.value) return 'Пользователь';
   return user.value.name || user.value.nickname || 'Пользователь';
@@ -113,7 +115,6 @@ export function loadUser(token = null) {
     console.error('Error user loading: ', error);
     logout();
   }
-  //console.log(userCheck)
 }
 
 export function clearToken() {
@@ -124,7 +125,7 @@ export function clearToken() {
     console.error('Ошибка при удалении токена:', error);
   }
   user.value = null;
-};
+}
 
 export function logout() {
   clearToken();
@@ -138,9 +139,9 @@ export function textStatus(status) {
     [USER_STATUS.DND]: 'Не беспокоить',
     [USER_STATUS.INACTIVE]: 'Неактивен',
     [USER_STATUS.ONLINE]: 'В сети',
-    [USER_STATUS.STREAMING]: 'В сети'
+    [USER_STATUS.STREAMING]: 'В сети',
   };
-  
+
   return statusMap[status] || 'Неизвестный статус';
 }
 

@@ -2,8 +2,6 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import MainView from "../views/MainView.vue";
 import MessagesView from "../views/MessagesView.vue";
 import FriendsView from "../views/FriendsView.vue";
-import store from '@/store';
-import { computed } from 'vue';
 
 import { isAuthenticated } from '@/composables/userComposable'
 
@@ -139,7 +137,6 @@ const routes = [
   },
 ];
 
-
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
@@ -147,24 +144,27 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // Проверяем авторизацию
-  
+
   // Список публичных страниц
-  const publicPages = ['login', 'register']
-  
+  const publicPages = ['login', 'register'];
+
   // Если страница требует авторизации (все кроме login/register)
   if (!publicPages.includes(to.name)) {
     // Если не авторизован - на логин
     if (!isAuthenticated.value) {
-      next({ name: 'login' })
-    } else {
-      next() // авторизован - пропускаем
+      next({ name: 'login' });
     }
-  } else {
+    else {
+      next(); // авторизован - пропускаем
+    }
+  }
+  else {
     // Если авторизован и пытается зайти на login/register - на главную
     if (isAuthenticated.value) {
-      next({ name: 'friends' })
-    } else {
-      next() // не авторизован - пропускаем на login/register
+      next({ name: 'friends' });
+    }
+    else {
+      next(); // не авторизован - пропускаем на login/register
     }
   }
 });
