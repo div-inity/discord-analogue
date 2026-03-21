@@ -218,6 +218,8 @@ async function validateField (field) {
     errors.value.push({id: field.id, error: field.error});
   }
   else if (field.id === 'nickname') {
+    // не валидируется
+    // нужно сделать автоматическое предложение никнейма на основе имени или мейла
   }
   else if (field.id === 'name') {
     const check = await checkName();
@@ -253,7 +255,11 @@ async function validateForm() {
   }
 
   if (errors.value.length) {
-    return false;
+    for (let i in errors.value) {
+      if (i.error == true) {
+        return false;
+      }
+    }
   }
   
   // Валидация даты - выполняется только если все поля прошли
@@ -270,7 +276,7 @@ async function validateForm() {
 
 async function createAccount() {
   if (await validateForm() == false) return;
-
+  console.log('ok')
   const date = `${selectedYear.value}-${(String)(months.value.indexOf(selectedMonth.value)+1).padStart(2, '0')}-${(String)(selectedDay.value).padStart(2, '0')}`;
 
   fetch('/api/v1/register', {
@@ -293,6 +299,7 @@ async function createAccount() {
     return response.json();
   })
   .then(data => {
+    console.log(data)
     router.push({name: 'login'})
   })
   .catch(error => {

@@ -5,38 +5,108 @@
         <Icon name="search" size="18"/>
       </template>
     </TextField>
+
     <p class="title-list-friends">
-      {{ title }} {{ list?.length }}
+      {{ title || null }} {{ list?.length || null }}
     </p>
+
     <TransitionGroup name="list" tag="div" class="list-friends flex column">
-      <div class="list-friends-items flex column" v-for="(item, i) in list" :key="i">
-        <Divider h color="var(--system-back-color3)" width="98" />
-        <div class="list-friends-item flex row">
-          <Avatar :avatar="item.avatar" size="40" :status="item.status"></Avatar>
-          <div class="item-info flex column">
-            <p class="nickname">{{ item.nickname }}<span class="name">{{ item.name }}</span></p>
-            <span>{{ textStatus(item.status) }}</span>
-          </div>
-          <div class="item-options flex row">
-            <button 
-              v-html="mainIcons.chat"
-              class="radial"
-              v-tippy="{ content: 'Сообщение', placement: 'top' }
-            "></button>
-            <button
-              v-html="mainIcons.options"
-              class="radial"
-              v-tippy="{ content: 'Ещё', placement: 'top' }"
-              @click="showPopup(i)"
-            ></button>
-            <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
-              <template v-slot:items>
-                <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
-              </template>
-            </PopUp>
+      <template v-if="!list?.outcome && !list?.income" :key="currentBlock">
+        <div class="list-friends-items flex column" v-for="(item, i) in list" :key="i">
+          <Divider h color="var(--system-back-color3)" width="98" />
+          <div class="list-friends-item flex row">
+            <Avatar :avatar="item?.avatar || null" size="40" :status="item?.status || null"></Avatar>
+            <div class="item-info flex column">
+              <p class="nickname">{{ item?.nickname }}<span class="name">{{ item?.name }}</span></p>
+              <span>{{ textStatus(item?.status) }}</span>
+            </div>
+            <div class="item-options flex row">
+              <button 
+                v-html="mainIcons.chat"
+                class="radial"
+                v-tippy="{ content: 'Сообщение', placement: 'top' }
+              "></button>
+              <button
+                v-html="mainIcons.options"
+                class="radial"
+                v-tippy="{ content: 'Ещё', placement: 'top' }"
+                @click="showPopup(i)"
+              ></button>
+              <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
+                <template v-slot:items>
+                  <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
+                </template>
+              </PopUp>
+            </div>
           </div>
         </div>
-      </div>
+      </template>
+
+      <template v-else :key="currentBlock+1">
+        <template v-if="list?.income?.length">
+          <p class="title-list-friends">Входящие ({{ list.income.length }})</p>
+          <div class="list-friends-items flex column" v-for="(item, i) in list.income" :key="i">
+            <Divider h color="var(--system-back-color3)" width="98" />
+            <div class="list-friends-item flex row">
+              <Avatar :avatar="item?.avatar || null" size="40" :status="item?.status || null"></Avatar>
+              <div class="item-info flex column">
+                <p class="nickname">{{ item.nickname }}<span class="name">{{ item.name }}</span></p>
+                <span>{{ textStatus(item.status) }}</span>
+              </div>
+              <div class="item-options flex row">
+                <button 
+                  v-html="mainIcons.chat"
+                  class="radial"
+                  v-tippy="{ content: 'Сообщение', placement: 'top' }
+                "></button>
+                <button
+                  v-html="mainIcons.options"
+                  class="radial"
+                  v-tippy="{ content: 'Ещё', placement: 'top' }"
+                  @click="showPopup(i)"
+                ></button>
+                <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
+                  <template v-slot:items>
+                    <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
+                  </template>
+                </PopUp>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template v-if="list?.outcome?.length">
+          <p class="title-list-friends">Исходящие ({{ list.outcome.length }})</p>
+          <div class="list-friends-items flex column" v-for="(item, i) in list.outcome" :key="i">
+            <Divider h color="var(--system-back-color3)" width="98" />
+            <div class="list-friends-item flex row">
+              <Avatar :avatar="item.avatar || null" size="40" :status="item.status"></Avatar>
+              <div class="item-info flex column">
+                <p class="nickname">{{ item.nickname }}<span class="name">{{ item.name }}</span></p>
+                <span>{{ textStatus(item.status) }}</span>
+              </div>
+              <div class="item-options flex row">
+                <button 
+                  v-html="mainIcons.chat"
+                  class="radial"
+                  v-tippy="{ content: 'Сообщение', placement: 'top' }
+                "></button>
+                <button
+                  v-html="mainIcons.options"
+                  class="radial"
+                  v-tippy="{ content: 'Ещё', placement: 'top' }"
+                  @click="showPopup(i)"
+                ></button>
+                <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
+                  <template v-slot:items>
+                    <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
+                  </template>
+                </PopUp>
+              </div>
+            </div>
+          </div>
+        </template>
+        
+      </template>
     </TransitionGroup>
   </div>
 </template>

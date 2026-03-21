@@ -53,9 +53,12 @@ const router = useRouter();
 
 const { socket } = useSocket({
   'users:getFriends': getFriends,
+  'users:getBlockRequests': getBlockRequests,
+  'users:getRequests:income': getRequestsIncome,
+  'users:getRequests:outcome': getRequestsOutcome,
 });
 
-const friends = ref(null);
+const list = ref(null);
 const friendsWithMode = ref(null);
 const title = ref(null);
 const mode = ref(null);
@@ -65,22 +68,26 @@ const mode = ref(null);
 const getFriendsByMode = (currentMode) => {
   //const friends = store.state.friends?.friends || {};
   store.commit('user/SET_FRIEND_LIST_MODE', currentMode);
-  console.log(store.state.user.friendListMode)
+  //console.log(store.state.user.friendListMode)
   switch (currentMode) {
     case 'online':
       title.value = "В сети";
-      return (friends.added || []).filter(friend => friend.status !== 'offline');
+      return 
     case 'all':
       title.value = "Всего друзей";
-      return friends || [];
+      socket.emit('users:getFriends');
+      return 
     case 'pending':
       title.value = "Заявки в друзья";
-      return friends.pending || [];
+      list.value = {income: null, outcome: null};
+      //console.log('l', list.value)
+      socket.emit('users:getRequests', 'outcome');
+      socket.emit('users:getRequests', 'income');
+      return 
     case 'blocked':
       title.value = "Игнорируются";
-      return friends.blocked || [];
-    default:
-      return [];
+      socket.emit('users:getBlockRequests');
+      return 
   }
 };
 // ПЕРЕДЕЛАТЬ - МОД ЗАПИСАТЬ В СТОР, ТАК КАК ПЕРЕХОД ПО ДИАЛОГАМ, а потом возврат в друзья 
@@ -98,15 +105,29 @@ const navLinks = [
 ];
 
 onMounted(() => {
-  socket.emit('users:getFriends');
   mode.value = store.state.user.friendListMode;
   setMode(mode.value)
 });
 
 
 function getFriends(data) {
-  //console.log(data)
-  friends.value = data
+  //console.log('friends',data)
+  list.value = data
+}
+
+function getBlockRequests (data) {
+  //console.log('block',data)
+  list.value = data
+}
+
+function getRequestsIncome (data) {
+  //console.log('income', data)
+  list.value.income = data
+}
+
+function getRequestsOutcome (data) {
+  //console.log('outcome', data)
+  list.value.outcome = data
 }
 
 watch(
@@ -120,7 +141,7 @@ watch(
 );
 
 provide('title', title);
-provide('list', friends);
+provide('list', list);
 </script>
 <style lang="scss">
 
