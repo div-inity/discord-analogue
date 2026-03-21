@@ -1,4 +1,6 @@
 <template>
+  <p>bond@ya.ru</p>
+  <p>veselaya@ya.ru</p>
   <div class="auth-screen">
     <form action="" class="auth-form">
       <h1 class="greetings">{{ t('auth.greetings') }}</h1>
