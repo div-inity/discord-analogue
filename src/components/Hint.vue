@@ -63,6 +63,7 @@ body {
       line-height: 163%;
       text-align: left;
       font-family: var(--font-family-300);
+      align-items: center;
 
       i {
         width: 17px;

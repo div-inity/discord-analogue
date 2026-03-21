@@ -16,6 +16,7 @@
           v-model="field.value"
           @focus="field.focused = true"
           @blur="() => { field.focused = false; validateField(field) }"
+          
           @input="validateField(field)"
           autocomplete="off" />
         <Hint 
@@ -86,6 +87,7 @@ const selectedMonth = ref(months.value[0]);
 const selectedDay = ref(1);
 const dateHint = ref('');
 const dateError = ref(false);
+const errors = ref([]);
 const fields = reactive({
   email: {
     label: 'E-mail',
@@ -140,19 +142,6 @@ function shouldShowHint (fieldId) {
   return field.focused || field.error;
 };
 
-const months = computed(() => {
-  if (locale.value === 'en') {
-    return [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
-    ];
-  }
-  return [
-    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
-  ]
-})
-
 function isValidDate(y, m, d) {
   const month = months.value.indexOf(m)
   if (month === undefined) {
@@ -167,74 +156,120 @@ function isValidDate(y, m, d) {
   );
 };
 
-function validateField (field) {
-  var validated = false;
+async function checkName() {
+  return fetch('/api/v1/checkName', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: fields.name.value,
+    }),
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.json();
+  })
+  .then(data => {
+    return data.success;
+  })
+  .catch(error => {
+    console.error('Ошибка при POST-запросе checkName:', error);
+  });
+}
 
+async function checkMail() {
+  return fetch('/api/v1/checkEmail', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      email: fields.email.value,
+    }),
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.json();
+  })
+  .then(data => {
+    return data.success;
+  })
+  .catch(error => {
+    console.error('Ошибка при POST-запросе checkName:', error);
+  });
+}
+
+async function validateField (field) {
   if (field.value == '' && field.required) {
     field.error = t('reg.required');
-    validated = false;
+    errors.value.push({id: field.id, error: field.error});
   }
 
   if (field.id === 'email') {
-    field.error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)
-      ? ''
-      : t('reg.mailError');
+    const check = await checkMail();
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value);
+    field.error = !isEmailValid && t('reg.mailError1')
+      ||
+      check == false && t('reg.mailError2');
 
-    validated = false;
+    errors.value.push({id: field.id, error: field.error});
   }
   else if (field.id === 'nickname') {
-    validated = true;
   }
   else if (field.id === 'name') {
+    const check = await checkName();
     field.error = 
       (field.value.length < 2 || field.value.length > 32) && t('reg.nameError1')
       ||
-      (/[а-яёА-ЯЁ]/.test(field.value)) && t('reg.nameError2');
-    validated = false;
+      (/[а-яёА-ЯЁ]/.test(field.value)) && t('reg.nameError2')
+      ||
+      check == false && t('reg.nameError3');
+    errors.value.push({id: field.id, error: field.error});
   }
   else if (field.id === 'password') {
     const error = t('reg.passError');
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
     field.error = (!passwordRegex.test(field.value)) && error;
-    validated = false;
+    errors.value.push({id: field.id, error: field.error});
   }
   else if (field.id === 'repassword') {
     field.error = (field.value != fields.password.value) && t('reg.repassError');
-    validated = false;
+    errors.value.push({id: field.id, error: field.error});
   }
 
   if (!field.error) {
     return true;
   }
-
-  return validated;
 };
 
 
-function validateForm () {
-  var validated = false;
-  Object.values(fields).forEach(f => {
-      validated = validateField(f);
-  });
-
-  if (validated) { // Дата валидируется после остальных полей
-    if (!isValidDate(selectedYear.value, selectedMonth.value, selectedDay.value)) {
-      validated = false;
-      dateError.value = true;
-      dateHint.value = 'Дата не корректна';
-    }
-    else {
-      validated = true;
-      dateError.value = false;
-      dateHint.value = '';
-    }
+async function validateForm() {
+  errors.value = [];
+  for (const f of Object.values(fields)) {
+    await validateField(f);
   }
 
-  return validated;
-};
+  if (errors.value.length) {
+    return false;
+  }
+  
+  // Валидация даты - выполняется только если все поля прошли
+  if (!isValidDate(selectedYear.value, selectedMonth.value, selectedDay.value)) {
+    dateError.value = true;
+    dateHint.value = t('reg.dateError');
+    return false;
+  } else {
+    dateError.value = false;
+    dateHint.value = '';
+    return true;
+  }
+}
 
 async function createAccount() {
-  if (!validateForm()) return;
+  if (await validateForm() == false) return;
 
   const date = `${selectedYear.value}-${(String)(months.value.indexOf(selectedMonth.value)+1).padStart(2, '0')}-${(String)(selectedDay.value).padStart(2, '0')}`;
 
