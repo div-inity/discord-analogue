@@ -87,6 +87,7 @@ const selectedMonth = ref(months.value[0]);
 const selectedDay = ref(1);
 const dateHint = ref('');
 const dateError = ref(false);
+const errors = ref([]);
 const fields = reactive({
   email: {
     label: 'E-mail',
@@ -202,11 +203,9 @@ async function checkMail() {
 }
 
 async function validateField (field) {
-  var validated = false;
-
   if (field.value == '' && field.required) {
     field.error = t('reg.required');
-    validated = false;
+    errors.value.push({id: field.id, error: field.error});
   }
 
   if (field.id === 'email') {
@@ -216,10 +215,9 @@ async function validateField (field) {
       ||
       check == false && t('reg.mailError2');
 
-    validated = false;
+    errors.value.push({id: field.id, error: field.error});
   }
   else if (field.id === 'nickname') {
-    validated = true;
   }
   else if (field.id === 'name') {
     const check = await checkName();
@@ -229,35 +227,33 @@ async function validateField (field) {
       (/[а-яёА-ЯЁ]/.test(field.value)) && t('reg.nameError2')
       ||
       check == false && t('reg.nameError3');
-    validated = false;
+    errors.value.push({id: field.id, error: field.error});
   }
   else if (field.id === 'password') {
     const error = t('reg.passError');
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
     field.error = (!passwordRegex.test(field.value)) && error;
-    validated = false;
+    errors.value.push({id: field.id, error: field.error});
   }
   else if (field.id === 'repassword') {
     field.error = (field.value != fields.password.value) && t('reg.repassError');
-    validated = false;
+    errors.value.push({id: field.id, error: field.error});
   }
 
   if (!field.error) {
     return true;
   }
-  return validated;
 };
 
 
 async function validateForm() {
-  var isValid = false;
-
+  errors.value = [];
   for (const f of Object.values(fields)) {
-    isValid = await validateField(f);
-    
-    if (!isValid) {
-      return false;
-    }
+    await validateField(f);
+  }
+
+  if (errors.value.length) {
+    return false;
   }
   
   // Валидация даты - выполняется только если все поля прошли
