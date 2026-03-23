@@ -111,7 +111,7 @@ onMounted(() => {
 
 
 function getFriends(data) {
-  //console.log('friends',data)
+  console.log('friends',data)
   list.value = data
 }
 

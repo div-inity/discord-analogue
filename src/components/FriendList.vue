@@ -7,7 +7,7 @@
     </TextField>
 
     <p class="title-list-friends">
-      {{ title || null }} {{ list?.length || null }}
+      {{ title || null }} - {{ list?.length || list?.income?.length + list?.outcome?.length || 0 }}
     </p>
 
     <TransitionGroup name="list" tag="div" class="list-friends flex column">
@@ -55,21 +55,17 @@
               </div>
               <div class="item-options flex row">
                 <button 
-                  v-html="mainIcons.chat"
-                  class="radial"
-                  v-tippy="{ content: 'Сообщение', placement: 'top' }
-                "></button>
-                <button
-                  v-html="mainIcons.options"
-                  class="radial"
-                  v-tippy="{ content: 'Ещё', placement: 'top' }"
-                  @click="showPopup(i)"
+                  v-html="mainIcons.check_mark"
+                  class="radial accept"
+                  v-tippy="{ content: 'Принять', placement: 'top' }"
+                  @click="accept"
                 ></button>
-                <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
-                  <template v-slot:items>
-                    <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
-                  </template>
-                </PopUp>
+                <button 
+                  v-html="mainIcons.cross"
+                  class="radial reject"
+                  v-tippy="{ content: 'Игнорировать', placement: 'top' }"
+                  @click="reject"
+                ></button>
               </div>
             </div>
           </div>
@@ -86,15 +82,10 @@
               </div>
               <div class="item-options flex row">
                 <button 
-                  v-html="mainIcons.chat"
-                  class="radial"
-                  v-tippy="{ content: 'Сообщение', placement: 'top' }
-                "></button>
-                <button
-                  v-html="mainIcons.options"
-                  class="radial"
-                  v-tippy="{ content: 'Ещё', placement: 'top' }"
-                  @click="showPopup(i)"
+                  v-html="mainIcons.cross"
+                  class="radial cancel"
+                  v-tippy="{ content: 'Отмена', placement: 'top' }"
+                  @click="cancel"
                 ></button>
                 <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
                   <template v-slot:items>
@@ -156,6 +147,18 @@ function showPopup (popup) {
 function hidePopup () {
   visiblePopup.value = null;
 };
+
+function cancel() { // Отменить свою заявку в друзья
+  alert("cancel")
+}
+
+function accept() { // Принять заявку в друзья
+  alert("accept")
+}
+
+function reject() { // Не принимать входящую заявку в друзья
+  alert("reject")
+}
 </script>
 <style lang="scss">
 // стили для TransitionGroup:
@@ -195,6 +198,7 @@ function hidePopup () {
         cursor: pointer;
         max-height: 61px;
         position: relative;
+        transition: .3s background-color;
 
         &:hover {
           background-color: var(--system-back-color3);
@@ -231,13 +235,40 @@ function hidePopup () {
 
         .item-options {
           column-gap: 10px;
-
           button {
-            background-color: var(--system-back-color2);
             cursor: pointer;
+            color: var(--loud-text-color);
+            font-family: var(--font-family-600);
+          }
+
+          button.radial {
+            background-color: var(--system-back-color2);
             width: 40px;
             height: 40px;
             color: #ABABAB;
+
+            &.accept {
+              transition:  .3s background-color;
+              &:hover {
+                background-color: var(--light-green-color);
+              }
+            }
+
+            &.reject {
+              transition:  .3s background-color;
+              &:hover {
+                background-color: var(--notification-color);
+              }
+              
+            }
+
+            &.cancel {
+              &:hover {
+                svg path {
+                  fill: #ff6704;
+                }
+              }
+            }
 
             &:hover {
               svg path {
@@ -249,6 +280,10 @@ function hidePopup () {
               max-width: 100%;
               max-height: 100%;
               padding: 10px;
+
+              path {
+                transition: .3s fill;
+              }
             }
           }
         }
