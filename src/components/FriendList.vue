@@ -24,8 +24,9 @@
               <button 
                 v-html="mainIcons.chat"
                 class="radial"
-                v-tippy="{ content: 'Сообщение', placement: 'top' }
-              "></button>
+                v-tippy="{ content: 'Сообщение', placement: 'top' }"
+                @click="goToChat(item.dialog_id)"  
+              ></button>
               <button
                 v-html="mainIcons.options"
                 class="radial"
@@ -58,13 +59,13 @@
                   v-html="mainIcons.check_mark"
                   class="radial accept"
                   v-tippy="{ content: 'Принять', placement: 'top' }"
-                  @click="accept"
+                  @click="accept(item.req_id)"
                 ></button>
                 <button 
                   v-html="mainIcons.cross"
                   class="radial reject"
                   v-tippy="{ content: 'Игнорировать', placement: 'top' }"
-                  @click="reject"
+                  @click="reject(item.req_id)"
                 ></button>
               </div>
             </div>
@@ -85,7 +86,7 @@
                   v-html="mainIcons.cross"
                   class="radial cancel"
                   v-tippy="{ content: 'Отмена', placement: 'top' }"
-                  @click="cancel"
+                  @click="cancel(item.req_id)"
                 ></button>
                 <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
                   <template v-slot:items>
@@ -103,6 +104,9 @@
 </template>
 <script setup>
 import { ref, inject } from 'vue';
+import { useRouter } from 'vue-router';
+import { useSocket } from '@/composables/useSocket';
+
 import { textStatus } from '@/composables/userComposable';
 
 import Avatar from './Avatar.vue';
@@ -113,9 +117,15 @@ import Icon from '@/components/Icon.vue';
 
 import { mainIcons } from '@/assets/icons';
 
+const router = useRouter();
+
+const { socket } = useSocket({
+  'users:getRequests:income': getRequestsIncome,
+  'users:getRequests:outcome': getRequestsOutcome,
+});
+
 const title = inject('title');
 let list = inject('list');
-// Переделать, когда будут другие статусы отношений
 
 const visiblePopup = ref(null);
 const popupItems = ref([
@@ -148,16 +158,41 @@ function hidePopup () {
   visiblePopup.value = null;
 };
 
-function cancel() { // Отменить свою заявку в друзья
+function goToChat (uuid) {
+  if (uuid) {
+    console.log(uuid);
+    router.push(`/messages/${uuid}`);
+  }
+  else {
+    // Сделать логику создания чата и перехода к нему
+  }
+}
+
+function cancel(req_id) { // Отменить свою заявку в друзья
   alert("cancel")
 }
 
-function accept() { // Принять заявку в друзья
-  alert("accept")
+function accept(req_id) { // Принять заявку в друзья
+  const payload = { id: req_id, status: 'accepted'};
+  console.log(payload)
+  socket.emit('users:setRequestStatus', payload);
+  socket.emit('users:getRequests', 'outcome');
+      socket.emit('users:getRequests', 'income');
 }
 
-function reject() { // Не принимать входящую заявку в друзья
-  alert("reject")
+function reject(req_id) { // Не принимать входящую заявку в друзья
+  const payload = { id: req_id, status: 'blocked'};
+  console.log(payload)
+  socket.emit('users:setRequestStatus', payload);
+  socket.emit('users:getRequests', 'outcome');
+  socket.emit('users:getRequests', 'income');
+}
+
+function getRequestsIncome (data) {
+  list.value.income = data
+}
+function getRequestsOutcome (data) {
+  list.value.outcome = data
 }
 </script>
 <style lang="scss">
