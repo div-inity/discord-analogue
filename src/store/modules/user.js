@@ -48,9 +48,9 @@ export default {
       birthdate: '',
       }
     },
-    SET_FRIEND_LIST_MODE(state, mode) {
+    /* SET_FRIEND_LIST_MODE(state, mode) {
       state.friendListMode = mode;
-    }
+    } */
   },
   actions: {
     /* async updateUser({ commit, state }, updates) {

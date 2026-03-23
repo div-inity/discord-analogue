@@ -127,8 +127,19 @@ export function clearToken() {
   user.value = null;
 }
 
+function clearLocalStorage () {
+  try {
+    localStorage.removeItem('friendListMode');
+    //localStorage.removeItem('theme');
+    localStorage.removeItem('sidebarWidth');
+  } catch (error) {
+    console.error('Ошибка при удалении токена:', error);
+  }
+}
+
 export function logout() {
   clearToken();
+  clearLocalStorage();
   window.location.reload();
 }
 
