@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar-wrapper flex column" :style="{ width: sidebarWidth + 'px' }">
     <template v-if="route.meta.private_msg == true">
-      <div class="sidebar-header" :style="{height: headerHeight+ 'px'}">
+      <div class="sidebar-header" :style="{height: headerHeight+ 'px', padding: '10px'}">
         <button class="sidebar-search-dialog text">
           {{ t('sidebar.sidebarsearchdialog') }}
         </button>
@@ -85,7 +85,7 @@
       </menu>
     </template>
     <template v-else>
-      <div class="sidebar-header flex row" :style="{height: headerHeight+ 'px'}">
+      <div class="sidebar-header flex column" :style="{height: headerHeight+ 'px'}">
         <slot name="header"></slot>
       </div>
       <div class="other">
@@ -237,9 +237,9 @@ onBeforeUnmount(() => {
   * {
     user-select: none;
   }
-  &>* {
+  /* &>* {
     padding: 10px;
-  }
+  } */
 
   .sidebar-header {
     width: 100%;
@@ -263,6 +263,7 @@ onBeforeUnmount(() => {
   }
 
   .sidebar-actions {
+    margin: 10px;
 
     .sidebar-actions-link {
       color: var(--muted-text-color);
@@ -325,7 +326,6 @@ onBeforeUnmount(() => {
         background: transparent;
         width: 20px;
         aspect-ratio: 1 / 1;
-        cursor: pointer;
 
         &:hover svg * {
           fill: var(--main-text-color);
@@ -389,7 +389,6 @@ onBeforeUnmount(() => {
           background: transparent;
           width: 16px;
           height: 16px;
-          cursor: pointer;
           visibility: hidden;
           position: absolute;
           right: 7px;

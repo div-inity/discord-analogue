@@ -51,7 +51,6 @@ header {
     height: inherit;
 
     .header-action {
-      cursor: pointer;
 
       &:hover {
         rect {

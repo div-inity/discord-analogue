@@ -259,7 +259,6 @@ onMounted(() => {
   
 
   button {
-    cursor: pointer;
     width: auto;
     padding-inline: 10px;
     background-color: var(--system-purple-color);
@@ -274,6 +273,7 @@ onMounted(() => {
 
     &:disabled {
       filter: brightness(.7);
+      cursor: default;
 
       &:hover {
         background-color: var(--system-purple-color);

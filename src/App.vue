@@ -45,7 +45,6 @@ html {
   border: none;
   padding: 8px 16px;
   border-radius: 20px;
-  cursor: pointer;
   color: var(--main-text-color);
   transition: all 0.3s ease;
   position: absolute;

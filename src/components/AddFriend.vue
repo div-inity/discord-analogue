@@ -125,7 +125,6 @@ function Discovery() {
     font-size: 16px;
     border-radius: 8px;
     align-items: center;
-    cursor: pointer;
     transition: .3s background-color;
 
     &:hover {

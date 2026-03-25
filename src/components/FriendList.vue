@@ -338,7 +338,6 @@ watch(mode, (newMode, oldMode) => {
         .item-options {
           column-gap: 10px;
           button {
-            cursor: pointer;
             color: var(--loud-text-color);
             font-family: var(--font-family-600);
           }

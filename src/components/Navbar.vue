@@ -304,12 +304,15 @@ watchEffect(() => {
     margin-block: 8px;
   }
 
-  .home-link a {
-    &:not(.active) {
-      .avatar {
-        img {
-          background-color: var(--system-back-color2);
-        }
+  .home-link {
+    .avatar {
+      img {
+        background-color: var(--system-back-color2);
+      }
+    }
+    &:hover {
+      .avatar img{
+        background-color: var(--system-purple-color);
       }
     }
   }
@@ -436,7 +439,6 @@ watchEffect(() => {
       button {
         aspect-ratio: 1/1;
         background-color: transparent;
-        cursor: pointer;
         height: 29px;
         display: inline-flex;
         align-items: center;

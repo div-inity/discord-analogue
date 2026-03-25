@@ -86,5 +86,6 @@ export function generalFunctions() {
     windowWidth: state.windowWidth,
     windowHeight: state.windowHeight,
     headerHeight: state.headerHeight,
+    mainHeaderHeight: state.mainHeaderHeight
   };
 }

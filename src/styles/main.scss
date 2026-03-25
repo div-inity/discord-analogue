@@ -125,6 +125,7 @@ input,
 button {
   border: none;
   border-radius: 3px;
+  cursor: pointer;
 }
 
 input {
@@ -154,7 +155,6 @@ select {
 }
 
 button.text {
-  cursor: pointer;
   background-color: var(--system-back-color5);
   font-family: var(--font-family-500);
   font-size: 13px;

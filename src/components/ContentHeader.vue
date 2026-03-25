@@ -68,7 +68,6 @@ const setHeaderClass = () => {
       padding: 13px;
       display: inline-flex;
       background-color: transparent;
-      cursor: pointer;
 
       &:hover {
         svg * {
@@ -101,7 +100,6 @@ const setHeaderClass = () => {
         border-radius: 9px;
         padding: 8px 12px;
         background-color: transparent;
-        cursor: pointer;
         text-transform: capitalize;
 
         a {

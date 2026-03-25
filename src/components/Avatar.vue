@@ -187,7 +187,7 @@ function defineActivity () {
 }
 
 img {
-
+  transition: background-color .3s;
   background-position: center center;
   object-fit: cover;
 }
