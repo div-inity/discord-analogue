@@ -1,6 +1,13 @@
 <template>
   <p>bond@ya.ru</p>
   <p>veselaya@ya.ru</p>
+  <p>boss@ya.ru</p>
+  <p>devka@ya.ru</p>
+  <p>sub@ya.ru</p>
+  <p>bs@ya.ru</p>
+  <p>prr@ya.ru</p>
+  <p>a@ya.ru</p>
+  <p>karl@ya.ru</p>
   <div class="auth-screen">
     <form action="" class="auth-form">
       <h1 class="greetings">{{ t('auth.greetings') }}</h1>

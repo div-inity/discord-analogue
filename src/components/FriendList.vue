@@ -5,43 +5,108 @@
         <Icon name="search" size="18"/>
       </template>
     </TextField>
+
     <p class="title-list-friends">
-      {{ title }} {{ list?.length }}
+      {{ title || null }} - {{ list?.length || list?.income?.length + list?.outcome?.length || 0 }}
     </p>
+
     <TransitionGroup name="list" tag="div" class="list-friends flex column">
-      <div class="list-friends-items flex column" v-for="(item, i) in list" :key="i">
-        <Divider h color="var(--system-back-color3)" width="98" />
-        <div class="list-friends-item flex row">
-          <Avatar :avatar="item.avatar" size="40" :status="item.status"></Avatar>
-          <div class="item-info flex column">
-            <p class="nickname">{{ item.nickname }}<span class="name">{{ item.name }}</span></p>
-            <span>{{ textStatus(item.status) }}</span>
-          </div>
-          <div class="item-options flex row">
-            <button 
-              v-html="mainIcons.chat"
-              class="radial"
-              v-tippy="{ content: 'Сообщение', placement: 'top' }
-            "></button>
-            <button
-              v-html="mainIcons.options"
-              class="radial"
-              v-tippy="{ content: 'Ещё', placement: 'top' }"
-              @click="showPopup(i)"
-            ></button>
-            <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
-              <template v-slot:items>
-                <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
-              </template>
-            </PopUp>
+      <template v-if="!list?.outcome && !list?.income" :key="currentBlock">
+        <div class="list-friends-items flex column" v-for="(item, i) in list" :key="i">
+          <Divider h color="var(--system-back-color3)" width="98" />
+          <div class="list-friends-item flex row">
+            <Avatar :avatar="item?.avatar || null" size="40" :status="item?.status || null"></Avatar>
+            <div class="item-info flex column">
+              <p class="nickname">{{ item?.nickname }}<span class="name">{{ item?.name }}</span></p>
+              <span>{{ textStatus(item?.status) }}</span>
+            </div>
+            <div class="item-options flex row">
+              <button 
+                v-html="mainIcons.chat"
+                class="radial"
+                v-tippy="{ content: 'Сообщение', placement: 'top' }"
+                @click="goToChat(item.dialog_id)"  
+              ></button>
+              <button
+                v-html="mainIcons.options"
+                class="radial"
+                v-tippy="{ content: 'Ещё', placement: 'top' }"
+                @click="showPopup(i)"
+              ></button>
+              <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
+                <template v-slot:items>
+                  <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
+                </template>
+              </PopUp>
+            </div>
           </div>
         </div>
-      </div>
+      </template>
+
+      <template v-else :key="currentBlock+1">
+        <template v-if="list?.income?.length">
+          <p class="title-list-friends">Входящие ({{ list.income.length }})</p>
+          <div class="list-friends-items flex column" v-for="(item, i) in list.income" :key="i">
+            <Divider h color="var(--system-back-color3)" width="98" />
+            <div class="list-friends-item flex row">
+              <Avatar :avatar="item?.avatar || null" size="40" :status="item?.status || null"></Avatar>
+              <div class="item-info flex column">
+                <p class="nickname">{{ item.nickname }}<span class="name">{{ item.name }}</span></p>
+                <span>{{ textStatus(item.status) }}</span>
+              </div>
+              <div class="item-options flex row">
+                <button 
+                  v-html="mainIcons.check_mark"
+                  class="radial accept"
+                  v-tippy="{ content: 'Принять', placement: 'top' }"
+                  @click="accept(item.req_id, item.id)"
+                ></button>
+                <button 
+                  v-html="mainIcons.cross"
+                  class="radial reject"
+                  v-tippy="{ content: 'Игнорировать', placement: 'top' }"
+                  @click="reject(item.req_id, item.id)"
+                ></button>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template v-if="list?.outcome?.length">
+          <p class="title-list-friends">Исходящие ({{ list.outcome.length }})</p>
+          <div class="list-friends-items flex column" v-for="(item, i) in list.outcome" :key="i">
+            <Divider h color="var(--system-back-color3)" width="98" />
+            <div class="list-friends-item flex row">
+              <Avatar :avatar="item.avatar || null" size="40" :status="item.status"></Avatar>
+              <div class="item-info flex column">
+                <p class="nickname">{{ item.nickname }}<span class="name">{{ item.name }}</span></p>
+                <span>{{ textStatus(item.status) }}</span>
+              </div>
+              <div class="item-options flex row">
+                <button 
+                  v-html="mainIcons.cross"
+                  class="radial cancel"
+                  v-tippy="{ content: 'Отмена', placement: 'top' }"
+                  @click="cancel(item.req_id)"
+                ></button>
+                <PopUp :key="i" v-show="visiblePopup == i" @mouseleave="hidePopup()">
+                  <template v-slot:items>
+                    <a href="#" @click="p.handler" v-for="p in popupItems" :class="p.class">{{ p.name }}</a>
+                  </template>
+                </PopUp>
+              </div>
+            </div>
+          </div>
+        </template>
+        
+      </template>
     </TransitionGroup>
   </div>
 </template>
 <script setup>
-import { ref, inject } from 'vue';
+import { ref, inject, watch, nextTick } from 'vue';
+import { useRouter } from 'vue-router';
+import { useSocket } from '@/composables/useSocket';
+
 import { textStatus } from '@/composables/userComposable';
 
 import Avatar from './Avatar.vue';
@@ -52,9 +117,18 @@ import Icon from '@/components/Icon.vue';
 
 import { mainIcons } from '@/assets/icons';
 
-const title = inject('title');
-let list = inject('list');
-// Переделать, когда будут другие статусы отношений
+const router = useRouter();
+
+const { socket } = useSocket({
+  'users:getFriends': getFriends,
+  'users:getBlockRequests': getBlockRequests,
+  'users:getRequests:income': getRequestsIncome,
+  'users:getRequests:outcome': getRequestsOutcome,
+});
+
+const mode = inject('mode');
+const title = ref(null);
+const list = ref(null)
 
 const visiblePopup = ref(null);
 const popupItems = ref([
@@ -79,6 +153,49 @@ const popupItems = ref([
   },
 ]);
 
+const getFriendsByMode = () => {
+  switch (mode.value) {
+    case 'online':
+      title.value = "В сети";
+      return;
+    case 'all':
+      title.value = "Всего друзей";
+      socket.emit('users:getFriends');
+      return;
+    case 'pending':
+      title.value = "Заявки в друзья";
+      list.value = {income: null, outcome: null};
+      //console.log('l', list.value)
+      socket.emit('users:getRequests', 'outcome');
+      socket.emit('users:getRequests', 'income');
+      return;
+    case 'blocked':
+      title.value = "Игнорируются";
+      socket.emit('users:getBlockRequests');
+      return;
+  }
+};
+
+function getFriends(data) {
+  //console.log('friends',data)
+  list.value = data
+}
+
+function getBlockRequests (data) {
+  //console.log('block',data)
+  list.value = data
+}
+
+function getRequestsIncome (data) {
+  //console.log('income', data)
+  list.value.income = data
+}
+
+function getRequestsOutcome (data) {
+  //console.log('outcome', data)
+  list.value.outcome = data
+}
+
 function showPopup (popup) {
   visiblePopup.value = popup;
 };
@@ -86,6 +203,64 @@ function showPopup (popup) {
 function hidePopup () {
   visiblePopup.value = null;
 };
+
+function goToChat (uuid) {
+  if (uuid) {
+    router.push(`/messages/${uuid}`);
+  }
+  else {
+    // Сделать логику создания чата и перехода к нему
+  }
+}
+
+async function cancel(req_id) { // Отменить свою заявку в друзья
+  alert("cancel")
+}
+
+function accept(req_id, id) { // Принять заявку в друзья
+  const payload = { id: req_id, status: 'accepted'};
+  socket.emit('users:setRequestStatus', payload);
+  deleteItemById(id, 'income');
+}
+
+function reject(req_id, id) { // Не принимать входящую заявку в друзья
+  const payload = { id: req_id, status: 'blocked'};
+  socket.emit('users:setRequestStatus', payload);
+  deleteItemById(id, 'income');
+}
+
+function deleteItemById(id, targetArray = null) {
+  let obj = list.value
+  // Если указан конкретный массив
+  if (targetArray && obj[targetArray] && Array.isArray(obj[targetArray])) {
+    const index = obj[targetArray].findIndex(item => item.id == id);
+    if (index !== -1) {
+      obj[targetArray].splice(index, 1);
+      return { success: true, array: targetArray };
+    }
+    return { success: false, message: "Item not found in " + targetArray };
+  }
+  
+  // Ищем во всех массивах
+  for (let key of ['income', 'outcome']) {
+    if (obj[key] && Array.isArray(obj[key])) {
+      const index = obj[key].findIndex(item => item.id == id);
+      if (index !== -1) {
+        obj[key].splice(index, 1);
+        return { success: true, array: key };
+      }
+    }
+  }
+  return { success: false, message: "Item not found" };
+}
+
+watch(mode, (newMode, oldMode) => {
+  //console.log("Новый мод, " + newMode);
+  getFriendsByMode();
+}, {
+  deep: true,
+  immediate: true
+});
 </script>
 <style lang="scss">
 // стили для TransitionGroup:
@@ -125,6 +300,7 @@ function hidePopup () {
         cursor: pointer;
         max-height: 61px;
         position: relative;
+        transition: .3s background-color;
 
         &:hover {
           background-color: var(--system-back-color3);
@@ -161,13 +337,40 @@ function hidePopup () {
 
         .item-options {
           column-gap: 10px;
-
           button {
-            background-color: var(--system-back-color2);
             cursor: pointer;
+            color: var(--loud-text-color);
+            font-family: var(--font-family-600);
+          }
+
+          button.radial {
+            background-color: var(--system-back-color2);
             width: 40px;
             height: 40px;
             color: #ABABAB;
+
+            &.accept {
+              transition:  .3s background-color;
+              &:hover {
+                background-color: var(--light-green-color);
+              }
+            }
+
+            &.reject {
+              transition:  .3s background-color;
+              &:hover {
+                background-color: var(--notification-color);
+              }
+              
+            }
+
+            &.cancel {
+              &:hover {
+                svg path {
+                  fill: #ff6704;
+                }
+              }
+            }
 
             &:hover {
               svg path {
@@ -179,6 +382,10 @@ function hidePopup () {
               max-width: 100%;
               max-height: 100%;
               padding: 10px;
+
+              path {
+                transition: .3s fill;
+              }
             }
           }
         }

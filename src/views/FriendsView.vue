@@ -34,9 +34,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, provide, watch } from 'vue';
-import { useStore } from 'vuex';
-import { useSocket } from '@/composables/useSocket';
+import { ref, onMounted, provide } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import Sidebar from '@/components/Sidebar.vue'
@@ -47,47 +45,14 @@ import Content from '@/components/Content.vue';
 import RightAside from '@/components/RightAside.vue';
 import Icon from '@/components/Icon.vue';
 
-const store = useStore();
 const route = useRoute();
 const router = useRouter();
 
-const { socket } = useSocket({
-  'users:getFriends': getFriends,
-});
-
-const friends = ref(null);
-const friendsWithMode = ref(null);
-const title = ref(null);
 const mode = ref(null);
 
-
-//ПЕРЕДЕЛАТЬ ЛОГИКУ КОМПОНЕНТА, когда будут другие статусы отношений
-const getFriendsByMode = (currentMode) => {
-  //const friends = store.state.friends?.friends || {};
-  store.commit('user/SET_FRIEND_LIST_MODE', currentMode);
-  console.log(store.state.user.friendListMode)
-  switch (currentMode) {
-    case 'online':
-      title.value = "В сети";
-      return (friends.added || []).filter(friend => friend.status !== 'offline');
-    case 'all':
-      title.value = "Всего друзей";
-      return friends || [];
-    case 'pending':
-      title.value = "Заявки в друзья";
-      return friends.pending || [];
-    case 'blocked':
-      title.value = "Игнорируются";
-      return friends.blocked || [];
-    default:
-      return [];
-  }
-};
-// ПЕРЕДЕЛАТЬ - МОД ЗАПИСАТЬ В СТОР, ТАК КАК ПЕРЕХОД ПО ДИАЛОГАМ, а потом возврат в друзья 
-// ДОЛЖЕН ВОЗВРАЩАТЬ В ЗАПИСАННЫЙ МОД
 const setMode = (newMode) => {
   mode.value = newMode;
-  friendsWithMode.value = getFriendsByMode(newMode);
+  localStorage.setItem('friendListMode', newMode)
   
   if (route.name !== 'friend-list') {
     router.push({ name: 'friend-list' });
@@ -98,29 +63,11 @@ const navLinks = [
 ];
 
 onMounted(() => {
-  socket.emit('users:getFriends');
-  mode.value = store.state.user.friendListMode;
+  mode.value = localStorage.getItem('friendListMode') || 'online';
   setMode(mode.value)
 });
 
-
-function getFriends(data) {
-  //console.log(data)
-  friends.value = data
-}
-
-watch(
-  () => store.state.friends?.friends,
-  () => {
-    if (mode.value) {
-      friendsWithMode.value = getFriendsByMode(mode.value);
-    }
-  },
-  { deep: true }
-);
-
-provide('title', title);
-provide('list', friends);
+provide('mode', mode);
 </script>
 <style lang="scss">
 

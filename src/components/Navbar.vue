@@ -45,7 +45,7 @@
         <Avatar size="35" :avatar="user.avatar" :status="user.status" />
         <div class="userinfo flex column">
           <div class="name">{{ user.name }}</div>
-          <div class="userprofile-info">{{ (user.info) ? user.info : user.status }}</div>
+          <div class="userprofile-info">{{ user.info ?? user.status ?? "Без статуса" }}</div>
           <div class="nickname">{{ user.nickname }}</div>
         </div>
       </div>
@@ -398,6 +398,7 @@ watchEffect(() => {
 
       .userinfo {
         overflow: hidden;
+        justify-content: center;
 
         .name {
           font-family: var(--font-family-400);
