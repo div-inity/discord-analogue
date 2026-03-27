@@ -85,7 +85,9 @@
       </menu>
     </template>
     <template v-else>
-      <div class="sidebar-header flex column" :style="{height: headerHeight+ 'px'}">
+      <div class="sidebar-header flex column" :style="{
+        'margin-bottom': (props.headerHeight || '50px')
+      }"><!--  :style="{height: headerHeight+ 'px'}" -->
         <slot name="header"></slot>
       </div>
       <div class="other">
@@ -114,6 +116,8 @@ import { useSocket } from '@/composables/useSocket';
 // Иконки
 import { sidebarIcons } from '@/assets/icons';
 
+const props = defineProps(['headerHeight']);
+console.log(props.headerHeight)
 const { socket } = useSocket({
   'dialog:getList': onDialogGetList
 });
@@ -233,6 +237,7 @@ onBeforeUnmount(() => {
   position: relative;
   overflow: auto;
   scrollbar-width: none;
+  padding-bottom: 70px;
 
   * {
     user-select: none;
@@ -260,6 +265,10 @@ onBeforeUnmount(() => {
         color: var(--muted-text-color);
       }
     }
+  }
+
+  .other {
+    width: 100%;
   }
 
   .sidebar-actions {

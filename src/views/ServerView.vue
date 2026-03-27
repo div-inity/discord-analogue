@@ -1,26 +1,53 @@
 <template>
-  <Sidebar>
+  <Sidebar :headerHeight="(server?.boostLevel > 0 && server?.banner) ? '150px' : null">
     <template v-slot:header>
-      <div class="banner">
-        <img :src="state.server.banner" alt="">
+      <div class="banner" v-if="server?.boostLevel > 0 && server?.banner">
+        <img :src="server?.banner" alt="">
       </div>
-      <div class="header-actions flex row" :style="{width: sidebarWidth + 'px', top: mainHeaderHeight + 'px'}">
+      <div 
+        class="header-actions flex row" 
+        :class="{boosted: server?.boostLevel > 0}"
+        :style="{
+          width: sidebarWidth + 'px', 
+          top: mainHeaderHeight + 'px',
+          height: headerHeight + 'px',
+        }"
+      >
         <button 
           class="server-name flex row" 
           :class="{clicked: serverNameClicked}"
           @click="serverNameClick">
-          <Icon name="communityServer" size="18"/>
-          {{ state.server.name }}
+          <Icon :name="server?.icon" size="18"/>
+          {{ server?.name }}
           <Icon name="arrow_down" size="18" class="arrow"/>
         </button>
         <button class="invite">
           <Icon name="addFriend" size="18" />
         </button>
       </div>
-      
     </template>
     <template v-slot:other>
-      Нужно бустов
+      <div class="server-info flex column">
+        <button v-for="s in server_info" class="flex row">
+          <Icon :name="s.icon" size="18"/>
+          {{ s.name }}
+        </button>
+      </div>
+
+      <Divider h width="100" color="var(--system-back-color1)"/>
+
+      <div class="categories flex column" v-for="c in server?.categories">
+        <p class="category">{{ c.name }}</p>
+        <div class="channels flex column" v-for="chs in c.channels">
+          <button class="channel flex row">
+            <Icon :name="channelIcons[chs.type]" size="18"/>
+            {{ chs.name }}
+          </button>
+        </div>
+        <!-- <div class="channel" v-for="ch in c">
+          <pre>{{ ch }}</pre>
+          </div> -->
+      </div>
     </template>
   </Sidebar>
   <router-view />serverview
@@ -28,25 +55,76 @@
 <script setup>
 import Sidebar from '@/components/Sidebar.vue';
 import Icon from '@/components/Icon.vue';
+import Divider from '@/components/Divider.vue';
 
 import { generalFunctions } from '@/composables/generalFunctions';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+import store from '@/store';
+import { useRoute } from 'vue-router';
+const route = useRoute();
+const {sidebarWidth, mainHeaderHeight, headerHeight} = generalFunctions();
+const server = ref(null);
+const serverNameClicked = ref(false);
+const server_info = [
+  {
+    name: '1 событие',
+    rights: 5,
+    icon: 'calendar',
+    handler: () => {
 
-
-const {sidebarWidth, mainHeaderHeight} = generalFunctions()
-const state = {
-  server: {
-    name: "SIRUS",
-    icon: 'communityServer',
-    banner: require('@/assets/img/UserIcon3.jpg'),
-  }
+    }
+  },
+  {
+    name: 'Просмотр каналов',
+    rights: 0,
+    icon: 'view_list',
+    handler: () => {
+      
+    }
+  },
+  {
+    name: 'Участники',
+    rights: 5,
+    icon: 'hideProfile',
+    handler: () => {
+      
+    }
+  },
+  {
+    name: 'Бусты сервера',
+    rights: 5,
+    icon: 'boost',
+    handler: () => {
+      
+    }
+  },
+]
+const channelIcons = {
+  text: 'channel_text',
+  rules: 'channel_rules',
+  announcements: 'channel_announcements',
+  forum: 'channel_forum',
+  voice: 'call',
+  private: 'channel_locked',
 }
 
-const serverNameClicked = ref(false)
 
 function serverNameClick () {
   serverNameClicked.value = !serverNameClicked.value;
 }
+
+
+watch(
+  () => route.params.id,
+  (id, oldid) => {
+    if (id != oldid) {
+      server.value = computed(() => store.getters['servers/getServer'](Number(id))).value;
+      serverNameClicked.value = false;
+      console.log(server.value);
+    }
+  },
+  { immediate: true }
+);
 </script>
 <style lang="scss">
 .sidebar-header {
@@ -63,7 +141,7 @@ function serverNameClick () {
     img {
       height: 100%;
       width: 100%;
-          object-fit: cover;
+      object-fit: cover;
     }
   }
 
@@ -72,24 +150,41 @@ function serverNameClick () {
     position: fixed;
     z-index: 10;
     padding-inline: 10px;
-    background: -webkit-linear-gradient(0deg, rgb(0, 0, 0, .2), rgb(0, 0, 0, .6));
-    background: -moz-linear-gradient(0deg, rgb(0, 0, 0, .2), rgb(0, 0, 0, .6));
-    background: linear-gradient(0deg, rgb(0, 0, 0, .2), rgb(0, 0, 0, .6));
-    box-shadow: 0 6px 9px rgba(0, 0, 0, 0.2);
-    height: inherit;
-    transition: backdrop-filter .3s;
     align-items: center;
+    border-radius: 5px 0 0 0;
+    overflow: hidden;
 
-    &:hover {
-      backdrop-filter: blur(10px); /* Размытие заднего фона */
+    &.boosted {
+    transition: backdrop-filter .3s;
+    background: -webkit-linear-gradient(0deg, rgb(0, 0, 0, 0), rgb(0, 0, 0, .6));
+    background: -moz-linear-gradient(0deg, rgb(0, 0, 0, 0), rgb(0, 0, 0, .6));
+    background: linear-gradient(0deg, rgb(0, 0, 0, 0), rgb(0, 0, 0, .6));
+
+      &:hover {
+        backdrop-filter: blur(10px); /* Размытие заднего фона */
+        box-shadow: inset 0 -1px 0px 0px rgba(255, 255, 255, .06);
+      }
+
+      button {
+
+        &:hover{
+          backdrop-filter: blur(1px); 
+          background-color: transparent;
+        }
+      }
     }
 
     button {
       background-color: transparent;
       border-radius: 8px;
+      transition: background-color .3s;
 
       &:hover {
-        backdrop-filter: blur(1px); 
+        background-color: var(--system-back-color1);
+
+        svg path {
+          fill: var(--main-text-color);
+        }
       }
     }
     .server-name {
@@ -114,8 +209,47 @@ function serverNameClick () {
       align-self: center;
     }
   }
-
-  
 }
+.other { // sidebar-other
+  padding: 0 10px;
+
+  & > div:not(.divider) {
+    padding: 16px 0;
+  }
+
+  .server-info, .channels {
+    align-items: flex-start;
+    width: 100%;
+
+    button {
+      background-color: transparent;
+      width: 100%;
+      text-align: left;
+      gap: 5px;
+      font-family: var(--font-family-500);
+      font-size: 15px;
+      padding: 5.5px 8px;
+      border-radius: 8px;
+      color: var(--muted-text-color);
+      transition: background-color .3s;
+      align-items: center;
+      
+      &:hover {
+        background-color: var(--system-back-color1);
+        color: var(--main-text-color)
+      }
+    }
+  }
+
+  .categories {
+    .category {
+      font-family: var(--font-family-500);
+      font-size: 13px;
+      color: var(--muted-text-color);
+
+    }
+  }
+}
+
 
 </style>
