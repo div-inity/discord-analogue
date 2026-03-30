@@ -51,9 +51,23 @@
           v-for="ch in c.channels"
           class="channels flex column"
         >
-          <button class="channel flex row" v-if="ch.mentions > 0 || !collapsedCategory(c.id)">
+          <button
+            v-if="ch.new_messages > 0 || !collapsedCategory(c.id)"
+            class="channel flex row"
+            :class="{new: ch.new_messages > 0}"
+            >
             <Icon :name="channelIcons[ch.type]" size="18"/>
-            {{ ch.name }}
+            <span class="channel-name">{{ ch.name }}</span>
+            <div class="channel-actions">
+              <Mentions 
+                v-if="ch.mentions > 0" 
+                outlineColor="var(--system-back-color3)"
+              >{{ ch.mentions }}</Mentions>
+              <div class="hovered-actions flex row">
+                <Icon name="add_friend" size="17" v-tippy="{ content: 'Пригласить на канал', placement: 'top' }"/>
+                <Icon name="settings" size="17" v-tippy="{ content: 'Настроить канал', placement: 'top' }"/>
+              </div>
+            </div>
           </button>
         </div>
       </div>
@@ -65,6 +79,7 @@
 import Sidebar from '@/components/Sidebar.vue';
 import Icon from '@/components/Icon.vue';
 import Divider from '@/components/Divider.vue';
+import Mentions from '@/components/Mentions.vue';
 
 import { generalFunctions } from '@/composables/generalFunctions';
 
@@ -98,7 +113,7 @@ const server_info = [
   {
     name: 'Участники',
     rights: 5,
-    icon: 'hideProfile',
+    icon: 'people',
     handler: () => {
       
     }
@@ -243,7 +258,13 @@ watch(
     align-items: flex-start;
     width: 100%;
 
-    button.channel , button.server-info-button{
+    button.server-info-button {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    button.channel , button.server-info-button {
       background-color: transparent;
       width: 100%;
       text-align: left;
@@ -258,11 +279,11 @@ watch(
       
       &:hover {
         background-color: var(--system-back-color1);
-        color: var(--main-text-color)
+        color: var(--main-text-color);
       }
       &.active {
         background-color: var(--system-back-color1);
-        color: var(--main-text-color)
+        color: var(--main-text-color);
       }
     }
   }
@@ -274,6 +295,9 @@ watch(
       color: var(--muted-text-color);
       transition: color .3s;
       margin-bottom: 5px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
 
       &:hover {
         color: var(--main-text-color);
@@ -281,6 +305,55 @@ watch(
 
         svg path {
           fill: var(--main-text-color);
+        }
+      }
+    }
+    .channels {
+      .channel {
+        position: relative;
+
+        &:hover {
+          .mentions {
+            display: none;
+          }
+          .hovered-actions {
+            display: flex;
+          }
+        }
+
+        &.new {
+          color: var(--main-text-color);
+        }
+
+        &.new::before {
+          position: absolute;
+          content: "";
+          width: 4px;
+          background: var(--loud-text-color);
+          border-radius: 0 4px 4px 0;
+          top: 50%;
+          transform: translate(0%, -50%);
+          transition: height 0.3s ease, left 0.3s ease;
+          height: 8px;
+          left: -10px;
+        }
+
+        .channel-name {
+          flex-grow: 2;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+
+        .hovered-actions {
+          display: none;
+          column-gap: 3px;
+
+          .icon:hover {
+            svg path {
+              fill: var(--main-text-color);
+            }
+          }
         }
       }
     }

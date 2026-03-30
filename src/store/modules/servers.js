@@ -20,19 +20,20 @@ export default {
         ],
         banner: require('@/assets/img/UserIcon3.jpg'),
         user_settings: {
-          collapsed_categories: [2,3,4],
+          collapsed_categories: [],
         },
         categories: [
           {
             id: 1,
-            name: 'Информационые каналы',
+            name: 'Информационные каналы',
             channels: [ 
               {
                 name: 'Добро пожаловать',
                 type: 'text',
-                mentions: 1,
+                mentions: 100,
                 description: 'Добро пожаловать на сервер Sirus.Su! Рады вас видеть!',
                 rules: {},
+                new_messages: 3,
               },
               {
                 name: 'правила',
@@ -40,6 +41,7 @@ export default {
                 mentions: 0,
                 description: 'Соблюдайте правила сервера, будьте няшками!',
                 rules: {},
+                new_messages: 3,
               },
               {
                 name: 'вопрос_ответ',
@@ -47,6 +49,7 @@ export default {
                 mentions: 0,
                 description: 'Самые часто отвечаемые ответы.',
                 rules: {},
+                new_messages: 0,
               },
             ]
           },
@@ -60,6 +63,7 @@ export default {
                 description: 'Последние новости проекта. Будьте в курсе последних событий!',
                 mentions: 3,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'список_изменений',
@@ -67,6 +71,7 @@ export default {
                 description: 'Здесь должен быть список изменений, но будет ли?',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'список_исправленного',
@@ -74,6 +79,7 @@ export default {
                 description: '',
                 mentions: 1,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'media',
@@ -81,6 +87,7 @@ export default {
                 description: 'Ролики, обзоры, гайды, статьи.',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'стримы',
@@ -88,6 +95,7 @@ export default {
                 description: 'Стримы — то, что все так не любят, но иногда смотрят ради интереса.',
                 mentions: 5,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'статус_сервера',
@@ -95,6 +103,7 @@ export default {
                 description: 'Все актуальные новости по работе игровых миров, а также сайта и форума!',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'розыгрыши',
@@ -102,6 +111,7 @@ export default {
                 description: 'Еженедельные розыгрыши на Sirus.su!',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'опросы',
@@ -109,6 +119,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
             ]
           },
@@ -122,6 +133,7 @@ export default {
                 description: 'Раздолье флудерастов. Добро пожаловать!',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'soulseeker-x1',
@@ -129,6 +141,7 @@ export default {
                 description: 'Общий чат Soulseeker x1',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'scourge-x2',
@@ -136,6 +149,7 @@ export default {
                 description: 'Общий чат Scourge x2',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'sirus-x5',
@@ -143,6 +157,7 @@ export default {
                 description: 'Общий чат Sirus x5',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'neverest-x3',
@@ -150,6 +165,7 @@ export default {
                 description: 'Общий чат Neverest x3',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'поиск-спутников',
@@ -157,6 +173,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'игровые-вопросы',
@@ -164,6 +181,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'игровые-обсуждения',
@@ -171,6 +189,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
             ]
           },
@@ -184,6 +203,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'Группа #1',
@@ -191,6 +211,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'Группа #2',
@@ -198,6 +219,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'Группа #3',
@@ -205,6 +227,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'Группа #4',
@@ -212,6 +235,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'PvP',
@@ -219,6 +243,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'PvP',
@@ -226,6 +251,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'PvE',
@@ -233,6 +259,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'PvE',
@@ -240,6 +267,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
               {
                 name: 'Карантин',
@@ -247,6 +275,7 @@ export default {
                 description: '',
                 mentions: 0,
                 rules: {},
+                new_messages: 0,
               },
             ]
           },
