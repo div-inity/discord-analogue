@@ -28,7 +28,7 @@
     </template>
     <template v-slot:other>
       <div class="server-info flex column">
-        <button v-for="s in server_info" class="flex row">
+        <button v-for="s in server_info" class="flex row server-info-button">
           <Icon :name="s.icon" size="18"/>
           {{ s.name }}
         </button>
@@ -37,16 +37,25 @@
       <Divider h width="100" color="var(--system-back-color1)"/>
 
       <div class="categories flex column" v-for="c in server?.categories">
-        <p class="category">{{ c.name }}</p>
-        <div class="channels flex column" v-for="chs in c.channels">
-          <button class="channel flex row">
-            <Icon :name="channelIcons[chs.type]" size="18"/>
-            {{ chs.name }}
+        <p 
+          class="category"
+          :class="{collapsed: collapsedCategory(c.id)}"
+          @click="collapse(c.id)"
+        >
+          {{ c.name }}
+          <Icon 
+            :name="collapsedCategory(c.id) ? 'arrow_right' : 'arrow_down'" 
+            size="10"/>
+        </p>
+        <div 
+          v-for="ch in c.channels"
+          class="channels flex column"
+        >
+          <button class="channel flex row" v-if="ch.mentions > 0 || !collapsedCategory(c.id)">
+            <Icon :name="channelIcons[ch.type]" size="18"/>
+            {{ ch.name }}
           </button>
         </div>
-        <!-- <div class="channel" v-for="ch in c">
-          <pre>{{ ch }}</pre>
-          </div> -->
       </div>
     </template>
   </Sidebar>
@@ -58,13 +67,17 @@ import Icon from '@/components/Icon.vue';
 import Divider from '@/components/Divider.vue';
 
 import { generalFunctions } from '@/composables/generalFunctions';
+
 import { computed, ref, watch } from 'vue';
 import store from '@/store';
 import { useRoute } from 'vue-router';
+
 const route = useRoute();
+
 const {sidebarWidth, mainHeaderHeight, headerHeight} = generalFunctions();
+
 const server = ref(null);
-const serverNameClicked = ref(false);
+const serverNameClicked = ref(false); // Флаг для проявления всплывающего меню
 const server_info = [
   {
     name: '1 событие',
@@ -108,11 +121,20 @@ const channelIcons = {
   private: 'channel_locked',
 }
 
-
 function serverNameClick () {
   serverNameClicked.value = !serverNameClicked.value;
 }
 
+const collapsedCategory = (id) => {
+  return server.value?.user_settings?.collapsed_categories?.includes(id) || false;
+};
+
+function collapse (id) {
+  store.commit('servers/toggleCollapseCategory', {
+    server_id: server.value.id,
+    category_id: id
+  });
+}
 
 watch(
   () => route.params.id,
@@ -120,7 +142,7 @@ watch(
     if (id != oldid) {
       server.value = computed(() => store.getters['servers/getServer'](Number(id))).value;
       serverNameClicked.value = false;
-      console.log(server.value);
+      //console.log(server.value);
     }
   },
   { immediate: true }
@@ -221,7 +243,7 @@ watch(
     align-items: flex-start;
     width: 100%;
 
-    button {
+    button.channel , button.server-info-button{
       background-color: transparent;
       width: 100%;
       text-align: left;
@@ -238,6 +260,10 @@ watch(
         background-color: var(--system-back-color1);
         color: var(--main-text-color)
       }
+      &.active {
+        background-color: var(--system-back-color1);
+        color: var(--main-text-color)
+      }
     }
   }
 
@@ -246,7 +272,17 @@ watch(
       font-family: var(--font-family-500);
       font-size: 13px;
       color: var(--muted-text-color);
+      transition: color .3s;
+      margin-bottom: 5px;
 
+      &:hover {
+        color: var(--main-text-color);
+        cursor: pointer;
+
+        svg path {
+          fill: var(--main-text-color);
+        }
+      }
     }
   }
 }

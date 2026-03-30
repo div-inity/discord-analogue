@@ -8,6 +8,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { mainIcons } from '@/assets/icons';
 
 const props = defineProps({
@@ -15,7 +16,7 @@ const props = defineProps({
   size: { default: 24 }
 });
 
-const iconSvg = mainIcons[props.name] || null;
+const iconSvg = computed(() => mainIcons[props.name] || null);
 </script>
 <style lang="scss">
 .icon {

@@ -19,14 +19,18 @@ export default {
           'https://avatars.mds.yandex.net/get-yapic/35885/srMKjfT9weL7jIicQXjiMCrBpVo-1/orig',
         ],
         banner: require('@/assets/img/UserIcon3.jpg'),
+        user_settings: {
+          collapsed_categories: [2,3,4],
+        },
         categories: [
           {
+            id: 1,
             name: 'Информационые каналы',
             channels: [ 
               {
                 name: 'Добро пожаловать',
                 type: 'text',
-                mentions: 0,
+                mentions: 1,
                 description: 'Добро пожаловать на сервер Sirus.Su! Рады вас видеть!',
                 rules: {},
               },
@@ -47,13 +51,14 @@ export default {
             ]
           },
           {
+            id: 2,
             name: 'Объявления',
             channels: [
               {
                 name: 'новости',
                 type: 'announcements', // объявления
                 description: 'Последние новости проекта. Будьте в курсе последних событий!',
-                mentions: 0,
+                mentions: 3,
                 rules: {},
               },
               {
@@ -67,7 +72,7 @@ export default {
                 name: 'список_исправленного',
                 type: 'text',
                 description: '',
-                mentions: 0,
+                mentions: 1,
                 rules: {},
               },
               {
@@ -81,7 +86,7 @@ export default {
                 name: 'стримы',
                 type: 'text',
                 description: 'Стримы — то, что все так не любят, но иногда смотрят ради интереса.',
-                mentions: 0,
+                mentions: 5,
                 rules: {},
               },
               {
@@ -108,6 +113,7 @@ export default {
             ]
           },
           {
+            id: 3,
             name: 'Каналы для общения',
             channels: [
               {
@@ -169,6 +175,7 @@ export default {
             ]
           },
           {
+            id: 4,
             name: 'Голосовые каналы',
             channels: [
               {
@@ -291,8 +298,20 @@ export default {
     getServer: (state) => (id) => {
       const s = state.servers.find(d => d.id === id);
       return s || null;
-    }
+    },
   },
-  mutations: {},
-  actions: {},
+  mutations: {
+    toggleCollapseCategory (state, { server_id, category_id }) {
+      const server = state.servers.find(d => d.id === server_id);
+      const findedCategory = server.user_settings.collapsed_categories.indexOf(category_id)
+      if (findedCategory > -1) {
+        server.user_settings.collapsed_categories.splice(findedCategory, 1);
+        return;
+      }
+      server.user_settings.collapsed_categories.push(category_id);
+    },
+  },
+  actions: {
+
+  },
 }
