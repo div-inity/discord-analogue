@@ -260,6 +260,7 @@ onBeforeUnmount(() => {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      border-radius: 3px;
 
       &:hover {
         color: var(--muted-text-color);

@@ -110,6 +110,16 @@ export async function getDialogFieldByID(uuid, field) { // Получить зн
   return f;
 };
 
+export function profileInfo (members_info, id=null) { // Вернет инфо по Одному юзеру из перечисленных
+  // Если id не передается, то ищет одного юзера, не хозяина текущего аккаунта по диалогу,
+  console.log(members_info)
+  var filter = members_info.find(item => item.id !== Number(user.value.id));
+  console.log(filter);
+  return filter;
+  // Иначе ищет юзера по id:
+
+}
+
 export function dialogComposable () {
   return {
     dialogNames,
@@ -122,5 +132,6 @@ export function dialogComposable () {
     setChat,
     setActiveDialogID,
     getDialogFieldByID,
+    profileInfo,
   };
 }

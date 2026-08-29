@@ -61,6 +61,25 @@
           </TextField>
         </Content>
         <RightAside :RightAside="WIDTHASIDE">
+          <template v-if="members_info">
+            <template v-if="members_info.length > 2"><!-- Группа -->
+              <article class="members flex column">
+                <h3>Участники — {{ members_info.length }}</h3>
+                <div class="w-full member" v-for="m, i in members_info">
+                  <button class="member__button flex row center w-full">
+                    <Avatar status="0" avatar size="36"></Avatar>
+                    {{ m.nickname }}
+                    
+                  </button>
+                </div>
+                
+              </article>
+            </template>
+            <template v-else><!-- Диалог -->
+              <ProfileShort :user="profileInfo(members_info)"/>
+            </template>
+          </template>
+          
         </RightAside>
       </ContentFlex>
     </div>
@@ -71,7 +90,7 @@
 import { useRoute } from 'vue-router';
 import { ref, onBeforeUnmount, watch } from 'vue';
 
-import { dialogComposable } from '@/composables/dialogComposable';
+import { dialogComposable, profileInfo } from '@/composables/dialogComposable';
 
 import Sidebar from '@/components/Sidebar.vue'
 import ContentHeader from '@/components/ContentHeader.vue';
@@ -81,8 +100,9 @@ import RightAside from '@/components/RightAside.vue';
 import Avatar from '@/components/Avatar.vue';
 import TextField from '@/components/TextField.vue';
 import Chat from '@/components/Chat.vue';
+import ProfileShort from '@/components/ProfileShort.vue';
 
-import { chatActionsIcons, textFieldIcons } from '@/assets/icons'
+import { textFieldIcons } from '@/assets/icons'
 
 import { useSocket } from '@/composables/useSocket';
 
@@ -98,6 +118,7 @@ const WIDTHASIDE = 350;
 const route = useRoute();
 const dNames = ref(null); // Название диалога
 const chat = ref([]); // Хранит сообщения
+
 
 function onMessage(msg) {// Выполняется при отправке сообщения
   if (msg.unshift) chat.value = [msg.unshift, ...chat.value];
@@ -191,3 +212,4 @@ watch(
   width: 20px;
 }
 </style>
+

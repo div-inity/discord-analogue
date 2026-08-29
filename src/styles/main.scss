@@ -100,6 +100,9 @@ svg, svg * {
     color: var(--muted-notification-color);
   }
 }
+.w-full {
+  width: 100%;
+}
 
 .flex {
   display: flex;
@@ -111,6 +114,15 @@ svg, svg * {
   &.row {
     flex-direction: row;
   }
+  &.row-reverse {
+    flex-direction: row-reverse;
+  }
+  &.column-reverse {
+    flex-direction: column-reverse;
+  }
+  &.center {
+    align-items: center;
+  }
 }
 
 .radial {
@@ -121,10 +133,13 @@ ul {
   list-style: none;
 }
 
-input,
+input {
+  border: none;
+  cursor: pointer;
+}
 button {
   border: none;
-  border-radius: 3px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -233,8 +248,8 @@ a {
 }
 
 .status {
-  height: 10px;
-  width: 10px;
+  width: 20%;
+  aspect-ratio: 1/1;
   background-repeat: no-repeat;
   background-position: center center;
   right: 0;
@@ -279,6 +294,18 @@ a {
     font-family: var(--font-family-500);
     font-size: 16px;
     color: var(--main-text-color);
+  }
+}
+
+.br {
+  &-3 {
+    border-radius: 3px;
+  }
+  &-8 {
+    border-radius: 8px;
+  }
+  &-13 {
+    border-radius: 13px;
   }
 }
 

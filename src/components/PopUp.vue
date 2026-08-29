@@ -8,7 +8,7 @@
 <script setup>
 </script>
 <style lang="scss">
-.popup {
+/* .popup {
   background-color: var(--system-back-color1);
   color: var(--main-text-color);
   border-radius: 8px;
@@ -44,5 +44,5 @@
       }
     }
   }
-}
+} */
 </style>

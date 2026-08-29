@@ -1,6 +1,11 @@
 <template>
   <header>
     <div class="logo">{{ PROJECT_NAME }}</div>
+    <div class="header__user" v-if="user">
+      id: {{ user.id }} |
+      name: {{ user.name }} |
+      nickname: {{ user.nickname }}
+    </div>
     <div class="header-actions">
       <button class="header-action minus">
         <svg width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -26,6 +31,7 @@
 </template>
 <script setup>
 import { PROJECT_NAME } from '@/composables/generalFunctions';
+import { user } from '@/composables/userComposable';
 </script>
 <style lang="scss">
 header {
@@ -44,6 +50,11 @@ header {
     font-size: 12px;
     line-height: 133%;
     color: var(--muted-text-color);
+  }
+
+  .header__user {
+    color: var(--system-purple-color);
+    font-family: var(--font-family-400);
   }
 
   .header-actions {
