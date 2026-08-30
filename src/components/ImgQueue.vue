@@ -1,7 +1,7 @@
 <template>
   <div class="img-queue">
     <div class="imgs  flex row">
-      <img :src="i" alt="" v-for="i in props.imgs" class="radial">
+      <img :src="i" alt="" v-for="i in cut()" class="radial" :style="{borderColor: props.borderColor,width: size + 'px'}">
     </div>
   </div>
 </template>
@@ -20,16 +20,26 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  /* borderColor: String,
-  size, 
-  maxLength,  */
+  size: {
+    requiered: false, 
+    default: 24,
+  },
+  maxLength: {
+    requiered: false, 
+    default: 3,
+  },
+  borderColor: String,
 });
+
+function cut () {
+  // Обрезать массив картинок до maxLength
+  return props.imgs.slice(0, props.maxLength);
+}
 </script>
 <style lang="scss">
 .img-queue {
   .imgs {
     img {
-      width: 24px;
       aspect-ratio: 1/1;
       background-position: center center;
       margin-right: -5px;

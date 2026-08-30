@@ -117,7 +117,6 @@ import { useSocket } from '@/composables/useSocket';
 import { sidebarIcons } from '@/assets/icons';
 
 const props = defineProps(['headerHeight']);
-console.log(props.headerHeight)
 const { socket } = useSocket({
   'dialog:getList': onDialogGetList
 });
