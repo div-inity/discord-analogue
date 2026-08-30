@@ -75,6 +75,7 @@ import { useRoute } from 'vue-router';
 // Компоненты
 import Avatar from './Avatar.vue';
 import Divider from './Divider.vue';
+import ImgQueue from './ImgQueue.vue';
 
 // Иконки
 import Icon from '@/components/Icon.vue';
@@ -116,18 +117,13 @@ const actions = ref([
   },
 ]);
 
+
 function computeServerData (i) {
   let imgs = [];
 
   if (servers[i].active_users && servers[i].active_users.length) {
     for (const item of servers[i].active_users) {
-      imgs.push(h(
-        'img',
-        {
-          src: item,
-          class: 'tooltip-imgs radial',
-        }
-      ));
+      imgs.push(item); // Загружаем аватары активных игроков на сервере
     }
   }
 
@@ -165,7 +161,12 @@ function computeServerData (i) {
               class: 'server-activity-type'
             }
             ) : null,
-        ...imgs,
+        h(
+          ImgQueue,
+          {
+            imgs: imgs,
+          }
+        ),
         (servers[i].active_users && servers[i].active_users.length > 2) ? h(
           'span',
           {
@@ -235,14 +236,6 @@ watchEffect(() => {
       color: var(--muted-text-color);
     }
   }
-}
-
-.tooltip-imgs {
-  width: 24px;
-  aspect-ratio: 1/1;
-  background-position: center center;
-  margin-right: -5px;
-  border: 1px solid var(--icon-color);
 }
 
 .navbar {
