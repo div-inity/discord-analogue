@@ -131,8 +131,10 @@ function sendMessage() {
   }
 
   const msg = {
-    message: newMessage.value,
-    dialog: activeDialogID.value,
+    message: {
+      text: newMessage.value,
+    },
+    dialog_id: activeDialogID.value,
   };
 
   socket.emit('chat:message', msg);
@@ -145,10 +147,11 @@ async function loadChat() { // Смена диалога
   }
   // Присоединяемся к комнате диалога
   socket.emit('chat:join', activeDialogID.value);
+  //console.log("loadChat", activeDialogID.value)
 
   chat.value = [];
 
-  socket.emit('chat:load', {
+  socket.emit('chat:load', { // Первичная загрузка чата
     dialog_id: route.params?.id,
     offset: 0,
   });
@@ -156,7 +159,7 @@ async function loadChat() { // Смена диалога
   // Если совершен переход в другой диалог или актуального диалога нет
   await getDialogFieldByID(route.params?.id, 'members_info');
   const custom_name = await getDialogFieldByID(route.params?.id, "custom_name");
-  dNames.value = (custom_name.value.length) ? custom_name.value : dialogNames(members_info.value);
+  dNames.value = (custom_name.value?.length) ? custom_name.value : dialogNames(members_info.value);
 };
 
 function loadmessages() { // Подгрузка старых сообщений
@@ -165,6 +168,7 @@ function loadmessages() { // Подгрузка старых сообщений
     offset: chat.value?.length,
   };
   socket.emit('chat:load', payload);
+  console.log("Идет загрузка чата")
 };
 
 onBeforeUnmount(() => {

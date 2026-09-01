@@ -25,7 +25,7 @@
                 v-html="mainIcons.chat"
                 class="radial"
                 v-tippy="{ content: 'Сообщение', placement: 'top' }"
-                @click="goToChat(item.dialog_id)"  
+                @click="goToChat(item.dialog_id, item.id)"  
               ></button>
               <button
                 v-html="mainIcons.options"
@@ -124,6 +124,8 @@ const { socket } = useSocket({
   'users:getBlockRequests': getBlockRequests,
   'users:getRequests:income': getRequestsIncome,
   'users:getRequests:outcome': getRequestsOutcome,
+  'chat:new_chat': setNewChat,
+  //'сокет' : отправляет полученные данные в указанную функцию
 });
 
 const mode = inject('mode');
@@ -204,13 +206,14 @@ function hidePopup () {
   visiblePopup.value = null;
 };
 
-function goToChat (uuid) {
+function goToChat (uuid, uid) {
   if (uuid) {
     router.push(`/messages/${uuid}`);
   }
   else {
     // Сделать логику создания чата и перехода к нему
     // Отправить пустое сообщение 
+    socket.emit('chat:message', { dialog_id: null, members: [uid], message: null });
   }
 }
 
@@ -262,6 +265,10 @@ watch(mode, (newMode, oldMode) => {
   deep: true,
   immediate: true
 });
+
+function setNewChat(uuid) {
+  router.push(`/messages/${uuid.dialog_id}`);
+}
 </script>
 <style lang="scss">
 // стили для TransitionGroup:

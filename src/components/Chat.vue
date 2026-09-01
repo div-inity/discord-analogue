@@ -33,7 +33,6 @@ const props = defineProps({
   messages: Object,
 });
 const emit = defineEmits(['scrolled']);
-
 const isHovered = ref(false);
 const scrollChat = ref(null);
 
