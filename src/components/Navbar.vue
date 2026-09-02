@@ -1,70 +1,166 @@
 <template>
-  <TransitionGroup name="fade" class="navbar" tag="div" :style="{ width: navbarWidth + 'px' }" v-if="user">
-    <div class="private-messages" :key="currentBlock">
-      <div class="home-link" v-tippy="{ content: t('navbar.mymessages') }">
-        <router-link :to="(activeDialogID == null) ? '/friends' : '/messages/'+activeDialogID" :class="(activeServer > 0) ? null : 'active'" class="home">
-          <Avatar size="48" square />
-        </router-link>
-      </div>
-
-      <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" />
-      <div class="missed_messages" v-for="(d, i) in unreadDialogs">
-        <div class="message" v-tippy="{ content: d.custom_name || dialogNames(d.members_info) }"><!--  -->
-          <router-link :class="(d?.unread_count > 0) ? 'missed' : null" :to="'/messages/' + d.uuid"
-            class="link-message">
-            <Avatar v-if="d.avatars?.length == 1" size="48" :mentions="d.unread_count" :avatar="d.avatars[0]" />
-            <Avatar v-else size="48" :mentions="d.unread_count" :avatars="d.avatars" multy
-              outline="var(--system-back-color5)" />
+  <TransitionGroup name="fade" class="navbar" tag="div" :style="{ width: navbarWidth + 'px' }">
+    <!-- Добавлен явный ключ для корневого элемента -->
+    <template v-if="user" :key="'user-block'">
+      
+      <!-- Блок личных сообщений -->
+      <div class="private-messages" :key="'private-messages'">
+        <div class="home-link" v-tippy="{ content: t('navbar.mymessages') }">
+          <router-link 
+            :to="(activeDialogID == null) ? '/friends' : '/messages/'+activeDialogID" 
+            :class="(activeServer > 0) ? null : 'active'" 
+            class="home"
+          >
+            <Avatar size="48" square />
           </router-link>
         </div>
       </div>
-    </div>
-    <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" v-if="unreadDialogs?.length" />
 
-    <div :key="currentBlock" class="servers" v-for="(s, i) in servers">
-      <div class="server" v-tippy="{ content: computeServerData(i) }">
-        <router-link
-          :class="{ 'missed-messages': s.missed_messages && s.missed_messages > 0, 'active': activeServer == s.id }"
-          :to="'/server/' + s.id" class="link-server">
-          <Avatar :avatar="s.avatar" square size="48" :mentions="s.mentions" :activity="s.activity_type"
-            :active="s.my_activity" />
-        </router-link>
-      </div>
-    </div>
-    <Divider :width="67" color="var(--system-back-color1)" h :key="currentBlock" />
+      <!-- Разделитель -->
+      <Divider 
+        v-if="unreadDialogs?.length" 
+        :key="'divider-1'" 
+        :width="67" 
+        color="var(--system-back-color1)" 
+        h 
+      />
 
-    <div :key="currentBlock" v-tippy="{ content: a.name }" class="actions" v-for="(a, i) in actions">
-      <div @click="a.handler" class="link-action">
-        <img :src="a.avatar" alt="">
-      </div>
-    </div>
-
-    <!-- Блок юзер-функций (профиль, заглушить, откл.звук, настройки, статус) -->
-    <div :key="currentBlock" class="userprofile flex row" :style="{ width: profileWidth + 'px' }">
-      <div class="profile flex row">
-        <Avatar size="35" :avatar="user.avatar" :status="user.status" />
-        <div class="userinfo flex column">
-          <div class="name">{{ user.name }}</div>
-          <div class="userprofile-info">{{ user.info ?? user.status ?? "Без статуса" }}</div>
-          <div class="nickname">{{ user.nickname }}</div>
+      <!-- Непрочитанные диалоги -->
+      <div 
+        v-for="(d, i) in unreadDialogs" 
+        :key="'dialog-' + d.uuid"  
+        class="missed_messages"
+      >
+        <div class="message" v-tippy="{ content: d.custom_name || dialogNames(d.members_info) }">
+          <router-link 
+            :class="(d?.unread_count > 0) ? 'missed' : null" 
+            :to="'/messages/' + d.uuid"
+            class="link-message"
+          >
+            <Avatar 
+              v-if="d.avatars?.length == 1" 
+              size="48" 
+              :mentions="d.unread_count" 
+              :avatar="d.avatars[0]" 
+            />
+            <Avatar 
+              v-else 
+              size="48" 
+              :mentions="d.unread_count" 
+              :avatars="d.avatars" 
+              multy
+              outline="var(--system-back-color5)" 
+            />
+          </router-link>
         </div>
       </div>
 
-      <div class="user-actions flex row">
-        <button @click="microphoneToggle" v-html="profileIcons.microphone"
-          v-tippy="{ content: 'Заглушить', placement: 'top' }">
-        </button>
-        <button @click="headphonesToggle" v-html="profileIcons.headphones"
-          v-tippy="{ content: 'Откл. звук', placement: 'top' }">
-        </button>
-        <button @click="settingsOpen" v-html="profileIcons.settings"
-          v-tippy="{ content: 'Настройки пользователя', placement: 'top' }">
-        </button>
+      <!-- Второй разделитель -->
+      <Divider 
+        v-if="unreadDialogs?.length" 
+        :key="'divider-2'" 
+        :width="67" 
+        color="var(--system-back-color1)" 
+        h 
+      />
+
+      <!-- Серверы -->
+      <div 
+        v-for="(s, i) in servers" 
+        :key="'server-' + s.id" 
+        class="servers"
+      >
+        <div class="server" v-tippy="{ content: computeServerData(i) }">
+          <router-link
+            :class="{ 
+              'missed-messages': s.missed_messages && s.missed_messages > 0, 
+              'active': activeServer == s.id 
+            }"
+            :to="'/server/' + s.id" 
+            class="link-server"
+          >
+            <Avatar 
+              :avatar="s.avatar" 
+              square 
+              size="48" 
+              :mentions="s.mentions" 
+              :activity="s.activity_type"
+              :active="s.my_activity" 
+            />
+          </router-link>
+        </div>
       </div>
-    </div>
-    <button @click="logout()" :key="457247">Выход</button>
+
+      <!-- Третий разделитель -->
+      <Divider 
+        v-if="servers?.length" 
+        :key="'divider-3'" 
+        :width="67" 
+        color="var(--system-back-color1)" 
+        h 
+      />
+
+      <!-- Действия -->
+      <div 
+        v-for="(a, i) in actions" 
+        :key="'action-' + a.id"  
+        v-tippy="{ content: a.name }" 
+        class="actions"
+      >
+        <div @click="a.handler" class="link-action">
+          <img :src="a.avatar" alt="">
+        </div>
+      </div>
+
+      <!-- Блок юзер-функций -->
+      <div 
+        :key="'userprofile'" 
+        class="userprofile flex row" 
+        :style="{ width: profileWidth + 'px' }"
+      >
+        <div class="profile flex row">
+          <Avatar size="35" :avatar="user.avatar" :status="user.status" />
+          <div class="userinfo flex column">
+            <div class="name">{{ user.name }}</div>
+            <div class="userprofile-info">{{ user.info ?? user.status ?? "Без статуса" }}</div>
+            <div class="nickname">{{ user.nickname }}</div>
+          </div>
+        </div>
+
+        <div class="user-actions flex row">
+          <button 
+            @click="microphoneToggle" 
+            v-html="profileIcons.microphone"
+            v-tippy="{ content: 'Заглушить', placement: 'top' }"
+            :key="'mic-btn'"
+          ></button>
+          <button 
+            @click="headphonesToggle" 
+            v-html="profileIcons.headphones"
+            v-tippy="{ content: 'Откл. звук', placement: 'top' }"
+            :key="'headphones-btn'"
+          ></button>
+          <button 
+            @click="settingsOpen" 
+            v-html="profileIcons.settings"
+            v-tippy="{ content: 'Настройки пользователя', placement: 'top' }"
+            :key="'settings-btn'"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Кнопка выхода -->
+      <button 
+        @click="logout()" 
+        :key="'logout-btn'"
+      >
+        Выход
+      </button>
+
+    </template>
   </TransitionGroup>
 </template>
+
 <script setup>
 import { useI18n } from 'vue-i18n';
 import router from '@/router';

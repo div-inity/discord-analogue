@@ -38,7 +38,6 @@
       <ContentFlex>
         <Content :RightAside="WIDTHASIDE">
           <Chat 
-            v-if="chat?.length"
             :messages="chat"
             @scrolled="loadmessages()"/>
           <TextField
@@ -77,6 +76,7 @@
             </template>
             <template v-else><!-- Диалог -->
               <ProfileShort :user="profileInfo(members_info)"/>
+              {{ activeDialogID }}
             </template>
           </template>
           

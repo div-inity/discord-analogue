@@ -19,7 +19,9 @@
         name="input" 
         autocomplete="off"
         v-model="message" 
-        @keyup.enter="toSend()">
+        @keyup.enter="toSend()"
+        :autofocus="props.autofocus"
+      >
       <slot name="actions"></slot>
       <button v-if="props.button == true" @click="toSend()"
         :style="{height: props.height - 25 + 'px'}"
@@ -66,6 +68,7 @@
 </template>
 <script setup>
 import { ref, watch, nextTick, computed, onMounted   } from 'vue';
+
 import { contentHeight } from '@/composables/generalFunctions';
 
 const emit = defineEmits(['send'])
@@ -173,6 +176,7 @@ watch(message, () => {
     updateTextareaHeight();
   })
 });
+
 
 // Инициализация
 onMounted(() => {
